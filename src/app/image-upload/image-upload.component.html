@@ -1,0 +1,52 @@
+<ion-row>
+  <ion-col style="padding-top:6px;" size="3">
+    <ion-label>
+      <h2 class="attachment-label">{{ title }}</h2>
+    </ion-label>
+  </ion-col>
+  <ion-col>
+    <div class="button-segment">
+      <ion-segment [disabled]="preview" class="segment-button-group" value="FILE" [(ngModel)]="details.source_type">
+        <ion-segment-button value="FILE">
+          <ion-label>FILE</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="URL">
+          <ion-label>URL</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="details.source_type==='FILE'">
+  <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12" class="ion-margin-end" style="margin-right: 1px;">
+    <div class="upload-textarea">
+      <input type="file" style="display: none;" (change)="getBase64URL($event)" #inputWebpushImage>
+      <ion-item [disabled]="preview" class="textbox-stacked" lines="none">
+        <ion-label class="attachment-label uploading-fileLabelName">{{details.fileName || 'Image' }}
+        </ion-label>
+        <ion-button slot="end" fill="clear" (click)="inputWebpushImage.click()" *ngIf="!details.fileName">
+          <!-- <ion-img class="ion-padding-end" src="../../../../assets/templateIcons/uploadPic.png">
+          </ion-img> -->
+          <ion-icon style="margin-right: 4px; color: var(--add-channel);" name="cloud-upload-outline"></ion-icon>
+          <ion-label>Upload</ion-label>
+        </ion-button>
+        <ion-button slot="end" fill="clear" (click)="deleteUploadedFile()" *ngIf="details.fileName">
+          <ion-icon name="trash-outline" class="delete-btn-icon"></ion-icon>
+          <ion-label class="delete-btn-label">Delete</ion-label>
+        </ion-button>
+      </ion-item>
+    </div>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="details.source_type==='URL'">
+  <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12" class="ion-margin-end" style="margin-right: 1px;">
+    <div class="upload-textarea">
+      <input type="file" style="display: none; height: 42px; " #inputWebpushImage>
+      <ion-item [disabled]="preview" style="height: 42px;" lines="none">
+        <ion-input class="uploading-fileLabelName" style="transform: translateY(-3px);" placeholder="Enter URL"
+          [(ngModel)]="details.url">
+        </ion-input>
+      </ion-item>
+    </div>
+  </ion-col>
+</ion-row>

@@ -1,0 +1,1349 @@
+<ng-template #dynamic_tag_popover>
+  <ion-content>
+    <!-- System -->
+    <div class="popover-content custom-display-flex">
+      <ion-list-header class="ion-no-margin ion-no-padding">System</ion-list-header>
+      <a *ngFor="let tag of systemTagList" class="system-text" (click)="addSelectedTag('system.' + tag)">{{tag}}</a>
+      <!-- Application -->
+      <div class="popover-content custom-display-flex" *ngIf="template.dynamic_tags.length>0">
+        <ion-list-header class="ion-no-margin  ion-no-padding">Application</ion-list-header>
+        <a *ngFor=" let tag of template.dynamic_tags" (click)="addSelectedTag(tag.name)">{{tag.name}}</a>
+      </div>
+    </div>
+  </ion-content>
+</ng-template>
+
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <ion-icon routerLink="/configuration/template" style="cursor:pointer" name="arrow-back"
+              class="back-icon"></ion-icon>
+            <h1 class="ion-no-border" style="border: none">{{template.name || 'Untitled Template'}}</h1>
+            <!-- <ion-img (click)="opentempalteBaseDetailsModel()" src="../../../../assets/icon/temp_setting.png"
+              title="Edit Template Screen" alt="Edit Template Page" class="ion-padding-start cursor-pointer">
+            </ion-img> -->
+            <ion-icon (click)="opentempalteBaseDetailsModel()" title="Edit Template Screen" class="
+              ion-padding-start cursor-pointer setting-style" name="settings-outline"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <!-- side channel select bar -->
+  <form [formGroup]="form">
+    <ion-grid class="ion-no-padding">
+      <ion-row class="ion-no-padding">
+        <ion-col class="channel-side-bar " size-xs=" 12" size-sm="12" size-md="2.6" size-lg="2.6" size-xl="2.6">
+          <ion-row class="ion-no-padding ion-hide-md-up">
+          </ion-row>
+          <ion-list class="ion-no-padding ion-hide-md-down">
+            <ion-list-header class="ion-no-padding">Channels</ion-list-header>
+            <ion-label lines="none">Add channels to send notifications</ion-label>
+          </ion-list>
+
+          <div class="channel-side-nav-btns" *ngIf="selectedChannel != 'NEW'">
+            <ion-grid class="ion-no-padding">
+
+              <!--  mobile side channel select-->
+              <ion-row class="mobile-channel-row ion-padding-right ion-hide-md-up">
+                <!--  -->
+                <ion-col class="ion-padding-left" size="2"
+                  *ngFor="let channel of getSelectedChannelList(); let i = index"
+                  [ngClass]="{'active-link-mobile' : selectedChannel == channel.name}">
+                  <div class="main-cont">
+                    <div button lines="none" class="ion-no-padding ion-item-channel-button"
+                      (click)="switchChannel(channel.name)">
+                      <div class="icon-test">
+                        <ion-icon slot="start" class="mob-ion-icon ion-no-padding"
+                          name="{{channel.iconName}}"></ion-icon>
+                      </div>
+                      <ion-label class="ion-no-padding ion-hide-md-down" fill="clear">{{i + 1}}.
+                        {{channel.title}}</ion-label>
+                      <ion-icon slot="end" (click)="removeChannel(channel.name)" class="del-icon ion-hide-md-down"
+                        name="trash-outline"></ion-icon>
+                    </div>
+                  </div>
+                </ion-col>
+
+                <ion-col class="ion-no-padding mobile-btn-addchannel">
+                  <div button lines="none" (click)="showAddChannelView()">
+                    <ion-icon slot="start" class="ion-no-margin ion-no-padding" name="add-outline">
+                    </ion-icon>
+                    <ion-button fill="clear" class="ion-no-padding ion-padding-start ion-hide-md-down">Add
+                      Channel</ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+              <!-- mobile ends  -->
+
+              <ion-row class="ion-hide-md-down">
+                <ion-col class="ion-no-padding ion-no-margin" size-xs="1.5" offset-xs="0.5" size-sm="2" size-md="12"
+                  size-lg="12" size-xl="12" *ngFor="let channel of getSelectedChannelList(); let i = index"
+                  [ngClass]="{'active-link' : selectedChannel == channel.name}">
+                  <div>
+                    <ion-item button lines="none" class="ion-item-channel-button" (click)="switchChannel(channel.name)">
+                      <ion-icon slot="start" class="ion-no-margin" name="{{channel.iconName}}"></ion-icon>
+                      <ion-label class="ion-no-padding ion-no-margin ion-padding-start ion-hide-md-down" fill="clear">
+                        {{i + 1}}. {{channel.title}}</ion-label>
+                      <ion-icon slot="end" (click)="removeChannel(channel.name)"
+                        class="trash-channel del-icon ion-hide-md-down" name="trash-outline"></ion-icon>
+                    </ion-item>
+
+                  </div>
+                </ion-col>
+                <ion-col class="ion-no-padding add-channel-btn-left" size-xs="1.5" offset-xs="0.5" size-sm="2"
+                  size-md="12" size-lg="12" size-xl="12">
+                  <ion-item button lines="none" (click)="showAddChannelView()">
+                    <ion-icon slot="start" class="ion-no-margin ion-no-padding" name="add-outline">
+                    </ion-icon>
+                    <ion-button fill="clear" class="ion-no-padding ion-padding-start ion-hide-md-down">Add
+                      Channel</ion-button>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </ion-col>
+
+        <!-- ************ Add Channel ************ -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="channel-right-header"
+          *ngIf="selectedChannel == 'NEW'">
+          <!-- header -->
+          <div class="space-above-content ion-hide-md-down"></div>
+          <ion-grid class="ion-padding-horizontal channel-header">
+            <ion-row>
+              <ion-col size="12" class="ion-padding-bottom">
+                <ion-label>Add Notification Channel</ion-label>
+                <br>
+              </ion-col>
+              <ion-row>
+                <ion-col size="12" class="ion-no-padding">
+                  <ion-note class="font-size">Multiple channels can be added and managed within a single template. You
+                    can change any time.</ion-note>
+                </ion-col>
+              </ion-row>
+            </ion-row>
+          </ion-grid>
+          <!-- body 5 images -->
+          <ion-grid class="channel-container">
+            <ion-row>
+              <ion-col class="ion-no-margin channel-card-container">
+                <div class="channel-card cursor-pointer ion-no-margin click-position"
+                  *ngFor="let channel of channelList"
+                  [ngClass]="{'selected': template.channels.indexOf(channel.name) != -1}"
+                  (click)="addChannel(channel.name)">
+                  <ion-img class="tick-mark"
+                    src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg"></ion-img>
+                  <div class="img-label-container">
+                    <div class="img-container">
+                      <ion-img class="channel-img-size" [src]="channel.image"> </ion-img>
+                    </div>
+                    <ion-label class="channel-title">{{channel.title}}</ion-label>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+
+        <!-- ************ Email page ************ -->
+        <!-- main container starts -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="email-channel"
+          *ngIf="selectedChannel == 'EMAIL'" @myAnimationTrigger>
+          <!-- sub container => Emailer -->
+          <ion-card class="ion-no-padding temp-card">
+            <ion-grid class="ion-no-padding">
+              <ion-row class="flex-container">
+                <!-- left side -->
+                <ion-col class="left-content-header-margin">
+                  <div class="left-contant ion-padding-horizontal">
+                    <ion-item lines="none" class="ion-no-padding ion-margin-bottom">
+                      <div>
+                        <ion-label class="content-heading">Emailer</ion-label>
+                      </div>
+
+                      <ion-icon slot="end" class="cursor-pointer ion-padding-start ion-hide-md-up trash-channel"
+                        (click)="removeChannel('EMAIL')" title="Delete Email Template" name="trash-outline"></ion-icon>
+                      <ion-buttons slot="end" class="preview-btn ion-hide-md-up" (click)="setOpen(true)">
+                        <ion-button>
+                          <ion-icon name="search-outline"></ion-icon>Preview</ion-button>
+                      </ion-buttons>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textbox">
+                          <ion-label position="floating">Subject<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="email_subject_dynamic_tag" (click)="showDynamicContentPopup('EMAIL_SUBJECT')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="email_subject_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-input formControlName="subject" type="text" placeholder="Enter a Subject"
+                            class="font-size" (click)="cursorIndexIdentifier($event,'EMAIL_SUBJECT')"
+                            (select)="cursorIndexIdentifier($event,'EMAIL_SUBJECT')"
+                            (keyup)="cursorIndexIdentifier($event,'EMAIL_SUBJECT')"
+                            [(ngModel)]="template.emailContent.subject"></ion-input>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('subject')?.hasError('required') && (form.get('subject')?.touched || form.get('subject')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <!-- Segment Button for Email Editor / / Html Editor -->
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-segment [ngModelOptions]="{standalone: true}"
+                          [(ngModel)]="template.emailContent.editor_type">
+                          <ion-segment-button value="EMAIL_EDITOR">Email Editor</ion-segment-button>
+                          <ion-segment-button value="HTML_EDITOR">Html Editor</ion-segment-button>
+                        </ion-segment>
+                      </ion-col>
+                    </ion-row>
+                    <!-- Message -->
+                    <ion-row *ngIf="template.emailContent.editor_type != 'HTML_EDITOR'">
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textarea" style="position:relative">
+                          <ion-label position="floating">Message (Html)<span
+                              class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="email_message_dynamic_tag" (click)="showDynamicContentPopup('EMAIL_MESSAGE')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="email_message_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea #textareaRef (click)="cursorIndexIdentifier($event,'EMAIL_MESSAGE')"
+                            (select)="cursorIndexIdentifier($event,'EMAIL_MESSAGE')"
+                            (keyup)="cursorIndexIdentifier($event,'EMAIL_MESSAGE')" formControlName="message" rows="15"
+                            type="text" placeholder="Enter a Message" class="font-size"
+                            [(ngModel)]="template.emailContent.message"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('message')?.hasError('required') && (form.get('message')?.touched || form.get('message')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <!-- CodeMirror -->
+                    <ion-row *ngIf="template.emailContent.editor_type == 'HTML_EDITOR'">
+                      <ion-col class="form-element">
+
+                        <div style="border: 1px solid var(--ion-color-border);border-radius: 4px; position: relative;">
+                          <span style="right: 0; position: absolute; z-index: 3"
+                            *ngIf="template.emailContent.editor_type == 'HTML_EDITOR'">
+                            <ng-container #type>
+                              <ion-fab style="right: 92px; top: -5px;">
+                                <ion-fab-button
+                                  style="--background: none; --box-shadow: none;--color: var(--ion-color-primary); --close-icon-font-size: 20px;"
+                                  title="Upload" size="small" fill="clear" shape="round">
+                                  <ion-icon style="font-size: 20px;" name="cloud-upload"></ion-icon>
+                                </ion-fab-button>
+                                <ion-fab-list style="margin-inline-end: 35px;top: -9px;" side="start">
+                                  <ion-fab-button title="Upload Zip File"
+                                    (click)="type.textContent = 'ZIPFILE'; emailerInputFile.accept = 'application/zip,application/octet-stream,application/x-zip,application/x-zip-compressed';emailerInputFile.click();">
+                                    <ion-icon name="document-attach-outline"></ion-icon>
+                                  </ion-fab-button>
+                                  <ion-fab-button title="Upload HTML File"
+                                    (click)="type.textContent = 'HTMLFILE'; emailerInputFile.accept = 'text/html';emailerInputFile.click();">
+                                    <ion-icon name="logo-html5"></ion-icon>
+                                  </ion-fab-button>
+                                  <ion-fab-button title="Upload Image File"
+                                    (click)="type.textContent = 'IMAGEFILE'; emailerInputFile.accept ='image/*'; emailerInputFile.click();">
+                                    <ion-icon name="image-outline"></ion-icon>
+                                  </ion-fab-button>
+                                </ion-fab-list>
+                              </ion-fab>
+                              <input type="file" style="display: none"
+                                (change)="getHtmlZipFile($event, type.textContent ?? '')" #emailerInputFile>
+                            </ng-container>
+                            <ion-button *ngIf="template.emailContent.html_message"
+                              style="position: absolute; top: 1px; right: 130px;" slot="end" fill="clear" size="small"
+                              class="ion-no-margin" title="Download" shape="round"
+                              (click)="downloadHTMLFile(template.emailContent.html_message)">
+                              <ion-icon style="font-size: 20px;" name="cloud-download"></ion-icon>
+                            </ion-button>
+                            <ion-button slot="end" fill="clear" size="small" class="ion-no-margin"
+                              title="Formate Content" shape="round" (click)="codeMirrorFormatCode(codeMirrorComponent)">
+                              <ion-icon name="code-slash"></ion-icon>
+                            </ion-button>
+                            <ion-button (click)="modalPresent(template.emailContent, 'EMAIL_HTML')" size="small"
+                              slot="end" fill="clear" class="ion-no-margin" title="HTML EDITOR" shape="round">
+                              <ion-icon name="scan-outline" slot="icon-only"></ion-icon>
+                            </ion-button>
+                          </span>
+                          <div>
+                            <codemirror #codeMirrorEditor style="display: grid;" class="codemirror-small"
+                              [(ngModel)]="template.emailContent.html_message" [config]="codeMirrorOptions"
+                              [ngModelOptions]="{standalone: true}"
+                              (ngModelChange)="template.emailContent.html_message = $event">
+                            </codemirror>
+                          </div>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="email_htmleditor_dynamic_tag"
+                              (click)="showDynamicContentPopup('EMAIL_HTMLEDITOR')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="email_htmleditor_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-label style="display: flex;
+                        align-items: center;">Email Attachment<ion-icon name="information-circle"
+                            class="tooltip-icon"></ion-icon>
+                          <ion-tooltip class="tooltip">
+                            1. Should not exceed more than 3 files<br>
+                            2. Supported file types pdf, xls, xlsx, csv, jpg, jpeg, png, gif, bmp, ppt, pptx, doc,
+                            docx<br>
+                            3. Each file size should not exceed more than 2 MB<br>
+                          </ion-tooltip></ion-label>
+                        <div class="upload-textarea" style="margin-top: 6px; display: grid;">
+                          <input type="file" style="display: none;" #attachmentInput
+                            (change)="getEmailBase64URL($event)">
+                          <ion-item class="textbox-stacked" lines="none"
+                            style="--padding-start: 6px; --inner-padding-end: 10px; ">
+                            <ion-label *ngIf="this.template.attachments.length == 0"
+                              style="margin-left: 5px;">Attachment</ion-label>
+                            <div *ngIf="this.template.attachments.length > 0"
+                              style="padding-bottom: 11px; display: contents;">
+                              <ion-chip *ngFor="let list of template.attachments; index as i" class="attachment-chip">
+                                <ion-label [title]="list.name"
+                                  style="max-width: 60px; overflow: hidden; text-overflow: ellipsis;cursor:pointer;">{{list.name}}</ion-label>
+                                <ion-icon name="download-outline" title="downlaod"
+                                  (click)="notifiService.downlaodEmailAttachment(list);" *ngIf="list.id"
+                                  style="cursor: pointer; color: var(--ion-color-primary)"></ion-icon>
+                                <ion-icon name="close" title="delete" (click)="confirmationDeleteAttachment(i)"
+                                  style="cursor: pointer;"></ion-icon>
+                              </ion-chip>
+                            </div>
+                            <ion-button [disabled]="this.template.attachments.length > 2" slot="end" fill="clear"
+                              (click)="attachmentInput.click()"
+                              style="margin-left: 0px;color: var(--ion-color-primary)">
+                              <ion-icon style=" margin-left: 4px;margin-right: 4px; color: var(--ion-color-primary)"
+                                name="cloud-upload-outline">
+                              </ion-icon>
+                              <ion-label>Upload</ion-label>
+                            </ion-button>
+                          </ion-item>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-col>
+                <!-- right side -->
+                <ion-col class="right-contant">
+                  <!-- desktop view / device content -->
+                  <div class="preview-container">
+                    <span (click)="modalPresent(template.emailContent,'EMAIL')" class="cursor-pointer"
+                      title="Full screen" style="position: absolute;left: 94.5%;font-size:20px; color:black">
+                      <ion-icon name="scan-outline" class="pointer-none"></ion-icon>
+                    </span>
+                    <app-template-page [attachment_preview]="'TEMPLATE'" style="width: 100%;"
+                      [attachment_details]="template" [preview_channel]="'EMAIL'"
+                      [content]="template.emailContent"></app-template-page>
+                  </div>
+                  <!-- mobile device modal type content  -->
+                  <ion-modal [isOpen]="isModalOpen">
+                    <ng-template>
+                      <div>
+                        <ion-item lines="none">
+                          <ion-icon slot="end" color="dark" name="close-outline" (click)="setOpen(false)"></ion-icon>
+                        </ion-item>
+                        <div class="preview-container">
+                          <app-template-page [attachment_preview]="'TEMPLATE'" [attachment_details]="template"
+                            [preview_channel]="'EMAIL'" [content]="template.emailContent"></app-template-page>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+
+        <!-- ************ Web Push page ************ -->
+        <!-- main container starts -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="webpush-column"
+          *ngIf="selectedChannel == 'WEB_PUSH'" @myAnimationTrigger>
+          <ion-card class="temp-card">
+            <ion-grid class="ion-no-padding">
+              <ion-row>
+                <!-- left side -->
+                <ion-col class="left-content-header-margin">
+                  <div class="left-contant ion-padding-horizontal">
+                    <ion-item lines="none" class="ion-no-padding ion-margin-bottom">
+                      <div>
+                        <ion-label class="content-heading">Web Push</ion-label>
+                      </div>
+                      <!-- <ion-img class="cursor-pointer ion-padding-start ion-hide-md-up"
+                        src="../../../../assets/icon/deleteBin.png" title="Delete Web Push Template"
+                        (click)="removeChannel('WEB_PUSH')"></ion-img> -->
+                      <ion-icon slot="end" class="cursor-pointer ion-padding-start ion-hide-md-up trash-channel"
+                        (click)="removeChannel('WEB_PUSH')" title="Delete Web Push Template"
+                        name="trash-outline"></ion-icon>
+                      <ion-buttons slot="end" class="preview-btn ion-hide-md-up" (click)="setOpen(true)">
+                        <ion-button>
+                          <ion-icon name="search-outline"></ion-icon>Preview</ion-button>
+                      </ion-buttons>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textbox">
+                          <ion-label position="floating">Title<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="webpush_title_dynamic_tag" (click)="showDynamicContentPopup('WEBPUSH_TITLE')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="webpush_title_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea (click)="cursorIndexIdentifier($event,'WEBPUSH_TITLE')"
+                            (select)="cursorIndexIdentifier($event,'WEBPUSH_TITLE')"
+                            (keyup)="cursorIndexIdentifier($event,'WEBPUSH_TITLE')" formControlName="title" type="text"
+                            placeholder="Enter a Subject" class="font-size"
+                            [(ngModel)]="template.webPushContent.title"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('title')?.hasError('required') && (form.get('title')?.touched || form.get('title')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textarea">
+                          <ion-label position="floating">Message<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="webpush_message_dynamic_tag"
+                              (click)="showDynamicContentPopup('WEB_PUSH_MESSAGE')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="webpush_message_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea (click)="cursorIndexIdentifier($event,'WEB_PUSH_MESSAGE')"
+                            (select)="cursorIndexIdentifier($event,'WEB_PUSH_MESSAGE')"
+                            (keyup)="cursorIndexIdentifier($event,'WEB_PUSH_MESSAGE')" formControlName="msg" rows="4"
+                            type="text" placeholder="Type" class="font-size"
+                            [(ngModel)]="template.webPushContent.message"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('msg')?.hasError('required') && (form.get('msg')?.touched || form.get('msg')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textbox">
+                          <ion-label position="floating">Click Action</ion-label>
+                          <ion-input type="text" placeholder="Enter URL"
+                            [(ngModel)]="template.webPushContent.click_action" [ngModelOptions]="{standalone: true}"
+                            class="font-size"></ion-input>
+                        </ion-item>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <app-image-upload [details]="template.webPushContent.image"
+                          [title]="'Image'"></app-image-upload>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <app-image-upload [details]="template.webPushContent.icon" [title]="'Icon'"></app-image-upload>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-col>
+                <!-- right content -->
+                <ion-col class="right-contant ion-hide-md-down">
+                  <!-- desktop view / device content -->
+                  <div class="preview-container">
+                    <app-template-page [preview_channel]="'WEB_PUSH'"
+                      [content]="template.webPushContent"></app-template-page>
+                  </div>
+                  <!--  -->
+                  <ion-modal [isOpen]="isModalOpen">
+                    <ng-template>
+                      <div>
+                        <ion-item lines="none">
+                          <ion-icon slot="end" color="dark" name="close-outline" (click)="setOpen(false)"></ion-icon>
+                        </ion-item>
+                        <div class="preview-container">
+                          <app-template-page [preview_channel]="'WEB_PUSH'"
+                            [content]="template.webPushContent"></app-template-page>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+
+
+        <!-- ************ mobile Push page ************ -->
+        <!-- main container starts -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="mobilepush-column"
+          *ngIf="selectedChannel == 'MOBILE_PUSH'" @myAnimationTrigger>
+          <ion-card>
+            <ion-grid class="ion-no-padding">
+              <ion-row>
+                <!-- left side -->
+                <ion-col class="left-content-header-margin">
+                  <div class="left-contant ion-padding-horizontal">
+                    <ion-item lines="none" class="ion-no-padding ion-margin-bottom">
+                      <div>
+                        <ion-label class="content-heading" style="white-space: pre-wrap;">Mobile Push</ion-label>
+                      </div>
+                      <!-- <ion-img class="cursor-pointer ion-padding-start ion-hide-md-up"
+                        src="../../../../assets/icon/deleteBin.png" title="Delete Mobile Push Template"
+                        (click)="removeChannel('MOBILE_PUSH')"></ion-img> -->
+                      <ion-icon slot="end" class="cursor-pointer ion-padding-start ion-hide-md-up trash-channel"
+                        (click)="removeChannel('MOBILE_PUSH')" title="Delete Mobile Push Template"
+                        name="trash-outline"></ion-icon>
+                      <ion-buttons slot="end" class="preview-btn ion-hide-md-up" (click)="setOpen(true)">
+                        <ion-button>
+                          <ion-icon name="search-outline"></ion-icon>Preview</ion-button>
+                      </ion-buttons>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textbox">
+                          <ion-label position="floating">Title<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="mobilepush_title_dynamic_tag"
+                              (click)="showDynamicContentPopup('MOBILEPUSH_TITLE')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="mobilepush_title_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea (click)="cursorIndexIdentifier($event,'MOBILEPUSH_TITLE')"
+                            (select)="cursorIndexIdentifier($event,'MOBILEPUSH_TITLE')"
+                            (keyup)="cursorIndexIdentifier($event,'MOBILEPUSH_TITLE')" formControlName="mobTitle"
+                            type="text" placeholder="Type" class="font-size" [(ngModel)]="template.pushContent.title"
+                            [ngModelOptions]="{standalone: true}"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('mobTitle')?.hasError('required') && (form.get('mobTitle')?.touched || form.get('mobTitle')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textarea">
+                          <ion-label position="floating">Message<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="mobilepush_message_dynamic_tag"
+                              (click)="showDynamicContentPopup('MOBILEPUSH_MESSAGE')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="mobilepush_message_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea style="color: #16392F;" (click)="cursorIndexIdentifier($event,'</ion-item>')"
+                            (select)="cursorIndexIdentifier($event,'MOBILEPUSH_MESSAGE')"
+                            (keyup)="cursorIndexIdentifier($event,'MOBILEPUSH_MESSAGE')" formControlName="mobMsg"
+                            rows="4" type="text" class="font-size"
+                            [(ngModel)]="template.pushContent.message"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('mobMsg')?.hasError('required') && (form.get('mobMsg')?.touched || form.get('mobMsg')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <app-image-upload [details]="template.pushContent.image" [title]="'Image'"></app-image-upload>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textbox">
+                          <ion-label position="floating">Click
+                            Action</ion-label>
+                          <ion-input type="text" placeholder="Enter URL" [(ngModel)]="template.pushContent.click_action"
+                            [ngModelOptions]="{standalone: true}" class="font-size"></ion-input>
+                        </ion-item>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-col>
+                <!-- right contant -->
+                <ion-col class="right-contant ion-hide-md-down">
+                  <!-- desktop view / device content -->
+                  <div class="preview-container">
+                    <app-template-page style="width: 376px;" [preview_channel]="'MOBILE_PUSH'"
+                      [content]="template.pushContent"></app-template-page>
+                  </div>
+                  <!--  -->
+                  <ion-modal [isOpen]="isModalOpen">
+                    <ng-template>
+                      <div>
+                        <ion-item lines="none">
+                          <ion-icon slot="end" color="dark" name="close-outline" (click)="setOpen(false)"></ion-icon>
+                        </ion-item>
+                        <div class="preview-container">
+                          <app-template-page [preview_channel]="'SMS'"
+                            [content]="template.pushContent"></app-template-page>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+
+
+        <!-- ************ sms Push page ************ -->
+        <!-- main container starts -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="smspush-column"
+          *ngIf="selectedChannel == 'SMS'" @myAnimationTrigger>
+          <ion-card class="card-style">
+            <ion-grid class="ion-no-padding">
+              <ion-row>
+                <!-- left side -->
+                <ion-col class="left-content-header-margin">
+                  <div class="left-contant ion-padding-horizontal">
+                    <ion-item lines="none" class="ion-no-padding ion-margin-bottom">
+                      <div>
+                        <ion-label class="content-heading">SMS</ion-label>
+                      </div>
+                      <!-- <ion-img class="cursor-pointer ion-padding-start ion-hide-md-up"
+                        src="../../../../assets/icon/deleteBin.png" title="Delete SMS Template"
+                        (click)="removeChannel('SMS')"></ion-img> -->
+                      <ion-icon slot="end" class="cursor-pointer ion-padding-start ion-hide-md-up trash-channel"
+                        (click)="removeChannel('SMS')" title="Delete SMS Template" name="trash-outline"></ion-icon>
+                      <ion-buttons slot="end" class="preview-btn ion-hide-md-up" (click)="setOpen(true)">
+                        <ion-button>
+                          <ion-icon name="search-outline"></ion-icon>Preview
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-item fill="outline" class="textarea">
+                          <ion-label position="floating">SMS Content<span class="mandatory-field">*</span></ion-label>
+                          <span class="icon-wrapper">
+                            <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                              (click)="dynamicTagModel()"></ion-img>
+                            <ion-img id="sms_content_dynamic_tag" (click)="showDynamicContentPopup('SMS_CONTENT')"
+                              src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                              class="cursor-pointer">
+                            </ion-img>
+                          </span>
+                          <!-- system & application popover -->
+                          <ion-popover side="bottom" trigger="sms_content_dynamic_tag" [dismissOnSelect]="true">
+                            <ng-template>
+                              <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                            </ng-template>
+                          </ion-popover>
+                          <ion-textarea (click)="cursorIndexIdentifier($event,'SMS_CONTENT')"
+                            (select)="cursorIndexIdentifier($event,'SMS_CONTENT')"
+                            (keyup)="cursorIndexIdentifier($event,'SMS_CONTENT')" formControlName="smsContent" rows="3"
+                            type="text" placeholder="Type" class="font-size text-family"
+                            [(ngModel)]="template.smsContent.message"></ion-textarea>
+                        </ion-item>
+                        <ng-container
+                          *ngIf="form.get('smsContent')?.hasError('required') && (form.get('smsContent')?.touched || form.get('smsContent')?.dirty)">
+                          <small class="form-error-message">This is a required field</small>
+                        </ng-container>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-col>
+                <!-- right content -->
+                <ion-col class="right-contant ion-margin-top ion-hide-md-down">
+                  <div class="preview-container">
+                    <app-template-page [preview_channel]="'SMS'" [content]="template.smsContent"></app-template-page>
+                  </div>
+                  <ion-modal [isOpen]="isModalOpen">
+                    <ng-template>
+                      <div>
+                        <ion-item lines="none">
+                          <ion-icon slot="end" color="dark" name="close-outline" (click)="setOpen(false)"></ion-icon>
+                        </ion-item>
+                        <div class="preview-container">
+                          <app-template-page [preview_channel]="'SMS'"
+                            [content]="template.smsContent"></app-template-page>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+
+
+        <!-- ************ In-App Push page ************ -->
+        <!-- main container starts -->
+        <ion-col size-xs="12" size-sm="12" size-md="9.2" size-lg="9.2" size-xl="9.2" class="inapppush-column"
+          *ngIf="selectedChannel == 'IN_APP_MESSAGE'" @myAnimationTrigger>
+          <ion-card>
+            <ion-grid class="ion-no-padding">
+              <ion-row>
+                <!-- left side -->
+                <ion-col size-md="12" size-lg="6.6" class="left-content-header-margin">
+                  <div class="left-contant ion-padding-horizontal">
+                    <ion-item lines="none" class="ion-no-padding ion-margin-bottom ion-hide-md-up">
+                      <!-- <ion-img class="cursor-pointer ion-padding-start ion-hide-md-up"
+                        src="../../../../assets/icon/deleteBin.png" title="Delete In-App Push Template"
+                        (click)="removeChannel('IN_APP_MESSAGE')"></ion-img> -->
+                      <ion-icon slot="end" class="cursor-pointer ion-padding-start ion-hide-md-up trash-channel"
+                        (click)="removeChannel('IN_APP_MESSAGE')" title="Delete In-App Push Template"
+                        name="trash-outline"></ion-icon>
+                      <ion-buttons slot="end" class="preview-btn ion-hide-md-up" (click)="setOpen(true)">
+                        <ion-button>
+                          <ion-icon name="search-outline"></ion-icon>Preview
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col class="form-element">
+                        <ion-row>
+                          <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                            <h3>Message layout</h3>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col size-lg="3" size-xs="3" size-sm="3" size-md="3" class="ion-no-padding">
+                            <ion-card class="inApp-router-card" (click)="template.inAppContent.type = 'CARD'"
+                              [ngClass]="{'active': template.inAppContent.type == 'CARD'}">
+                              <ion-card-header class="inApp-router-card-header">
+                                <ion-img style="height: 24.36px;"
+                                  src="../../../../assets/icon/Inapp/card.svg"></ion-img>
+                              </ion-card-header>
+                              <ion-card-content class="ion-no-padding inApp-router-card-content">Card</ion-card-content>
+                            </ion-card>
+                          </ion-col>
+                          <ion-col size-lg="3" size-xs="3" size-sm="3" size-md="3" class="ion-no-padding">
+                            <ion-card class="inApp-router-card" (click)="template.inAppContent.type = 'MODAL'"
+                              [ngClass]="{'active': template.inAppContent.type == 'MODAL'}">
+                              <ion-card-header class="inApp-router-card-header">
+                                <ion-img style="height: 24.36px;"
+                                  src="../../../../assets/icon/Inapp/modal.svg"></ion-img>
+                              </ion-card-header>
+                              <ion-card-content
+                                class="ion-no-padding inApp-router-card-content">Modal</ion-card-content>
+                            </ion-card>
+                          </ion-col>
+                          <ion-col size-lg="3" size-xs="3" size-sm="3" size-md="3" class="ion-no-padding">
+                            <ion-card class="inApp-router-card" (click)="template.inAppContent.type = 'IMAGE_ONLY'"
+                              [ngClass]="{'active': template.inAppContent.type == 'IMAGE_ONLY'}">
+                              <ion-card-header class="inApp-router-card-header">
+                                <ion-img style="height: 24.36px;"
+                                  src="../../../../assets/icon/Inapp/imageonly.svg"></ion-img>
+                              </ion-card-header>
+                              <ion-card-content class="ion-no-padding inApp-router-card-content">Image
+                                only</ion-card-content>
+                            </ion-card>
+                          </ion-col>
+                          <ion-col size-lg="3" size-xs="3" size-sm="3" size-md="3" class="ion-no-padding">
+                            <ion-card class="inApp-router-card" (click)="template.inAppContent.type = 'TOP_BANNER'"
+                              [ngClass]="{'active': template.inAppContent.type === 'TOP_BANNER'}">
+                              <ion-card-header class="inApp-router-card-header">
+                                <ion-img style="height: 24.36px;"
+                                  src="../../../../assets/icon/Inapp/topBanner.svg"></ion-img>
+                              </ion-card-header>
+                              <ion-card-content class="ion-no-padding inApp-router-card-content">Top
+                                banner</ion-card-content>
+                            </ion-card>
+                          </ion-col>
+                        </ion-row>
+                        <!-- card -->
+                        <div class="InApp-push" *ngIf="template.inAppContent.type === 'CARD'" @myAnimationTrigger>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Message content</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading ">Background</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.backgroundColorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="cardBackgroundcolor"
+                                      [(ngModel)]="template.inAppContent.card.backgroundColorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('cardBackgroundcolor')?.hasError('required') && (form.get('cardBackgroundcolor')?.touched || form.get('cardBackgroundcolor')?.dirty)">
+                                    <small class="form-error-message">A background is required</small>
+                                  </ng-container>
+                                </ion-col>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Text colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.title.colorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="cardTitleColor"
+                                      [(ngModel)]="template.inAppContent.card.title.colorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('cardTitleColor')?.hasError('required') && (form.get('cardTitleColor')?.touched || form.get('cardTitleColor')?.dirty)">
+                                    <small class="form-error-message">A text colour is required</small>
+                                  </ng-container>
+                                </ion-col>
+                              </ion-row>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Message title</ion-label>
+                              <ion-item fill="outline" class="textbox-stacked input-padding">
+                                <ion-input placeholder="Example: Message title" type="text" name="title"
+                                  formControlName="cardTitle" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.card.title.text"></ion-input>
+                              </ion-item>
+                              <ng-container
+                                *ngIf="form.get('cardTitle')?.hasError('required') && (form.get('cardTitle')?.touched || form.get('cardTitle')?.dirty)">
+                                <small class="form-error-message">A message title is required</small>
+                              </ng-container>
+                            </ion-col>
+                            <ion-col style="padding-right: 10px;" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Body (optional)</ion-label>
+                              <ion-item fill="outline" class="textarea">
+                                <ion-textarea placeholder="Example: Message Body" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.card.body.text"></ion-textarea>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Images</h4>
+                            </ion-col>
+                            <ion-col style="padding-right: 12px;" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <app-image-upload [details]="template.inAppContent.card.portraitImageUrl"
+                                [title]="'Portrait image'"></app-image-upload>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col style="padding-right: 12px;" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <app-image-upload [details]="template.inAppContent.card.landscapeImageUrl"
+                                [title]="'Landscape image'"
+                                [preview]="enableCheckbox.sameImageAsPortrait"></app-image-upload>
+                              <div>
+                                <ion-checkbox (click)="checkboxEnable('sameImageAsPortrait')"
+                                  style="margin: 0px 0px -12px 0px;" slot="start"></ion-checkbox>
+                                <ion-label class="sub-heading disablecheckbox">Use same image as portrait </ion-label>
+                              </div>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12" class="ion-padding-top">
+                              <h4>Primary button</h4>
+                            </ion-col>
+                            <ion-col>
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                                  <ion-label class="sub-heading">Button text</ion-label>
+                                  <ion-item fill="outline" class="textbox-stacked input-padding">
+                                    <ion-input placeholder="Primary" [ngModelOptions]="{standalone: true}"
+                                      formControlName="cardButtontext"
+                                      [(ngModel)]="template.inAppContent.card.primaryActionButton.text.text"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('cardButtontext')?.hasError('required') && (form.get('cardButtontext')?.touched || form.get('cardButtontext')?.dirty)">
+                                    <small class="form-error-message">Button text is required</small>
+                                  </ng-container>
+                                </ion-col>
+                              </ion-row>
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Background colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.primaryActionButton.buttonColorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="cardButtonBackgroundColor"
+                                      [(ngModel)]="template.inAppContent.card.primaryActionButton.buttonColorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('cardButtonBackgroundColor')?.hasError('required') && (form.get('cardButtonBackgroundColor')?.touched || form.get('cardButtonBackgroundColor')?.dirty)">
+                                    <small class="form-error-message">Background is required</small>
+                                  </ng-container>
+                                </ion-col>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Text colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.primaryActionButton.text.colorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="cardButtontextColor"
+                                      [(ngModel)]="template.inAppContent.card.primaryActionButton.text.colorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('cardButtontextColor')?.hasError('required') && (form.get('cardButtontextColor')?.touched || form.get('cardButtontextColor')?.dirty)">
+                                    <small class="form-error-message">TextColor is required</small>
+                                  </ng-container>
+                                </ion-col>
+                              </ion-row>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="template.inAppContent.card.primaryActionButton.text.text" @myAnimationTrigger>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Button
+                                action
+                                <ion-icon class="question-icon" name="help-circle-outline"></ion-icon>
+                              </ion-label>
+                              <ion-item fill="outline" style="--inner-padding-end: 2px;"
+                                class="textbox-stacked input-padding">
+                                <ion-input [disabled]="enableCheckbox.isPrimaryContent"
+                                  [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.card.primaryAction.actionUrl"
+                                  placeholder="Example: https://yourapp.com/image.png">
+                                </ion-input>
+                              </ion-item>
+                              <div>
+                                <ion-checkbox (click)="checkboxEnable('isPrimaryContent')" slot="start"></ion-checkbox>
+                                <ion-label class="sub-heading">Use dismiss as the action</ion-label>
+                              </div>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="template.inAppContent.card.primaryActionButton.text.text && !addButton"
+                            @myAnimationTrigger>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-button (click)="buttonAdding()" class="addButton"><ion-icon
+                                  name="add-circle"></ion-icon>Add
+                                button</ion-button>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="addButton" @myAnimationTrigger>
+                            <ion-col size-xs="6" size-sm="6" size-md="6" size-lg="6" class="ion-padding-top">
+                              <h4>Secondary button</h4>
+                            </ion-col>
+                            <ion-col offset="5" size-xs="1" size-sm="1" size-md="1" size-lg="1" class="ion-padding-top">
+                              <div>
+                                <ion-icon class="close-button" (click)="addButton=false" name="close-circle"></ion-icon>
+                              </div>
+                            </ion-col>
+                            <ion-col>
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                                  <ion-label class="sub-heading">Button text</ion-label>
+                                  <ion-item fill="outline" class="textbox-stacked input-padding">
+                                    <ion-input placeholder="Secondary" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.SecondaryActionButton.text.text"></ion-input>
+                                  </ion-item>
+                                </ion-col>
+                              </ion-row>
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Background colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.SecondaryActionButton.buttonColorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.SecondaryActionButton.buttonColorHex"></ion-input>
+                                  </ion-item>
+                                </ion-col>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Text colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.SecondaryActionButton.text.colorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.card.SecondaryActionButton.text.colorHex"></ion-input>
+                                  </ion-item>
+                                </ion-col>
+                              </ion-row>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="addButton">
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Button action
+                                <ion-icon class="question-icon" name="help-circle-outline"></ion-icon>
+                              </ion-label>
+                              <ion-item fill="outline" style="--inner-padding-end: 2px;"
+                                class="textbox-stacked input-padding">
+                                <ion-input [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.card.SecondaryAction.actionUrl"
+                                  [disabled]="enableCheckbox.isSecondaryContent"
+                                  placeholder="Example: https://yourapp.com/image.png">
+                                </ion-input>
+                              </ion-item>
+                              <div>
+                                <ion-checkbox (click)="checkboxEnable('isSecondaryContent')"
+                                  slot="start"></ion-checkbox>
+                                <ion-label class="sub-heading">Use dismiss as the action</ion-label>
+                              </div>
+                            </ion-col>
+                          </ion-row>
+                        </div>
+                        <!-- ///// -->
+                        <!-- modal -->
+                        <div class="InApp-push" *ngIf="template.inAppContent.type === 'MODAL'" @myAnimationTrigger>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Message content</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Background</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.modal.backgroundColorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="modalBackground"
+                                      [(ngModel)]="template.inAppContent.modal.backgroundColorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('modalBackground')?.hasError('required') && (form.get('modalBackground')?.touched || form.get('modalBackground')?.dirty)">
+                                    <small class="form-error-message">A background is required</small>
+                                  </ng-container>
+                                </ion-col>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading">Text colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.modal.title.colorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="modalTextcolor"
+                                      [(ngModel)]="template.inAppContent.modal.title.colorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('modalTextcolor')?.hasError('required') && (form.get('modalTextcolor')?.touched || form.get('modalTextcolor')?.dirty)">
+                                    <small class="form-error-message">A Text Colour is required</small>
+                                  </ng-container>
+                                </ion-col>
+                              </ion-row>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Message title</ion-label>
+                              <ion-item fill="outline" class="textbox-stacked input-padding">
+                                <ion-input formControlName="modalTitle" placeholder="Example: Message title"
+                                  [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.title.text"></ion-input>
+                              </ion-item>
+                              <ng-container
+                                *ngIf="form.get('modalTitle')?.hasError('required') && (form.get('modalTitle')?.touched || form.get('modalTitle')?.dirty)">
+                                <small class="form-error-message">A message title is required</small>
+                              </ng-container>
+                            </ion-col>
+                            <ion-col style="padding-right: 10px;" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Body (optional)</ion-label>
+                              <ion-item fill="outline" class="textarea">
+                                <ion-textarea placeholder="Example: Message body" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.body.text"></ion-textarea>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Image (optional)</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <app-image-upload style="padding-right: 12px;"
+                                [details]="template.inAppContent.modal.imageUrl"
+                                [title]="'Image (optional)'"></app-image-upload>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Button (optional)</h4>
+                            </ion-col>
+                            <ion-col size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Button text (optional)</ion-label>
+                              <ion-item fill="outline" class="textbox-stacked input-padding">
+                                <ion-input [(ngModel)]="template.inAppContent.modal.actionButton.text.text"
+                                  [ngModelOptions]="{standalone: true}" placeholder="Button text"></ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="template.inAppContent.modal.actionButton.text.text">
+                            <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                              <ion-label class="sub-heading">Background colour</ion-label>
+                              <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.actionButton.buttonColorHex">
+                                <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                  [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.actionButton.buttonColorHex"></ion-input>
+                              </ion-item>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                              <ion-label class="sub-heading">Text colour</ion-label>
+                              <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.actionButton.text.colorHex">
+                                <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                  [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.actionButton.text.colorHex"></ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row *ngIf="template.inAppContent.modal.actionButton.text.text">
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Button action<ion-icon class="question-icon"
+                                  name="help-circle-outline"></ion-icon>
+                              </ion-label>
+                              <ion-item fill="outline" style="--inner-padding-end: 2px;"
+                                class="textbox-stacked input-padding">
+                                <ion-input [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.modal.action.actionUrl"
+                                  placeholder="Example: https://yourapp.com/image.png">
+                                </ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                        </div>
+                        <!-- ///// -->
+                        <!-- image-only -->
+                        <div class="InApp-push" *ngIf="template.inAppContent.type === 'IMAGE_ONLY'" @myAnimationTrigger>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Image</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <app-image-upload style="padding-right: 12px;"
+                                [details]="template.inAppContent.imageOnly.imageUrl"
+                                [title]="'Image'"></app-image-upload>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <h4>Action (optional)</h4>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label class="sub-heading">Image action (optional)<ion-icon class="question-icon"
+                                  name="help-circle-outline"></ion-icon>
+                              </ion-label>
+                              <ion-item fill="outline" style="--inner-padding-end: 2px;"
+                                class="textbox-stacked input-padding">
+                                <ion-input [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.imageOnly.action.actionUrl"
+                                  placeholder="Example: https://yourapp.com/image.png">
+                                </ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                        </div>
+                        <!-- ///// -->
+                        <!-- Top-banner -->
+                        <div class="InApp-push" *ngIf="template.inAppContent.type === 'TOP_BANNER'" @myAnimationTrigger>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Message content</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-row>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading ">Background</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.banner.backgroundColorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="bannerBackground"
+                                      [(ngModel)]="template.inAppContent.banner.backgroundColorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('bannerBackground')?.hasError('required') && (form.get('bannerBackground')?.touched || form.get('bannerBackground')?.dirty)">
+                                    <small class="form-error-message">A background is required</small>
+                                  </ng-container>
+                                </ion-col>
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6">
+                                  <ion-label class="sub-heading ">Text colour</ion-label>
+                                  <ion-item fill="outline" lines="none" class="textbox-stacked input-padding">
+                                    <input type="color" class="color-picker" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="template.inAppContent.banner.title.colorHex">
+                                    <ion-input style="margin-left: 10px;" placeholder="#000000"
+                                      [ngModelOptions]="{standalone: true}" formControlName="bannerTextcolor"
+                                      [(ngModel)]="template.inAppContent.banner.title.colorHex"></ion-input>
+                                  </ion-item>
+                                  <ng-container
+                                    *ngIf="form.get('bannerTextcolor')?.hasError('required') && (form.get('bannerTextcolor')?.touched || form.get('bannerTextcolor')?.dirty)">
+                                    <small class="form-error-message">A text colour is required</small>
+                                  </ng-container>
+                                </ion-col>
+                              </ion-row>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label>Message title</ion-label>
+                              <ion-item fill="outline" class="textbox-stacked input-padding">
+                                <ion-input placeholder="Example: Message title" [ngModelOptions]="{standalone: true}"
+                                  formControlName="bannerTitle"
+                                  [(ngModel)]="template.inAppContent.banner.title.text"></ion-input>
+                              </ion-item>
+                              <ng-container
+                                *ngIf="form.get('bannerTitle')?.hasError('required') && (form.get('bannerTitle')?.touched || form.get('bannerTitle')?.dirty)">
+                                <small class="form-error-message">A message title is required</small>
+                              </ng-container>
+                            </ion-col>
+                            <ion-col style="padding-right: 10px;" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label>Body (optional)</ion-label>
+                              <ion-item fill="outline" class="textarea">
+                                <ion-textarea placeholder="Example: Message body" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.banner.body.text"></ion-textarea>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Image (optional)</h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <app-image-upload style="padding-right: 12px;"
+                                [details]="template.inAppContent.banner.imageUrl" [title]="'Image'"></app-image-upload>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <h4>Action (optional) </h4>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                              <ion-label>Banner action (optional)</ion-label>
+                              <ion-icon name="help-circle-outline"></ion-icon>
+                              <ion-item fill="outline" class="textbox-stacked input-padding">
+                                <ion-input [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="template.inAppContent.banner.action.actionUrl"
+                                  placeholder="Example: https://yourapp.com/page"></ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+                        </div>
+                        <!-- ///// -->
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-col>
+                <!-- right content -->
+                <ion-col size-lg="5" class="right-contant ion-margin-top ion-hide-md-down">
+                  <div class="preview-container">
+                    <app-template-page [preview_channel]="'IN_APP_MESSAGE'"
+                      [content]="template.inAppContent"></app-template-page>
+                  </div>
+                  <ion-modal [isOpen]="isModalOpen">
+                    <ng-template>
+                      <div>
+                        <ion-item lines="none">
+                          <ion-icon slot="end" color="dark" name="close-outline" (click)="setOpen(false)"></ion-icon>
+                        </ion-item>
+                        <div class="preview-container">
+                          <app-template-page [preview_channel]="'IN_APP_MESSAGE'"
+                            [content]="template.inAppContent"></app-template-page>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <!-- button container -->
+      <ion-row class="ion-no-padding ion-margin-bottom" *ngIf="selectedChannel != 'NEW'">
+        <ion-col offset-xs="0" offset-sm="0" offset-md="2.6" offset-lg="2.6" offset-xl="2.6" @myAnimationTrigger>
+          <div>
+            <ion-buttons class="ion-no-padding ion-hide-md-down m-l-10" lines="none">
+              <ion-button fill="clear" color="primary" class="m-r-10" (click)="save()">
+                <ion-label>Save</ion-label>
+              </ion-button>
+              <ion-button fill="clear" color="secondary" class="m-l-10" (click)="confirmCancel()">
+                <ion-label>Cancel</ion-label>
+              </ion-button>
+            </ion-buttons>
+
+            <!-- small div button change -->
+            <ion-buttons class="ion-padding-start ion-hide-md-up" lines="none">
+              <ion-button fill="clear" color="secondary" class="m-r-10" (click)="confirmCancel()">
+                <ion-label>Cancel</ion-label>
+              </ion-button>
+              <ion-button fill="clear" color="primary" class="m-l-10" (click)="save()">
+                <ion-label>Save</ion-label>
+              </ion-button>
+            </ion-buttons>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
+<div class="temp-model-alignment" *ngIf="notifiService.isTempPopup">
+  <div class="temp-model-wrapper">
+    <app-temp-create-popup-modal [template]="template" [categoryList]="categoryList"></app-temp-create-popup-modal>
+  </div>
+</div>

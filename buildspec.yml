@@ -1,0 +1,64 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18.x
+    commands:
+      - export COMMIT_ID="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+      - export ZIP_FILE_NAME="${CODEBUILD_BUILD_NUMBER}_${COMMIT_ID}"
+      - echo "ZIP_FILE_NAME = $ZIP_FILE_NAME"
+      
+      - echo "***** Installing Ionic CLI *****"
+      - npm install -g @ionic/cli
+
+      - echo "***** Install Node Module *****"
+      - npm install --force
+
+      - |
+         cat > buildDetails.txt <<- EOM 
+         BUILD_NUMBER=${CODEBUILD_BUILD_NUMBER}
+         COMMIT_ID=${COMMIT_ID}
+         EOM
+      - export IS_INSTALL_SUCCESS=true
+  build:
+    commands:
+      - if [ "${IS_INSTALL_SUCCESS}" != "true" ]; then echo "***** Install phase failed. So we are skipping build phase *****"; exit 1; fi
+      - ionic build --prod
+      - export IS_BUILD_SUCCESS=true
+  post_build:
+    commands:
+      - if [ "${IS_BUILD_SUCCESS}" != "true" ]; then echo "***** Build phase failed/skipped. So we are skipping post_build phase *****"; exit 1; fi
+      - echo "***** Packaging Ionic Project *****"
+      - cd www
+      - zip -r ../$ZIP_FILE_NAME.zip *
+      - cd ..
+      - echo "***** Packaging Ionic Project Completed *****"
+
+      - export _PREFIX_PATH=${BRANCH_NAME}/${REPO_NAME}
+      - export _LAST_DEPLOY_ID=$(aws codebuild list-builds-for-project --project-name "deploy-${BRANCH_NAME}-${REPO_NAME}" --max-items 2 --query "ids[*]" --output text | head -n 1)
+      - |
+        if [ "${_LAST_DEPLOY_ID}" != "" ]; then 
+          aws codebuild batch-get-builds --ids ${_LAST_DEPLOY_ID} --query "builds[].environment.environmentVariables[?name=='BUILD_NUMBER' || name=='COMMIT_ID']" > previous-deploy-details.json
+          export _LENGTH=$(cat previous-deploy-details.json | jq -r '. | length')
+          if [ "${_LENGTH}" == "1" ]; then 
+            export _CURRENT_DEPLOYED=${_PREFIX_PATH}/$(cat previous-deploy-details.json | jq -r '.[0][] | select(.name == "BUILD_NUMBER") | .value')_$(cat previous-deploy-details.json | jq -r '.[0][] | select(.name == "COMMIT_ID") | .value').zip
+
+            export _DELETE_ID_LIST=$(aws s3api list-objects-v2 --bucket ${ARTIFACT_BUCKET_NAME} --prefix ${_PREFIX_PATH} --query "(reverse(sort_by(Contents[?Key!='${_CURRENT_DEPLOYED}'], &LastModified))[3:])[*].Key" --output json)
+          elif [ "${_LENGTH}" == "2" ]; then
+            export _CURRENT_DEPLOYED=${_PREFIX_PATH}/$(cat previous-deploy-details.json | jq -r '.[0][] | select(.name == "BUILD_NUMBER") | .value')_$(cat previous-deploy-details.json | jq -r '.[0][] | select(.name == "COMMIT_ID") | .value').zip
+            export _LAST_DEPLOYED=${_PREFIX_PATH}/$(cat previous-deploy-details.json | jq -r '.[1][] | select(.name == "BUILD_NUMBER") | .value')_$(cat previous-deploy-details.json | jq -r '.[1][] | select(.name == "COMMIT_ID") | .value').zip
+            
+            export _DELETE_ID_LIST=$(aws s3api list-objects-v2 --bucket ${ARTIFACT_BUCKET_NAME} --prefix ${_PREFIX_PATH} --query "(reverse(sort_by(Contents[?Key!='${_CURRENT_DEPLOYED}' && Key!='${_LAST_DEPLOYED}'], &LastModified))[2:])[*].Key" --output json)
+          else
+            export _DELETE_ID_LIST=$(aws s3api list-objects-v2 --bucket ${ARTIFACT_BUCKET_NAME} --prefix ${_PREFIX_PATH} --query "(reverse(sort_by(Contents, &LastModified))[4:])[*].Key" --output json)
+          fi
+        fi
+        
+      - |
+        for DELETE_ID in $(echo "${_DELETE_ID_LIST}" | jq -r '.[]'); do
+          echo "Delete ID: ${DELETE_ID}"
+          aws s3 rm s3://${ARTIFACT_BUCKET_NAME}/${DELETE_ID}
+        done
+artifacts:
+  files:
+    - $ZIP_FILE_NAME.zip

@@ -1,0 +1,106 @@
+@import "../../../../theme/form.scss";
+@import "../../../../theme/variables.scss";
+
+ion-header {
+  ion-toolbar {
+    h1 {
+      margin: 0px;
+      padding: 29px 0px 0px 33px !important;
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 0px;
+      /* New green */
+      color: var(--ion-color-primary-shade);
+    }
+  }
+}
+
+ion-content {
+  --background: var(--ion-color-secondary);
+  --height: auto;
+
+  .content-wrapper {
+    margin-left: 25px;
+  }
+
+  //content
+  .main-column-wrapper {
+    padding-top: 15px;
+
+    .main-wrapper {
+      display: flex;
+      flex-direction: row;
+      // height: 40px;
+      margin-bottom: 20px;
+      align-items: center;
+
+      ion-icon {
+        margin-left: 16px;
+        font-size: 27px;
+        color: var(--ion-color-primary-shade);
+        cursor: pointer;
+      }
+
+      div {
+        display: flex;
+        align-items: center;
+        height: 38px;
+      }
+
+      p {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 17px;
+        color: black;
+        margin-top: 13px;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-direction: row;
+
+        ion-item {
+          margin: 0px 8.5px 0px 8.5px;
+          width: 195px;
+          height: 38px;
+        }
+      }
+    }
+  }
+}
+
+.sub-btns {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 15px 30px 15px 30px;
+  border-radius: 4px;
+
+  ion-button {
+    // --background: var(--ion-color-secondary);
+    border: 1px solid var(--ion-color-primary-shade);
+    --box-shadow: none;
+    width: 93px;
+    height: 38px;
+    border-radius: 4px;
+    padding-bottom: 1px;
+  }
+
+  ion-button:last-child {
+    border: none;
+    // --background: var(--ion-color-primary);
+    // --color: var(--ion-color-secondary);
+  }
+
+  ion-button {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+  }
+}

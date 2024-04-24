@@ -1,0 +1,81 @@
+<ion-row class="h-100-per">
+  <ion-col size="12" style="display: flex; flex-direction:row;" class="ion-no-padding">
+    <div class="search-outer-container ion-no-padding ion-hide-lg-down"
+      style=" background-color: var(--ion-color-secondary); width:274px; min-width:  274px;">
+      <div class="search-container">
+        <ion-row class="ion-margin-top">
+          <ion-col size="12" class="ion-no-padding">
+            <h2 class="ion-margin-vertical" style="margin-bottom: 0px; margin-top: 2px;">
+              Search Criteria
+            </h2>
+          </ion-col>
+          <ion-col size="12" class="ion-no-padding" style="margin-top: 12px;" *ngFor="let fields of filterFieldList">
+            <label *ngIf="fields.type !== 'DATE_AND_TIME'">{{fields.name}}</label>
+
+            <ion-item *ngIf="fields.type == 'TEXT'" fill="outline" class="textbox-stacked"
+              style="--background: #fafafa;margin-top: 5px;">
+              <ion-label position="stacked"></ion-label>
+              <ion-input name="ID" [(ngModel)]="filterCriteria[fields.attr]" placeholder="{{fields.name}}"></ion-input>
+            </ion-item>
+
+            <ion-item *ngIf="fields.type == 'MULTI_SELECT' && !fields.isSearchable" fill="outline"
+              class="dropdown-stacked" style="margin-top: 5px; --background:var(--ion-color-background)">
+              <ion-label position="stacked"></ion-label>
+              <ion-select class=" ion-no-padding" [multiple]="true" [(ngModel)]="filterCriteria[fields.attr]"
+                [interfaceOptions]="notifiService.customPopoverOptions" placeholder="{{fields.name}}"
+                interface="popover">
+                <ion-select-option *ngFor="let option of fields.values"
+                  [value]="option.value">{{option.text}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <div *ngIf="fields.type == 'MULTI_SELECT' && fields.isSearchable" fill="outline"
+              class="dropdown-stacked mat-select-block"
+              style="margin-top: 5px; --background:var(--ion-color-background)">
+              <ion-label position="stacked"></ion-label>
+              <app-multi-select-dropdown (selectedValueChange)="onSelectedValueChange(fields.attr, $event)"
+                [dropdownList]="fields.values" placeholder="All {{fields.name}}" [optionValue]="'value'"
+                [optionDisplayName]="'text'" [selectedValue]="filterCriteria[fields.attr]"></app-multi-select-dropdown>
+            </div>
+
+            <div *ngIf="fields.type == 'DATE_AND_TIME'" fill="outline" class="dropdown-stacked mat-select-block"
+              style="margin-top: 5px; --background:var(--ion-color-background)">
+              <ion-label> {{ fields.name }}
+                <span *ngIf="this.filterCriteria.startToEnddateTime?.length > 0" style="padding:15px 0px 0px 17px;">
+                  <ion-icon class="close-icon cursor-pointer" name="close-outline"
+                    (click)="this.filterCriteria.startToEnddateTime = []; this.filterCriteria.start_date = ''; this.filterCriteria.end_date = ''"></ion-icon>
+                </span>
+              </ion-label>
+              <div class="example-wrapper" style="z-index: 20;">
+                <ion-item fill="outline" class="textbox-stacked" style="--background: #fafafa;margin-top: 5px; --inner-border-width:0; --padding-start: 0px;
+                  --inner-padding-end: 0px;">
+                  <ion-label position="stacked"></ion-label>
+                  <input style="display: none;" [selectMode]="'range'" #dateRange [max]="maxDate"
+                    [(ngModel)]="filterCriteria.startToEnddateTime" [owlDateTime]="dtRange1">
+                  <input type="text" class="owlInput" [owlDateTimeTrigger]="dtRange1"
+                    [value]="(filterCriteria.startToEnddateTime && filterCriteria.startToEnddateTime[0] && filterCriteria.startToEnddateTime[1]) ? ((filterCriteria.startToEnddateTime[0] | date:'MM/dd/yyyy,HH:mm')  + '~' + (filterCriteria.startToEnddateTime[1] | date:'MM/dd/yyyy,HH:mm' )) : ''"
+                    (input)="onInputChange($event);" placeholder="Date Time Range" />
+                  <owl-date-time #dtRange1></owl-date-time>
+                </ion-item>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row style="margin: 20px 0px 20px 0px">
+          <ion-col size="6" class="ion-no-padding">
+            <ion-button expand="block" color="secondary" (click)="onReset()" class="m-r"
+              style="padding-bottom: 1px; margin-right: 9px;">
+              <ion-label>Reset</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-col size="6" class="ion-no-padding">
+            <ion-button expand="block" (click)="onSearch()" color="primary" class="m-l"
+              style="padding-bottom: 1px; margin-left: 10px;">
+              <ion-label>Search</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </ion-col>
+</ion-row>

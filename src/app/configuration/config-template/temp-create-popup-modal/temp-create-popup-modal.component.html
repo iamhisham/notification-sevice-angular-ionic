@@ -1,0 +1,88 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="header-toolbar">
+    <ion-title class="ion-no-padding">Template Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-element">
+  <form [formGroup]="form" (ngSubmit)="proceed()">
+    <ion-grid class="body-container ion-no-padding">
+      <ion-row>
+        <ion-col size="12" class="ion-no-padding form-element">
+          <ion-item fill="outline" class="textbox">
+            <ion-label position="floating">Template Name<span class="mandatory-field">*</span> </ion-label>
+            <ion-input formControlName="name" [(ngModel)]="template.name" name="name"></ion-input>
+          </ion-item>
+          <div *ngIf="form.get('name')?.invalid &&(form.get('name')?.dirty || form.get('name')?.touched)">
+            <div *ngIf="form.get('name')?.hasError('required') || form.get('name')?.errors?.['whitespace']">
+              <small class=" form-error-message">This is a required field</small>
+            </div>
+          </div>
+          <!-- <ng-container
+            *ngIf="form.get('name')?.hasError('required') && (form.get('name')?.touched || form.get('name')?.dirty)">
+            <small class="form-error-message">This is a required field</small>
+          </ng-container> -->
+        </ion-col>
+        <ion-col size="12" class="ion-no-padding form-element">
+          <ion-item fill="outline" class="textbox">
+            <ion-label position="floating">Description</ion-label>
+            <ion-textarea [(ngModel)]="template.description" class="description-textarea"
+              [ngModelOptions]="{standalone: true}"></ion-textarea>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" class="ion-no-padding form-element">
+          <!-- <ion-item fill="outline" class="dropdown-stacked">
+            <ion-label position="floating" style="font-family: 'inter';">Category <span class="mandatory-field">*</span>
+            </ion-label>
+            <ion-select class="ion-no-padding" [(ngModel)]="template.categoryId" placeholder="-Select Category-"
+              [interfaceOptions]="notifiService.customPopoverOptions" formControlName="category_id" interface="popover">
+              <ion-select-option *ngFor="let category of categoryList"
+                [value]="category.id">{{category.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+-->
+          <div class="mat-select-block">
+            <mat-form-field class="mat-form-container" appearance="outline" [hideRequiredMarker]="true"
+              floatLabel="always">
+              <mat-label>Category <span style="color:#c7152a">*</span> </mat-label>
+              <mat-select [multiple]="false" [(ngModel)]="template.categoryId" placeholder="-Select Category-"
+                formControlName="categoryId" required>
+                <mat-option *ngIf="categoryList.length !== 0">
+                  <ngx-mat-select-search placeholderLabel="Search" [(ngModel)]="matSelect.dropdownFilterSearch"
+                    [ngModelOptions]="{standalone: true}"
+                    noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngIf="categoryList.length === 0" [disabled]="true">No category found</mat-option>
+                <mat-option class="options-container" *ngFor="let category of categoryList
+                  | filter: { name : matSelect.dropdownFilterSearch } "
+                  [value]="category.id">{{category.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <ng-container
+            *ngIf="form.get('category_id')?.hasError('required') && (form.get('category_id')?.touched || form.get('category_id')?.dirty)">
+            <small class="form-error-message">This is a required field</small>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="btns">
+    <div class="btn-wrappers">
+
+      <!-- <ion-buttons lines="none" class="btns ion-no-padding"> -->
+      <ion-button (click)="confirmCancel()" color="secondary" class="ion-float-start cancel-btn" fill="clear">
+        <ion-label>Cancel</ion-label>
+      </ion-button>
+      <ion-button color="primary" (click)="proceed()" class="ion-float-end proceed-btn" [disabled]="!form.valid">
+        <ion-label>Proceed</ion-label>
+      </ion-button>
+      <!-- </ion-buttons> -->
+
+    </div>
+  </ion-toolbar>
+
+</ion-footer>

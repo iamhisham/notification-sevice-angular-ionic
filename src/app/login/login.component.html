@@ -1,0 +1,89 @@
+<ion-app class="login">
+  <ion-content>
+    <ion-row class="main-container">
+      <ion-col size="5" class="ion-no-padding" class="logo-container">
+        <ion-img *ngIf="notifiService.themeName == 'dot-mobile'" class="logo-name"
+          src="../../assets/login/logo-name.svg"></ion-img>
+        <ion-img src="../../assets/icon/web3LoginLogo.png" *ngIf="notifiService.themeName == 'web-3'"
+          class="mainLogo"></ion-img>
+      </ion-col>
+      <ion-col size="7" class="right-side-container ion-no-padding">
+        <ion-row class="login-screen" *ngIf="showVerificationCodeView==false">
+          <form (ngSubmit)="login()">
+            <ion-col size="12" class="ion-no-padding">
+              <ion-label>Login into your account</ion-label>
+            </ion-col>
+            <ion-col size="12">
+              <ion-label>Email</ion-label>
+              <ion-item fill="outline" lines="none">
+                <ion-input placeholder="Email" name="EmailAddress" [(ngModel)]="user.email"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-label>Password</ion-label>
+              <ion-item fill="outline" lines="none">
+                <ion-input name="Password" placeholder="Password" (ngModelChange)="showPasswordtoggle('keyUp')"
+                  #showpassword type="password" [(ngModel)]="user.password"></ion-input>
+                <ion-icon slot="end" name="eye-outline" class="cursor-pointer" title="password"
+                  style="color: gray; font-size: 22px;" (mouseup)="showPasswordtoggle('enter')"
+                  (touchend)="showPasswordtoggle('enter')" (mousedown)="showPasswordtoggle('leave')"
+                  (touchstart)="showPasswordtoggle('leave')">
+                </ion-icon>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <a [routerLink]="['/reset-password']">Forgot
+                password</a>
+            </ion-col>
+            <ion-col size="12">
+              <ion-button type="submit" expand="block">
+                <ion-label>Login</ion-label>
+              </ion-button>
+            </ion-col>
+            <ion-col size="12">
+              <p>have an account?<strong>
+                  <a [routerLink]="['/signup']" style="color: var(--ion-color-primary-color);">Sign up!</a>
+                </strong></p>
+            </ion-col>
+            <input type="submit" [hidden]="true" />
+          </form>
+        </ion-row>
+        <ion-row class="login-screen" *ngIf="showVerificationCodeView==true">
+          <form (ngSubmit)="emailConfirmationCode()">
+            <ion-col size="12" class="ion-no-padding">
+              <ion-label> Confirmation code</ion-label>
+            </ion-col>
+            <ion-col size="12">
+              <ion-label>Email</ion-label>
+              <ion-item fill="outline" lines="none">
+                <ion-input placeholder="Email" name="EmailAddress" [(ngModel)]="user.email"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <ion-label>Confirmation Code <span style="color: red;">*</span></ion-label>
+              <ion-item fill="outline" lines="none">
+                <ion-input name="signUpconfirmationCode" [(ngModel)]="user.confirmationCode"></ion-input>
+                <ion-checkbox slot="end" class="confirmChceked" *ngIf="ischeckedcode"
+                  [checked]="ischeckedcode"></ion-checkbox>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12">
+              <a class='cursor-pointer' (click)="resendConfirmationCode()">Resend Code</a>
+            </ion-col>
+            <ion-col size="12">
+              <ion-button class="M-B-16" type="submit" expand="block">
+                <ion-label>Confirm</ion-label>
+              </ion-button>
+            </ion-col>
+            <ion-col size="12" class="button-failure" style="display: inherit;">
+              <ion-button expand="block" (click)="showVerificationCodeView=false">
+                <ion-label>Cancel</ion-label>
+              </ion-button>
+            </ion-col>
+            <input type="submit" [hidden]="true" />
+          </form>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-content>
+</ion-app>

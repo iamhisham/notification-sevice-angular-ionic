@@ -1,0 +1,424 @@
+<!--SmS start-->
+<ng-template #previewSMS>
+  <div class="mobile-container">
+    <div class="mobile-outline">
+      <div class="mobile-inline">
+        <div class="mobile-top"></div>
+        <div class="sms-content-outer">
+          <div class="sms-content">
+            <ion-item lines="none" class="sms-textarea ion-no-padding">
+              {{ needTemplateParser ? getPreviewData(content.message) : content.message }}
+            </ion-item>
+          </div>
+        </div>
+        <div class="mobile-bottom"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--SmS end-->
+
+<!--Mobile push start-->
+<ng-template #previewMobilePush>
+  <div class="mobile-container">
+    <div class="mobile-outline">
+      <div class="mobile-inline">
+        <div class="mobile-top"></div>
+        <ion-card class="ion-no-margin web-push-content">
+          <div class="push-banner ion-no-padding" [ngClass]="{'push-banner-expand': preview_isExpand}">
+            <div class="push-icon"></div>
+            <ion-label class="push-tittle push-content">
+              {{ needTemplateParser ? getPreviewData(content.title) : content.title}}
+            </ion-label>
+            <ion-label class="push-body push-content">
+              {{ needTemplateParser ? getPreviewData(content.message) : content.message}}
+            </ion-label>
+            <ion-img class="push-image"
+              *ngIf="!preview_isExpand && content.image && ((content.image?.source_type === 'FILE' && content.image.fileName) || (content.image?.source_type === 'URL' && content.image.url))"
+              [src]="getPreviewImageData('image')"></ion-img>
+            <ion-icon class="push-arrow" *ngIf="!preview_isExpand" (click)="preview_isExpand = true"
+              name="chevron-down-outline" title="Expand"></ion-icon>
+            <ion-icon class="push-arrow" *ngIf="preview_isExpand" (click)="preview_isExpand = false"
+              name="chevron-up-outline" title="Clopase"></ion-icon>
+            <ion-img class="push-image-expand"
+              *ngIf="preview_isExpand && content.image && ((content.image?.source_type === 'FILE' && content.image.fileName) || (content.image?.source_type === 'URL' && content.image.url))"
+              [src]="getPreviewImageData('image')"></ion-img>
+          </div>
+        </ion-card>
+        <div class="mobile-bottom"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--Mobile push end-->
+
+<!--Web push start-->
+<ng-template #previewWebPush>
+  <div class="web-container" [ngClass]="{'web-container-left': needTemplateParser}">
+    <div class=" desktop-bessle">
+      <div class="desktop-screen">
+        <div>
+          <div class="desktop-screen-toolbar">
+            <div class="left-3-btns"></div>
+            <div class="left-3-btns"></div>
+            <div class="left-3-btns"></div>
+          </div>
+        </div>
+        <div class="desktop-screen-bottom">
+          <div class="web-cont-dis">
+            <ion-card class="ion-no-margin" class="topper-img-container" [ngClass]="{'pushUpperImage': !((content.image?.source_type === 'FILE' && content.image.fileName)
+              || (content.image?.source_type === 'URL' && content.image.url)) }">
+              <ion-img [src]="getPreviewImageData('image')">
+              </ion-img>
+            </ion-card>
+            <ion-card class="push-msg-container ion-no-margin">
+              <ion-grid class="ion-no-padding">
+                <ion-row>
+                  <ion-col size="2" class="desktop-notification-logo">
+                    <ion-img *ngIf="(content.icon?.source_type === 'FILE' && content.icon.fileName)
+                    || (content.icon?.source_type === 'URL' && content.icon.url)"
+                      [src]="getPreviewImageData('icon')"></ion-img>
+                  </ion-col>
+                  <ion-col size="8" class="ion-padding-start">
+                    <div class="title-label">
+                      {{ needTemplateParser ? getPreviewData(content.title) : content.title }}
+                    </div>
+                    <div class="msg-content">
+                      {{ needTemplateParser ? getPreviewData(content.message) : content.message}}
+                    </div>
+                  </ion-col>
+                  <ion-col size="2" style="padding-left: 16px;">
+                    <ion-icon name="close-outline" color="dark" style="margin: 4px 5px 0px 36px;float:right"></ion-icon>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="desktop-stand"></div>
+    <div class="desktop-stand-bottom"></div>
+  </div>
+</ng-template>
+<!--Web push end-->
+
+<!--Email start-->
+<ng-template #previewEmail>
+  <section class="email-container"
+    [ngClass]="{'email-container-left': needTemplateParser, 'hide-title-header': isFullScreenEditor}">
+    <div class="title-header">
+      <ion-list class="ion-padding-start ion-padding-top">
+        <ion-row>
+          <ion-col size="9">
+            <div class="body-container">
+              <ion-label class="font-size">
+                <span>Subject:</span>
+                {{ needTemplateParser ? getPreviewData(content.subject || content.title) : (content.subject ||
+                content.title) }}
+              </ion-label>
+            </div>
+            <div>
+              <ion-label class="font-size">
+                <span>From:</span> no-reply@web-3.in
+              </ion-label>
+            </div>
+          </ion-col>
+          <!--attachment file start-->
+          <ion-col size="3">
+            <div class="email-attached-container"
+              *ngIf="(notification_content?.length || 0) + (attachment_details?.attachments?.length || 0) > 0">
+              <ion-chip style="cursor: default;">
+                <ion-avatar class="attachment-icon">
+                  <ion-icon name="attach-outline"></ion-icon>
+                </ion-avatar>
+                <div class="attachment-count">
+                  <ion-label *ngIf="attachment_preview == 'HISTORY' ">
+                    {{(attachment_details?.attachments || []).length}}</ion-label>
+                  <!--custom message (direct message) -->
+                  <ion-label *ngIf="!isEmailReadOnly && attachment_preview == 'NOTIFICATION' ">
+                    {{ (notification_content || []).length }}</ion-label>
+                  <!--template message (not direct message) -->
+                  <ion-label *ngIf="isEmailReadOnly && attachment_preview == 'NOTIFICATION'">
+                    {{ (notification_content || []).length + (attachment_details?.attachments || []).length
+                    }}</ion-label>
+                  <ion-label *ngIf="attachment_preview == 'TEMPLATE'">
+                    {{ (notification_content || []).length +
+                    (attachment_details?.attachments || []).length }}</ion-label>
+                </div>
+                <ion-icon (click)="presentPopover($event)" class="arrow-down" name="chevron-down-outline"></ion-icon>
+              </ion-chip>
+            </div>
+            <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false" side="left" alignment="start"
+              [dismissOnSelect]="true">
+              <ng-template>
+                <ng-template [ngTemplateOutlet]="attachment_list"></ng-template>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+          <!--attachment file end-->
+        </ion-row>
+      </ion-list>
+    </div>
+    <div class="email-body">
+
+
+      <div class="iframe-container" *ngIf="content.editor_type == 'HTML_EDITOR' && content.html_message">
+        <iframe frameBorder="0" style="width: 100%;" class="checkSize"
+          [src]="(needTemplateParser ? getPreviewData(content.html_message) : content.html_message) | htmlToIframeUrl"></iframe>
+      </div>
+      <div class="highlight-color" fill="outline" *ngIf="content.editor_type != 'HTML_EDITOR' && !isEmailReadOnly">
+        <quill-editor [modules]="modules" [ngModelOptions]="{standalone: true}" placeholder="body..."
+          [(ngModel)]="content.message" (onEditorCreated)="getImageData($event)">
+        </quill-editor>
+      </div>
+      <div class="highlight-color read-only" fill="outline"
+        *ngIf="content.editor_type != 'HTML_EDITOR' && isEmailReadOnly">
+        <quill-editor [modules]="modules" [modules]="{ toolbar: false }" [ngModelOptions]="{standalone: true}"
+          placeholder="body..." [readOnly]="true"
+          [ngModel]="needTemplateParser ? getPreviewData(content.message) : content.message">
+        </quill-editor>
+      </div>
+    </div>
+  </section>
+</ng-template>
+<!--Email end-->
+
+<!--In-App Mesage start-->
+<ng-template #inAppMessage>
+  <div class="in-App-preview">
+    <ion-col size-md="12" size-lg="5" class="right-contant ion-margin-top ion-hide-md-down" ngClass="{'display': none}">
+      <!-- desktop view / device content -->
+      <!--card view-->
+      <div class="card-mobile-view" *ngIf="content.type === 'CARD'" @myAnimationTrigger>
+        <div class="inApp-container ion-margin">
+          <div class="mob-outline">
+            <div class="mob-inline">
+              <div class="mob-contant"></div>
+              <div class="container-card-view">
+                <ion-card class="container-card" style="background-color:{{content.card.backgroundColorHex}}">
+                  <ion-card-header class="card-padding">
+                    <ion-img
+                      *ngIf="content.card.portraitImageUrl && ((content.card.portraitImageUrl?.source_type === 'FILE' && content.card.portraitImageUrl.fileName) || (content.card.portraitImageUrl?.source_type === 'URL' && content.card.portraitImageUrl.url))"
+                      [src]="getPreviewImageData('portraitImageUrl', 'card')"></ion-img>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <div class="card-message-title">
+                      <ion-label class="ion-no-margin"
+                        style="color:{{content.card.title.colorHex}}">{{content.card.title?.text}}</ion-label>
+                    </div>
+                    <div class="card-message-body">
+                      <ion-label class="ion-no-margin"
+                        style="color:{{content.card.title.colorHex}}">{{content.card.body?.text}}</ion-label>
+                    </div>
+                    <div class="card-message-button">
+                      <button class="card-button"
+                        style="background-color:{{content.card.primaryActionButton.buttonColorHex}};color:{{content.card.primaryActionButton.text.colorHex}}">{{content.card.primaryActionButton?.text?.text}}</button>
+                      <button class="card-button"
+                        style="background-color:{{content.card.SecondaryActionButton.buttonColorHex}};color:{{content.card.SecondaryActionButton.text.colorHex}}">{{content.card.SecondaryActionButton?.text?.text}}</button>
+                    </div>
+                  </ion-card-content>
+                </ion-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--  -->
+      <!--modal view-->
+      <div class="card-mobile-view" *ngIf="content.type === 'MODAL'" @myAnimationTrigger>
+        <div class="inApp-container ion-margin">
+          <div class="mob-outline">
+            <div class="mob-inline">
+              <div class="mob-contant"></div>
+              <div>
+                <ion-icon class="close-button" name="close-circle"></ion-icon>
+              </div>
+              <div class="modal-card-view">
+                <ion-card
+                  style="background-color:{{content.modal.backgroundColorHex}}; position: unset; text-align: center;"
+                  class="modal-container-card">
+                  <ion-card-header class="card-message-title">
+                    <ion-label style="color:{{content.modal.title.colorHex}}">{{content.modal.title?.text}}</ion-label>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-img
+                      *ngIf="content.modal.imageUrl && ((content.modal.imageUrl?.source_type === 'FILE' && content.modal.imageUrl?.fileName) || (content.modal.imageUrl?.source_type === 'URL' && content.modal.imageUrl?.url))"
+                      [src]="getPreviewImageData('imageUrl', 'modal')"></ion-img>
+                    <div class="card-message-body">
+                      <ion-label style="color:{{content.modal.title.colorHex}}">{{content.modal.body?.text}}</ion-label>
+                    </div>
+                    <div class="card-message-button">
+                      <button class="card-button"
+                        style="background-color:{{content.modal.actionButton.buttonColorHex}};color:{{content.modal.actionButton.text.colorHex}}">{{content.modal.actionButton.text.text}}</button>
+                    </div>
+                  </ion-card-content>
+                </ion-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!--image only view-->
+      <div class="card-mobile-view" *ngIf="content.type === 'IMAGE_ONLY'" @myAnimationTrigger>
+        <div class="inApp-container ion-margin">
+          <div class="mob-outline">
+            <div class="mob-inline">
+              <div class="mob-contant"></div>
+              <div class="image-only-mobile-container-card">
+                <ion-img style="margin: 115px 10px; margin: 90px 10px;height: 250px;"
+                  *ngIf="content.imageOnly?.imageUrl && ((content.imageOnly?.imageUrl.source_type === 'FILE' && content.imageOnly?.imageUrl.fileName) || (content.imageOnly?.imageUrl.source_type === 'URL' && content.imageOnly?.imageUrl.url))"
+                  [src]="getPreviewImageData('imageUrl', 'imageOnly')" class="image-mobile-container">
+                </ion-img>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- -->
+      <!-- top banner-->
+      <div class="card-mobile-view" *ngIf="content.type === 'TOP_BANNER'" @myAnimationTrigger>
+        <div class="inApp-container ion-margin">
+          <div class="mob-outline">
+            <div class="mob-inline">
+              <div class="mob-contant"></div>
+              <div>
+                <ion-card class="top-banner-card" style="background-color:{{content.banner.backgroundColorHex}}">
+                  <div class="top-banner-card-content">
+                    <ion-row>
+                      <ion-col size="4">
+                        <ion-img class="top-banner-card-image"
+                          *ngIf="content.banner?.imageUrl && ((content.banner?.imageUrl.source_type === 'FILE' && content.banner?.imageUrl.fileName) || (content.banner?.imageUrl.source_type === 'URL' && content.banner?.imageUrl.url))"
+                          [src]="getPreviewImageData('imageUrl', 'banner')"></ion-img>
+                      </ion-col>
+                      <ion-col style="padding-left: 8px;" size="8">
+                        <ion-row>
+                          <ion-col class="top-banner-card-title">
+                            <ion-label
+                              style="color:{{content.banner.title.colorHex}}">{{content.banner.title?.text}}</ion-label>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="top-banner-card-message">
+                            <ion-label
+                              style="color:{{content.banner.title.colorHex}}">{{content.banner.body?.text}}</ion-label>
+                          </ion-col>
+                        </ion-row>
+                      </ion-col>
+                    </ion-row>
+                  </div>
+                </ion-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ion-col>
+  </div>
+</ng-template>
+<!--In-App Mesage end-->
+
+<!--Html Editer Preview start-->
+<ng-template #previewEmailHTML>
+  <div style="border: 1px solid var(--ion-color-border);border-radius: 4px; position: relative;">
+    <codemirror #codeMirror class="codeMirror" [(ngModel)]="content.html_message" [config]="codeMirrorOptions"
+      [ngModelOptions]="{standalone: true}" (ngModelChange)="content.html_message = $event">
+    </codemirror>
+    <span style="bottom: 0; right: 0; position: absolute; z-index: 3;">
+      <ion-button id="email" slot="end" fill="clear" size="small" class="ion-no-margin" title="Dynamic Tag"
+        shape="round" (click)="showDynamicContentPopup('EMAIL_HTMLEDITOR', codeMirror)">
+        <ion-img src="../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg" class="cursor-pointer">
+        </ion-img>
+      </ion-button>
+      <!-- popover for Dynamic tag value -->
+      <ion-popover side="top" alignment="start" trigger="email" [dismissOnSelect]="true">
+        <ng-template>
+          <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+        </ng-template>
+      </ion-popover>
+    </span>
+    <div style="top: 0; right: 0; position: absolute; z-index: 3;">
+      <ion-button slot="end" fill="clear" size="small" class="ion-no-margin" title="Formate Content" shape="round"
+        (click)="codeMirrorFormatCode(codeMirror)">
+        <ion-icon name="code-slash"></ion-icon>
+      </ion-button>
+    </div>
+    <!-- system & application popover -->
+  </div>
+</ng-template>
+<!--Html editer Preview end-->
+
+<!--Dynamic Tag popvoer  -->
+<ng-template #dynamic_tag_popover>
+  <ion-content style="z-index: 3;">
+    <!-- System -->
+    <div class="popover-content custom-display-flex">
+      <ion-list-header class="ion-no-margin ion-no-padding">System</ion-list-header>
+      <a *ngFor="let tag of systemTagList" class="system-text" (click)="addSelectedTag('system.' + tag)">{{tag}}</a>
+      <!-- Application -->
+      <div class="popover-content custom-display-flex" *ngIf="template.dynamic_tags.length>0">
+        <ion-list-header class="ion-no-margin  ion-no-padding">Application</ion-list-header>
+        <a *ngFor=" let tag of template.dynamic_tags" (click)="addSelectedTag(tag.name)">{{tag.name}}</a>
+      </div>
+    </div>
+  </ion-content>
+</ng-template>
+
+<ng-template #attachment_list>
+  <ion-content style="z-index: 3;">
+    <!-- System -->
+    <div class="popover-content custom-display-flex">
+      <!--template view in notification-->
+      <div *ngIf="isEmailReadOnly || attachment_preview == 'TEMPLATE'" style="display: contents;">
+        <a class="list-row list-select" style="width: 100%; height: 40px;"
+          *ngFor="let list of this.attachment_details.attachments; index as i"
+          (click)="notifiService.downlaodEmailAttachment(list)">
+          <ion-label class="system-text">{{list.name}}</ion-label>
+          <ion-icon name="arrow-down-circle-outline" *ngIf="list.id"></ion-icon>
+        </a>
+        <a class="list-row list-select" style="width: 100%; height: 40px;" *ngFor="let list of notification_content"
+          (click)="notifiService.downlaodEmailAttachment(list)">
+          <ion-label class="system-text">{{list.name}}</ion-label>
+          <ion-icon name="arrow-down-circle-outline" *ngIf="list.id"></ion-icon>
+        </a>
+      </div>
+      <!--custom view in notification-->
+      <div *ngIf="!isEmailReadOnly" style="display: contents;">
+        <a class="list-row list-select" style="width: 100%; height: 40px;" *ngFor="let list of notification_content"
+          (click)="notifiService.downlaodEmailAttachment(list)">
+          <ion-label class="system-text">{{list.name}}</ion-label>
+          <ion-icon name="arrow-down-circle-outline" *ngIf="list.id"></ion-icon>
+        </a>
+      </div>
+    </div>
+  </ion-content>
+</ng-template>
+
+
+<ion-grid [class]="isPreviewPopup ? 'view-message-container' : ''" style="width: 100%;">
+  <ion-row *ngIf="!isViewReason && isPreviewPopup" style="padding-top:4px; height: 45px;">
+    <ion-col size="6" offset="3" class="ion-text-center ion-no-padding">
+      <p class="err-title" style="margin-top: 6px;">{{preview_channel}}</p>
+    </ion-col>
+    <ion-col size="3">
+      <div lines="none" style="float: right; margin-top: -10px;" class="icon-ion-item">
+        <ion-icon *ngIf="!isFullScreenEditor" name="close-outline" class="closeicon test ion-no-padding "
+          style="font-size: 34px ;cursor:pointer" title="Close" (click)="cancel()"></ion-icon>
+        <ion-button *ngIf="isFullScreenEditor" (click)="cancel()" style="min-width: 100px;">
+          <ion-label style="color: var(--ion-color-secondary);">Save</ion-label>
+        </ion-button>
+      </div>
+    </ion-col>
+  </ion-row>
+  <ion-row class="view-message-container-body">
+    <ion-col>
+      <ng-template *ngIf="preview_channel === 'SMS'" [ngTemplateOutlet]="previewSMS"></ng-template>
+      <ng-template *ngIf="preview_channel === 'MOBILE_PUSH'" [ngTemplateOutlet]="previewMobilePush"></ng-template>
+      <ng-template *ngIf="preview_channel === 'WEB_PUSH'" [ngTemplateOutlet]="previewWebPush"></ng-template>
+      <ng-template *ngIf="preview_channel === 'EMAIL'" [ngTemplateOutlet]="previewEmail"></ng-template>
+      <ng-template *ngIf="preview_channel === 'IN_APP_MESSAGE'" [ngTemplateOutlet]="inAppMessage"></ng-template>
+      <ng-template *ngIf="preview_channel === 'EMAIL_HTML'" [ngTemplateOutlet]="previewEmailHTML"></ng-template>
+    </ion-col>
+  </ion-row>
+</ion-grid>

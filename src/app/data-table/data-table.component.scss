@@ -1,0 +1,426 @@
+//table css starts
+* {
+  font-family: "Inter";
+}
+
+.table-outer-layout {
+  min-height: 316px;
+  max-height: calc(100vh - 280px);
+  width: 100%;
+  max-width: 100%;
+  overflow: auto;
+  scroll-behavior: smooth;
+  // padding: 0px 8px;
+  padding: 0px 0px 0px 8px;
+  border-radius: 3px;
+  box-shadow: 0px 4px 7px rgba(0, 0, 0, 0.17);
+  background-color: var(--ion-color-secondary);
+
+  &.table-mini {
+    min-height: 210px;
+  }
+
+  // &:after {
+  //   content: " ";
+  //   position: absolute;
+  //   width: 10px;
+  //   height: 100%;
+  //   background: var(--ion-color-secondary);
+  //   right: 0px;
+  //   top: 0px;
+  //   z-index: 101;
+  // }
+
+  table {
+    width: 100%;
+    min-width: 800;
+  }
+
+  th {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--grid-header-txt);
+    font-style: normal;
+  }
+
+  td {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 15px;
+    color: var(--grid-content-txt);
+    font-family: "inter" !important;
+    font-style: normal;
+    word-break: break-all;
+    white-space: nowrap;
+
+    span {
+      font-family: "inter" !important;
+      font-style: normal;
+    }
+
+    a {
+      font-family: "inter" !important;
+      font-style: normal;
+      color: var(--anchor-tag);
+    }
+  }
+
+  //fixed right column - Edit Columns
+  td.mat-column-final {
+    width: 20px;
+    // padding-right: 8px;
+  }
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: var(--grid-hoverbg);
+  font-weight: 400;
+}
+
+//table CSS ends
+// popStyle
+ion-popover.grid-action-popover {
+  --width: 120px;
+  font-weight: 500 !important;
+  background: transparent;
+  opacity: 2;
+
+  --offset-x: -64px;
+
+  ion-item {
+    font-size: 12px !important;
+    padding: 0px;
+    font-weight: 500 !important;
+    color: var(--grid-content-txt);
+    --padding-end: 16px;
+  }
+}
+
+//paginator style
+::ng-deep.table-outer-container {
+
+  .mat-mdc-paginator {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-paginator-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between !important;
+    width: 100%;
+    margin: 0% !important;
+    padding: 0 !important;
+
+    .mat-mdc-paginator-page-size-label {
+      margin: 0 !important;
+      font-family: 'inter';
+      font-style: normal;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      width: 81%;
+      height: 29px;
+    }
+
+    .mat-mdc-form-field {
+      margin: 0 0 0 3px;
+      width: 73px;
+    }
+
+    //pagination arrow
+    .mat-mdc-select-arrow svg {
+      fill: var(--ion-color-primary);
+      position: absolute;
+      top: 0;
+      left: 131%;
+      transform: translate(-50%, -42%);
+      height: 28px;
+      background-color: #EAEAEA;
+    }
+  }
+
+  .paginator-footer {
+    margin-top: 10px;
+
+    .mat-mdc-paginator .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding-top: 1.5px !important;
+    }
+
+    .mat-mdc-paginator-outer-container {
+      background-color: transparent;
+    }
+
+    .mat-mdc-paginator-range-label {
+      margin: 0 !important;
+    }
+
+    .mat-mdc-paginator-page-size {
+      margin-right: 0 !important;
+    }
+
+    .mdc-list-item--selected {
+      color: red;
+    }
+
+    .mat-mdc-option.mat-mdc-option-active {
+      color: red !important;
+    }
+  }
+
+  //
+  //custom sort arrow starts
+  .mat-sort-header-arrow[style] {
+
+    // Hide default arrow stem
+    .mat-sort-header-stem {
+      display: none;
+    }
+
+    .mat-sort-header-indicator {
+      opacity: 1;
+      color: black;
+      font-weight: bold;
+
+      // Hide default arrow as its composed of left, right and middle
+      .mat-sort-header-pointer-left,
+      .mat-sort-header-pointer-right,
+      .mat-sort-header-pointer-middle {
+        display: none;
+      }
+    }
+  }
+
+  // My custom ascending arrow
+  [aria-sort="ascending"] {
+    .mat-sort-header-arrow {
+      .mat-sort-header-indicator {
+        &::before {
+          content: "\25B4";
+          top: -0em;
+          position: absolute;
+          color: var(--ion-color-primary);
+          font-size: 20px;
+          line-height: 10px;
+        }
+      }
+    }
+  }
+
+  // My custom descending arrow
+  [aria-sort="descending"] {
+    .mat-sort-header-arrow {
+      .mat-sort-header-indicator {
+        &::before {
+          content: "\25BE";
+          top: -14px;
+          position: absolute;
+          color: var(--ion-color-primary);
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  .table-outer-layout {
+    &::-webkit-scrollbar {
+      width: 20px;
+    }
+
+    &::-webkit-scrollbar:vertical {
+      width: 10px;
+      background-color: var(--grid-scrollbar);
+    }
+
+    &::-webkit-scrollbar:horizontal {
+      height: 10px;
+      background-color: var(--grid-scrollbar);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      border: 1px solid var(--grid-scrollbar-border) !important;
+      /* should match background, can't be transparent */
+      background-color: var(--grid-scrollbar-bgcolor);
+    }
+  }
+
+  @media (max-width: 480px) {
+
+    .table-outer-layout {
+      &::-webkit-scrollbar {
+        width: 15px;
+      }
+
+      &::-webkit-scrollbar:vertical {
+        width: 5px;
+        background-color: var(--grid-scrollbar);
+      }
+
+      &::-webkit-scrollbar:horizontal {
+        height: 5px;
+        background-color: var(--grid-scrollbar);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        border: 1px solid var(--grid-scrollbar-border) !important;
+        /* should match background, can't be transparent */
+        background-color: var(--grid-scrollbar-bgcolor);
+      }
+    }
+  }
+}
+
+//overwriten global css - padding horizontal
+.padding-hide-md-down {
+  --ion-grid-padding-xl: 50px;
+  --ion-grid-padding-lg: 50px;
+  --ion-grid-padding-md: 50px;
+  --ion-grid-padding-sm: 9px;
+  --ion-grid-padding-xs: 9px;
+}
+
+// grid right 3 dot
+mat-icon {
+  font-family: "Material Icons" !important;
+  font-style: normal;
+}
+
+//columns style start
+
+.w-40 {
+  min-width: 40px;
+  max-width: 40px;
+}
+
+.w-50 {
+  min-width: 50px;
+  max-width: 50px;
+}
+
+.w-75 {
+  min-width: 75px;
+  max-width: 75px;
+}
+
+.w-100 {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.w-115 {
+  min-width: 115px;
+  max-width: 115px;
+}
+
+.w-120 {
+  min-width: 120px;
+  max-width: 120px;
+}
+
+.w-125 {
+  min-width: 125px;
+  max-width: 125px;
+}
+
+.w-130 {
+  min-width: 130px;
+  max-width: 130px;
+}
+
+.w-135 {
+  min-width: 135px;
+  max-width: 135px;
+}
+
+.w-150 {
+  min-width: 150px;
+  max-width: 150px;
+}
+
+.w-160 {
+  min-width: 160px;
+  max-width: 160px;
+}
+
+.w-175 {
+  min-width: 175px;
+  max-width: 175px;
+}
+
+.w-200 {
+  min-width: 200px;
+  max-width: 200px;
+}
+
+.w-225 {
+  min-width: 225px;
+  max-width: 225px;
+}
+
+.w-250 {
+  min-width: 250px;
+  max-width: 250px;
+}
+
+.channals_logo {
+  display: flex;
+  flex-direction: row;
+
+  span {
+    margin: 3%;
+    font-size: 22px;
+  }
+
+  ion-icon {
+    // width: 18px;
+    // height: 14px;
+    margin: 3%;
+    font-size: 18px;
+    height: 20px;
+  }
+}
+
+//notifcation table
+.user-icon {
+  width: 20px;
+  height: 20px;
+}
+
+::ng-deep.mat-mdc-option .mat-pseudo-checkbox-minimal {
+  display: none;
+}
+
+::ng-deep .mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-checkmark-color: #fff;
+  --mdc-checkbox-selected-focus-icon-color: var(--ion-color-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--ion-color-primary);
+  --mdc-checkbox-selected-icon-color: var(--ion-color-primary);
+  --mdc-checkbox-selected-pressed-icon-color: var(--ion-color-primary);
+  --mdc-checkbox-unselected-focus-icon-color: #212121;
+  --mdc-checkbox-unselected-hover-icon-color: #212121;
+  --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-checkbox-unselected-icon-color: rgba(0, 0, 0, 0.54);
+  --mdc-checkbox-unselected-pressed-icon-color: rgba(0, 0, 0, 0.54);
+}
+
+::ng-deep .mat-mdc-checkbox.mat-accent .mdc-checkbox--selected~.mdc-checkbox__ripple {
+  background: transparent;
+}
+
+::ng-deep .mat-ripple.mat-mdc-checkbox-ripple.mat-mdc-focus-indicator {
+  display: none;
+}
+
+.checkBx {
+  margin-top: 2px;
+}
+
+::ng-deep .mdc-data-table__cell,
+.mdc-data-table__header-cell {
+  padding: 0px 8px 0px 8px !important;
+}

@@ -1,0 +1,38 @@
+<ion-header class="header-container ion-no-border">
+  <ion-toolbar>
+    <h1>Dynamic Application Tags</h1>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size-lg="12" class="ion-no-padding main-column-wrapper">
+        <div class="main-wrapper" *ngFor="let tag of template.dynamic_tags; let i=index">
+          <div class="content-wrapper">
+            <ion-item fill="outline" class="textbox">
+              <ion-label position="floating">Name</ion-label>
+              <ion-input name="key" [(ngModel)]="tag.name"></ion-input>
+            </ion-item>
+            <p>=</p>
+            <ion-item fill="outline" class="textbox">
+              <ion-label position="floating">{{isTemplateScreen ? 'Default Value' : 'Value'}}
+              </ion-label>
+              <ion-input name="value" [(ngModel)]="tag.value"></ion-input>
+            </ion-item>
+          </div>
+          <ion-icon name="close-outline" (click)="removeDynamicTag(i)"></ion-icon>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-buttons class="sub-btns">
+    <ion-button (click)="addDynamicTag()" color="secondary">
+      <ion-label style="color: var(--ion-color-primary-shade)">+ Add</ion-label>
+    </ion-button>
+    <ion-button (click)="save()" color="primary">
+      <ion-label>Save</ion-label>
+    </ion-button>
+  </ion-buttons>
+</ion-footer>

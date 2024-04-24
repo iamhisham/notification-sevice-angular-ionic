@@ -1,0 +1,222 @@
+@import "../../theme/form.scss";
+@import '../../theme/variables.scss';
+
+* {
+  font-size: 14px;
+  font-family: 'roboto-regular';
+  font-weight: 400;
+  color: var(--ion-color-primary-text);
+}
+
+ion-content {
+  .main-container {
+    height: 100vh;
+
+    .logo-container {
+      // background: url('../../assets/login/web3Logo.png') no-repeat center/cover fixed;
+      background: url('../../assets/login/logo.png') no-repeat center/cover fixed;
+
+      ion-img {
+        position: absolute;
+        top: 40px;
+        left: 58px;
+      }
+    }
+
+    .right-side-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+
+      .login-screen {
+        width: 531px;
+
+        form {
+          width: 100%;
+
+          ion-col {
+            padding: 0;
+
+            ion-item {
+              --border-color: #D9D9D9;
+
+
+              &::part(native) {
+                border-radius: 10px;
+              }
+            }
+          }
+
+          ion-col:nth-child(1) {
+            display: flex;
+
+            ion-label {
+              font-size: 24px;
+              font-family: 'Roboto-Medium';
+              font-weight: 500;
+              word-wrap: break-word;
+              margin-bottom: 64px;
+            }
+          }
+
+          ion-col:nth-child(2) {
+            ion-item {
+              margin-top: 8px;
+              margin-bottom: 16px;
+            }
+
+            ion-label {
+              line-height: 20px;
+              letter-spacing: 0.25px;
+            }
+          }
+
+          ion-col:nth-child(3) {
+            ion-item {
+              margin-top: 8px;
+              margin-bottom: 16px;
+            }
+
+            ion-label {
+              line-height: 20px;
+              letter-spacing: 0.25px;
+            }
+
+          }
+
+          ion-col:nth-child(4) {
+            padding-bottom: 16px;
+            display: flex;
+
+            a {
+              color: #D93535;
+              font-size: 14px;
+              font-family: 'Roboto-Medium';
+              font-weight: 500;
+              line-height: 14.50px;
+            }
+          }
+
+          ion-col:nth-child(5) {
+            padding-bottom: 64px;
+
+            ion-button {
+              margin: 0;
+              --background: var(--login-btn-color);
+              --border-radius: 10px;
+              margin-bottom: 64px;
+
+              ion-label {
+                color: var(--input-txt-color);
+                text-transform: capitalize;
+                padding: 12px;
+              }
+            }
+
+
+          }
+
+          ion-col:nth-child(6) {
+            p {
+              line-height: 20px;
+              letter-spacing: 0.25px;
+              font-family: 'roboto-Medium';
+
+              strong {
+
+                padding-inline-start: 12px;
+
+                a {
+                  font-size: 14px;
+                  font-family: 'Roboto-Medium';
+                  font-weight: 500;
+                  line-height: 14.50px;
+                }
+              }
+            }
+          }
+
+          ion-col:nth-child(7) {
+
+            ion-button {
+              margin: 0;
+              --background: var(--ion-color-primary-color);
+              --border-radius: 10px;
+
+              ion-label {
+                color: white;
+                text-transform: capitalize;
+                padding: 12px;
+              }
+            }
+
+
+          }
+
+          ion-col:nth-child(8) {
+
+            ion-button {
+              margin: 0;
+              --background: white;
+              --border-radius: 10px;
+
+              ion-label {
+                color: var(--ion-color-primary-color);
+                text-transform: capitalize;
+                padding: 12px;
+              }
+            }
+
+
+          }
+        }
+
+      }
+    }
+  }
+}
+
+
+//common css
+
+.P-8 {
+  padding-top: 8px;
+}
+
+.P-B-16 {
+  padding-bottom: 16px !important;
+}
+
+.M-B-16 {
+  margin-bottom: 16px !important;
+}
+
+.button-success {
+  ion-button {
+    margin: 0;
+    --background: var(--ion-color-primary-color);
+    --border-radius: 10px;
+    margin-bottom: 64px;
+
+    ion-label {
+      color: white;
+      text-transform: capitalize;
+      padding: 12px;
+    }
+  }
+}
+
+.button-failure {
+  ion-button {
+    margin: 0;
+    --background: white;
+    --border-radius: 10px;
+
+    ion-label {
+      color: var(--ion-color-primary-color);
+      text-transform: capitalize;
+      padding: 12px;
+    }
+  }
+}

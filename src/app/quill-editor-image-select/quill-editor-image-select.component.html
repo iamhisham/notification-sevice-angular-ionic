@@ -1,0 +1,71 @@
+<ion-header class="header-container ion-no-border">
+  <ion-toolbar>
+    <h1>Upload Image</h1>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size-lg="12" class="ion-no-padding main-content">
+        <div class="border-btm">
+          <ion-item lines="none" class="upload-type">
+            <ion-label>Upload Type :</ion-label>
+          </ion-item>
+          <ion-radio-group class="radio-btn" [(ngModel)]="uploadType.value">
+            <ion-item lines="none" class="upload-btn">
+              <ion-label>URL</ion-label>
+              <ion-radio slot="start" value="URL" class="ion-radio"></ion-radio>
+            </ion-item>
+            <ion-item lines="none" class="url-btn">
+              <ion-label>Image</ion-label>
+              <ion-radio slot="start" value="UPLOAD" class="ion-radio"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </div>
+      </ion-col>
+      <ion-col size-xs="12" size-lg="12" class="ion-no-padding main-content">
+        <ion-item fill="outline" *ngIf="uploadType.value === 'URL'"
+          class="textbox ion-margin-horizontal ion-margin-top">
+          <ion-label position="floating">URL:</ion-label>
+          <ion-input type="text" name="url" [(ngModel)]="url"></ion-input>
+        </ion-item>
+        <div *ngIf="uploadType.value === 'UPLOAD'" class="ion-margin-horizontal"
+          style="padding-top: 8px; --inner-padding-end: 0px">
+          <!-- <ion-label>Upload:</ion-label> -->
+          <ion-item lines="none" fill="outline" style="margin-top: 10px; --border-color: #d4d4d4;">
+            <input type="file" style="display: none" (change)="getBase64URL($event)" #quillEditorImage>
+            <ion-label placeholder="filename" class="display-file-name"> {{this.details.fileName || 'File Name'}}
+            </ion-label>
+            <ion-button slot="end" fill="clear" (click)="quillEditorImage.click()" class="ion-no-margin"
+              *ngIf="fileName ===''">
+              <ion-icon style="margin-right: 4px; color: var(--add-channel);" name="cloud-upload-outline"></ion-icon>
+              <ion-label>Upload</ion-label>
+            </ion-button>
+            <ion-button (click)="deleteImage()" slot="end" fill="clear" class="ion-no-margin" *ngIf="fileName !== ''">
+              <ion-icon name="trash-outline"></ion-icon>
+              <ion-label>Delete</ion-label>
+            </ion-button>
+          </ion-item>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="ion-no-border ion-no-margin ion-padding">
+  <ion-buttons>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" class="cancel-btn">
+          <ion-button color="secondary" (click)="onCancel()">
+            <ion-label>Cancel</ion-label>
+          </ion-button>
+        </ion-col>
+        <ion-col size="6" class="save-button">
+          <ion-button color="primary" (click)="onSave()" [disabled]="fileName === '' && url === ''">
+            <ion-label>Save</ion-label>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-buttons>
+</ion-footer>

@@ -1,0 +1,208 @@
+// -------------*******dot mobile theme***********-----------------
+:root {
+  .dot-mobile {
+    // theme
+    --theme-name: "dot-mobile";
+    --input-txt-color: white;
+    //login / signup pages
+    --login-bg-color: #142542;
+
+    // common txt color
+    --common-text: #212121;
+    --common-text-white: #dadada;
+    --common-small-subheading: #808080;
+
+    // dataTable / grid
+    --anchor-tag: #6495ED;
+    --grid-hoverbg: #E6F2FD;
+    --grid-header-txt: #0f261f;
+    --grid-content-txt: #343a40;
+    --grid-scrollbar: #e8f4ff;
+    --grid-scrollbar-border: #e8f4ff;
+    --grid-scrollbar-bgcolor: #80808096;
+    --text-color: #808080;
+    --login-btn-color: #5164B8;
+    --ion-color-primary-color: #5164B8;
+    // --header-toolbar (Ex: config Pg: header -> Configuration)
+    --toolbar-header: #344563;
+
+    --ion-color-side-navbar: #FFFFFF;
+    --ion-color-side-navbar-rgb: 105, 187, 123;
+    --ion-color-side-navbar-contrast: #6495ED;
+    --ion-color-side-navbar-contrast-rgb: 0, 0, 0;
+    --ion-color-side-navbar-shade: #0F261F;
+    --ion-color-side-navbar-tint: #0F261F;
+
+    --ion-side-navbar-color-default: #6495ED;
+    --ion-side-navbar-color-active: #6495ED;
+    --ion-side-navbar-bordercolor-active: #FFDD30;
+    --ion-side-navbar-bgColor-active: #E6F2FD;
+
+    // temp create screen - left 5 channels active
+    --active-channel: #6495ED;
+    --default-channel-bg: #E6F2FD;
+    --add-channel: #6495ED;
+    --selected-channels-bg: #E6F2FD;
+
+    // user segment create colors
+    --user-segment-left-side: #6495ED;
+    --user-segment-right-side: #E6F2FD;
+    --user-segment-text: #737373;
+    --segment-left-container: #F7F7F7;
+    --segment-right-container: #F7F7F7;
+
+    // dot-mobile-header
+    --ion-color-header-bg: #6495ED;
+    --ion-color-header-txt: #FFDD30;
+
+    // top header navbar
+    --ion-top-navbar-border: 1.4px solid var(--ion-color-primary);
+    --ion-top-navbar-bghover: #E6F2FD;
+    --ion-top-navbar-right: #FFFFFF;
+
+    // notification page
+    --noti-icon-bg-color: #A1CAF9;
+    --noti-icon-border-color: #A1CAF9;
+
+    // create btn (landing pages)
+    --ion-create-btn: #FFDD30;
+    --ion-create-btn-bg: #6495ED;
+
+    // chart variable
+    --chart-series-1: #6495ED;
+    --chart-series-2: #464597;
+
+    // save (primary) and cancel (secondary) btn
+    --ion-color-primary: #6495ED;
+    --ion-color-primary-rgb: 230, 242, 253;
+    --ion-color-primary-contrast: var(--ion-color-header-txt);
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #6fa0fb;
+    --ion-color-primary-tint: #6f9ef6;
+
+    //used: cancel btn
+    --ion-color-secondary: #FFFFFF;
+    --ion-color-secondary-rgb: 61, 194, 255;
+    --ion-color-secondary-contrast: var(--ion-color-header-bg);
+    --ion-color-secondary-contrast-rgb: 255, 255, 255;
+    --ion-color-secondary-shade: #36abe0;
+    --ion-color-secondary-tint: #50c8ff;
+
+    //Landing page create btn
+    --ion-color-tertiary: #6495ED;
+    --ion-color-tertiary-contrast: #FFDD30;
+    --ion-color-tertiary-shade: #36abe0;
+    --ion-color-tertiary-tint: #50c8ff;
+    --ion-color-tertiary-txt: #FFFFFF;
+
+    //basics
+    --ion-color-background: #fafafa;
+    --ion-content-txt: #343a40;
+    --ion-color-border: #d4d4d4;
+    --ion-template-background: #f3f3f3;
+
+
+    //dropdown color
+    --ion-dropdown-hover: #dce5f5;
+    --ion-dropdown-text-color: #6495ED;
+  }
+
+  // -------------*******mobile X theme***********-----------------
+  .mobilex {
+    // theme
+    --theme-name: "mobilex";
+
+    //login / signup pages
+    --login-bg-color: #224237;
+
+    // dataTable / grid
+    --anchor-tag: #079f71;
+    --grid-hoverbg: #e7f6f2;
+    --grid-header-txt: #0f261f;
+    --grid-content-txt: #343a40;
+    --grid-scrollbar: #e9f5e9;
+    --grid-scrollbar-border: #e9f5e9;
+    --grid-scrollbar-bgcolor: #80808096;
+
+    // --header-toolbar (Ex: config Pg: header -> Configuration)
+    --toolbar-header: #344563;
+
+    --ion-color-side-navbar: #0F261F;
+    --ion-color-side-navbar-rgb: 105, 187, 123;
+    --ion-color-side-navbar-contrast: white;
+    --ion-color-side-navbar-contrast-rgb: 0, 0, 0;
+    --ion-color-side-navbar-shade: #0F261F;
+    --ion-color-side-navbar-tint: #0F261F;
+
+    --ion-side-navbar-color-default: white;
+    --ion-side-navbar-color-active: #50f40c;
+    --ion-side-navbar-bordercolor-active: #50f40c;
+    --ion-side-navbar-bgColor-active: #16392f;
+
+    // temp create screen - left 5 channels active
+    --active-channel: #16392f;
+    --default-channel-bg: #D3F1E8;
+    --add-channel: #079F71;
+    --selected-channels-bg: #d6fff2;
+
+    // user segment create colors
+    --user-segment-left-side: #15372D;
+    --user-segment-right-side: #CBE8DF;
+    --user-segment-text: #15372D;
+    --segment-left-container: #F7F7F7;
+    --segment-right-container: #F7F7F7;
+
+    // mobileX-header
+    --ion-color-header-bg: #FCFCFC;
+    --ion-color-header-txt: #212121;
+
+    // top header navbar
+    --ion-top-navbar-border: 1.4px solid var(--ion-color-primary);
+    --ion-top-navbar-bghover: #eefffa;
+
+    // notification page
+    --noti-icon-bg-color: #defdf7;
+    --noti-icon-border-color: #4fceb7;
+
+    // create btn (landing pages)
+    --ion-create-btn: #50f40c;
+    --ion-create-btn-bg: #0F261F;
+
+    // chart variable
+    --chart-series-1: #079F71;
+    --chart-series-2: #15372D;
+
+    // save (primary) and cancel (secondary) btn
+    --ion-color-primary: #079f71;
+    --ion-color-primary-rgb: 7, 159, 113;
+    --ion-color-primary-contrast: var(--ion-color-header-bg);
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #079f71;
+    --ion-color-primary-tint: #079f71;
+
+    //used: cancel btn
+    --ion-color-secondary: #FFFFFF;
+    --ion-color-secondary-rgb: 61, 194, 255;
+    --ion-color-secondary-contrast: var(--ion-color-header-txt);
+    --ion-color-secondary-contrast-rgb: 255, 255, 255;
+    --ion-color-secondary-shade: #36abe0;
+    --ion-color-secondary-tint: #50c8ff;
+
+    //Landing page create btn
+    --ion-color-tertiary: #0F261F;
+    --ion-color-tertiary-contrast: #50f40c;
+    --ion-color-tertiary-shade: #0d241d;
+    --ion-color-tertiary-tint: #0d251e;
+    --ion-color-tertiary-txt: #50f40c;
+
+    //basics
+    --ion-color-background: #fafafa;
+    --ion-content-txt: #343a40;
+    --ion-color-border: #d4d4d4;
+    --ion-template-background: #f3f3f3;
+
+    //dropdown color
+    --ion-dropdown-hover: #cbe7de;
+    --ion-dropdown-text-color: #079f71;
+  }
+}

@@ -1,0 +1,126 @@
+@import "../../../theme/form.scss";
+@import "../../../theme/variables.scss";
+
+ion-header {
+  // border-bottom: 1px solid var(--common-text-white);
+  border-bottom: 1px solid var(--ion-color-border);
+
+  .abtestingresult-title-container {
+    line-height: 27px;
+
+    ion-title {
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 600;
+      font-size: 22px;
+      color: var(--toolbar-header);
+    }
+  }
+}
+
+ion-content {
+  ion-list {
+    padding: 0px 20px;
+
+    ion-list-header {
+      padding: 0px;
+
+      ion-label {
+        font-family: 'inter';
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--toolbar-header);
+      }
+    }
+
+    ion-item {
+      margin-top: 0px;
+    }
+  }
+}
+
+.right-container {
+  margin-top: 6px;
+}
+
+.card-container-parent {
+  ::ng-deep.variant-1 {
+    .card-header {
+      background-color: var(--chart-series-2);
+      color: white;
+    }
+  }
+
+  ::ng-deep.variant-2 {
+    .card-header {
+      background-color: var(--chart-series-1);
+      color: black;
+    }
+  }
+
+  .card-container {
+    color: black;
+    font-size: 14px;
+    text-align: center;
+    font-family: 'inter';
+  }
+
+  .card-header {
+    height: 36px;
+    font-weight: 600;
+
+    p {
+      margin-top: 9px;
+    }
+  }
+
+  .variant-title {
+    font-weight: 600;
+    padding-top: 12px;
+  }
+
+  .variant-subtitle {
+    padding: 5px 0px 8px 0px;
+  }
+
+  .variant-subtitle-light {
+    color: gray;
+    font-size: 12px;
+    padding: 5px 0px 8px 0px;
+    border-bottom: 0.5px solid rgb(212, 212, 212);
+  }
+
+  .preview {
+    padding: 0px 0px 8px 0px;
+    border-bottom: 0.5px solid rgb(212, 212, 212);
+
+    a {
+      cursor: pointer;
+      color: var(--ion-color-primary) !important;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .left-container {
+    position: fixed;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+  }
+
+  .right-container {
+    margin-left: calc(calc(3 / var(--ion-grid-columns, 12)) * 100%);
+  }
+}
+
+
+.no_notification_label {
+  // font-size: 12px;
+  font-family: 'Inter';
+  font-style: normal;
+  // font-size: 12px;
+  line-height: 15px;
+  color: #0F261F;
+  font-weight: 500;
+  font-size: 18px;
+}

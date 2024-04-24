@@ -1,0 +1,158 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="header-container ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <h1>Queue Notification</h1>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="ion-float-right">
+            <ion-button color="secondary" title="refresh" class="create-view-btn ion-no-margin"
+              style="min-width: 20px; margin-top:10px; margin-right: 14px; height: 41px;" (click)="reloadAll()">
+              <ion-icon name="refresh-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="wrapper">
+    <ion-grid class="ion-no-padding" class="main-grid-container">
+      <ion-row class="h-100-per">
+        <ion-col size="12" style="display: flex; " class="ion-no-padding whole-container">
+          <!--side-container -->
+          <div>
+            <app-data-table-search-criteria #queue_search [defaultFilterCriteria]="defaultFilterCriteria"
+              [filterFieldList]="filterFieldList" (applySearch)="applyFilter($event)"></app-data-table-search-criteria>
+          </div>
+          <!-- table right div -->
+          <div class="table-media-query" style=" background-color:var(--ion-color-background)">
+            <ion-grid class=" padding-hide-md-down right-contant">
+              <ion-row>
+                <!-- search crieraia for sm and tab -->
+                <ion-col size-md="12" class="ion-no-padding ion-hide-lg-up">
+                  <ion-row>
+                    <ion-col size-md="3.7" offset-md="0" class=" ion-no-padding">
+                      <div class=" filterSmLabel">
+                        <div class="staticLabel ">
+                          <ion-chip [outline]="true" id="open-fiter-model-queue-view">
+                            <ion-icon name="funnel-outline"></ion-icon>
+                            <ion-label class="filter_label">Search Criteria</ion-label>
+                          </ion-chip>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <ion-modal [backdropDismiss]="false" #modal trigger="open-fiter-model-queue-view"
+                        class="template-filter" animated={true}>
+                        <ng-template>
+                          <ion-header class="ion-no-border config-header">
+                            <ion-toolbar>
+                              <ion-title style="font-size: 16px;">Search Criteria</ion-title>
+                              <ion-buttons slot="end">
+                                <ion-icon (click)="onClose()" class="close_icon" name="close-outline"></ion-icon>
+                              </ion-buttons>
+                            </ion-toolbar>
+                          </ion-header>
+                          <ion-content>
+                            <ion-row>
+                              <ion-col class="aside-filter">
+                                <!-- <ng-container [ngTemplateOutlet]="notificationcontent"></ng-container> -->
+                              </ion-col>
+                            </ion-row>
+                          </ion-content>
+                          <ion-footer class="footer-view">
+                            <!-- <ng-container [ngTemplateOutlet]="notificationfooter"></ng-container> -->
+                          </ion-footer>
+                        </ng-template>
+                      </ion-modal>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col size-xl="12" size-lg="12" size-md="12" size-sm="12" size-xs="12"
+                  class="retry-col-wrapper ion-no-padding">
+                  <ion-label style="margin-top:0px;">
+                    <h1 class="cmn-heading" style="font-size: 20px;">Queue Statistics</h1>
+                  </ion-label>
+                </ion-col>
+                <ion-col class="summary-container ion-no-padding">
+                  <ion-row style="text-align:center;" class="top-twocard-row ">
+                    <ion-col class="ion-no-padding card-gap front-view" size-xl="4" size-lg="4" size-md="4" size-sm="12"
+                      size-xs="12">
+                      <ion-card class="ion-no-margin" class="card-container">
+                        <ion-row>
+                          <ion-col style="padding: 25px 0px 0px 0px" class="number-wrapper">
+                            <ion-label class="card-count" id="card-count-left"
+                              *ngIf="this.queue.isLoaded">{{this.queue.queuedCount || 0 }}</ion-label>
+                            <ion-spinner name="circular" *ngIf="!this.queue.isLoaded"></ion-spinner>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="card-tit-cont ion-no-padding">
+                            <ion-label class="card-name">Queues</ion-label>
+                          </ion-col>
+                        </ion-row>
+                      </ion-card>
+                    </ion-col>
+                    <ion-col class="ion-no-padding card-gap" size-xl="4" size-lg="4" size-md="4" size-sm="12"
+                      size-xs="12">
+                      <ion-card class="ion-no-margin" class="card-container">
+                        <ion-row>
+                          <ion-col style=" padding: 25px 0px 0px 0px" class="number-wrapper">
+                            <ion-label class="card-count" *ngIf="this.queue.isLoaded"
+                              id="card-count-left">{{this.queue.userCount || 0}}</ion-label>
+                            <ion-spinner name="circular" *ngIf="!this.queue.isLoaded"></ion-spinner>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="card-tit-cont ion-no-padding">
+                            <ion-label class="card-name" style="padding-left: 0px;">Users </ion-label>
+                          </ion-col>
+                        </ion-row>
+                      </ion-card>
+                    </ion-col>
+                    <ion-col class="ion-no-padding card-gap back-view" size-xl="4" size-lg="4" size-md="4" size-sm="12"
+                      size-xs="12">
+                      <ion-card class="ion-no-margin" class="card-container">
+                        <ion-row>
+                          <ion-col style=" padding: 25px 0px 0px 0px" class="number-wrapper">
+                            <ion-label class="card-count" id="card-count-left"
+                              *ngIf="this.queue.isLoaded">{{this.queue.notificationCount || 0}}</ion-label>
+                            <ion-spinner name="circular" *ngIf="!this.queue.isLoaded"></ion-spinner>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row>
+                          <ion-col class="card-tit-cont ion-no-padding">
+                            <ion-label class="card-name">Notifications</ion-label>
+                          </ion-col>
+                        </ion-row>
+                      </ion-card>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col size-xl="12" size-md="12" size-lg="12" size-sm="12" size-xs="12" class=" ion-no-padding">
+                  <ion-row class="ion-no-padding flex-container" style="width: 100%; padding: 10px 0px 12px 0px;">
+                    <ion-col size-lg="6" size-md="6" size-xs="12" size-sm=" 12" size-xs="12" class="ion-no-padding">
+                      <ion-label style="margin-top:0px;">
+                        <p class="cmn-heading heading-mob-align" style="font-size: 20px; margin-top: 6px;">
+                          Queue Channel Notification</p>
+                      </ion-label>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col size="12" class="ion-no-padding table-mob-align">
+                  <app-data-table #queue_grid [tableDetails]="errorQueueList"></app-data-table>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

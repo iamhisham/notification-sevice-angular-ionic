@@ -1,0 +1,107 @@
+@import "../../../theme/variables.scss";
+
+.header-container-lg {
+  // border-bottom: 0.5px solid var(--common-text-white);
+  border-bottom: 1px solid var(--ion-color-border);
+}
+
+ion-buttons {
+  margin: 14px 50px 14px 25px;
+
+  ion-button {
+    font-size: 14px;
+    margin: 0px 25px;
+    padding: 0px 0px;
+  }
+}
+
+//Mobile View
+.navGrid-container {
+  padding: 0px 7.812px;
+
+  .navbar {
+    background-color: var(--ion-color-secondary);
+    height: 182px;
+
+    .config-mob-title {
+      margin: 0%;
+      padding: 0%;
+      display: flex;
+      align-items: center;
+
+      div {
+        margin-left: 2.7%;
+
+        h1 {
+          margin: 0%;
+          // padding-top: 10%;
+          font-size: 18px;
+          color: var(--toolbar-header);
+          font-family: "Roboto" !important;
+        }
+      }
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: center;
+
+      ion-card {
+        --background: var(--segment-left-container);
+        text-align: center;
+        max-height: 111px;
+        min-height: 81px;
+        margin: 0% 6%;
+        padding: 0%;
+        width: 111px;
+        box-shadow: none;
+        border-radius: 12px;
+
+        ion-card-header {
+          display: flex;
+          justify-content: center;
+          padding-top: 22px;
+
+          ion-img {
+            height: 42px;
+            width: 42px;
+          }
+        }
+
+        ion-card-content {
+          font-weight: 400;
+          font-size: 12px;
+          color: black;
+        }
+      }
+    }
+
+    //for mobile only
+    .active {
+      border-radius: 4px;
+      padding: 0px 4px;
+      border: 1.2px solid var(--ion-color-tertiary);
+      background-color: var(--ion-top-navbar-bghover);
+      color: var(--ion-color-primary-shade);
+      font-weight: 500;
+    }
+  }
+}
+
+// //Common activemenu header
+.active {
+  border-radius: 4px;
+  font-weight: 500;
+  border: var(--ion-top-navbar-border);
+  color: var(--ion-color-primary);
+}
+
+.active:hover {
+  background: var(--ion-top-navbar-bghover);
+}
+
+ion-button:hover {
+  padding: 0px;
+  border-radius: 4px;
+  background-color: var(--ion-top-navbar-bghover);
+}

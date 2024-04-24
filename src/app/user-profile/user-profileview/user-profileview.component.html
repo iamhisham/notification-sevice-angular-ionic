@@ -1,0 +1,423 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="header-container ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <ion-row>
+              <ion-col size-xs="1.4" offset-xs="0" size-md="1" offset-md="0" size-lg="1" offset-lg="0">
+                <ion-icon name="arrow-back" [routerLink]="['/user-profile']" class="back-icon"
+                  style="cursor: pointer;"></ion-icon>
+              </ion-col>
+              <ion-col size-xs="4.7" offset-xs="0" size-md="8" offset-md="0" size-lg="8" offset-lg="0">
+                <h1 style=" border: none;">User Profile & Preferences</h1>
+              </ion-col>
+              <ion-col size-xs="1" offset-xs="0" size-md="1" offset-md="0" size-lg="1" offset-lg="0">
+                <ion-buttons>
+                  <ion-button class="view-notification" routerLink='/user-profile/{{user.id}}/history' slot="end"
+                    routerDirection="root">
+                    <ion-label class="view-button " style="font-family:'roboto';font-weight: 400;">View
+                      Notification
+                    </ion-label>
+                  </ion-button>
+                </ion-buttons>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col class="ion-no-padding">
+        <div style="width:100%;">
+          <!-- left content -->
+          <div style="width: 275px; position:fixed" class="left-content ion-hide-lg-down">
+            <div>
+              <ion-list class="ion-no-margin ion-no-padding notification-side-title">
+                <ion-list-header class="ion-no-padding">User Details</ion-list-header>
+                <ion-note>You can view all user preferences in detail.</ion-note>
+              </ion-list>
+              <!--  Account -->
+              <div class="notification-button-container">
+                <ion-item button lines="none" (click)="scrollContent('account')">
+                  <ion-label class="ion-no-padding ion-no-margin" fill="clear">1. Account</ion-label>
+                </ion-item>
+                <!--  preference -->
+                <ion-item button lines="none" (click)="scrollContent('preference')">
+                  <ion-label class="ion-no-padding ion-no-margin" fill="clear">2. Preferences</ion-label>
+                </ion-item>
+                <ion-item button lines="none" (click)="scrollContent('Tag')">
+                  <ion-label class="ion-no-padding ion-no-margin" fill="clear">3. Tags</ion-label>
+                </ion-item>
+              </div>
+            </div>
+          </div>
+          <!-- center content -->
+          <div style="width:calc(100% - 275px);  float:right" class="centered-column">
+            <div class="main-wrapper">
+              <div class="background-color-container">
+                <ion-grid>
+                  <ion-row id="account">
+                    <ion-col size-md="6" size-lg="6">
+                      <h1>1. Account</h1>
+                    </ion-col>
+                    <ion-col size-md="5.8" size-lg="5.8" style="display:flex; justify-content: end ;">
+                      <ion-buttons>
+                        <!--  -->
+                        <ion-button (click)="save()" color="primary">
+                          <ion-label>Save</ion-label>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="content-wrapper">
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg="0" offsetXl="0">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">First Name</ion-label>
+                        <ion-input [(ngModel)]="user.firstName" name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Last Name</ion-label>
+                        <ion-input [(ngModel)]="user.lastName" name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Middle Name</ion-label>
+                        <ion-input [(ngModel)]="user.middleName" name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg="0" offsetXl="0">
+                      <ion-item fill="outline" class="dropdown">
+                        <ion-label position="floating">Gender</ion-label>
+                        <ion-select class="ion-no-padding" [interfaceOptions]="notifiService.customPopoverOptions"
+                          placeholder="-Select-" [(ngModel)]='user.gender' interface="popover">
+                          <ion-select-option value="">-Select-</ion-select-option>
+                          <ion-select-option value="MALE" class="mucustom">MALE</ion-select-option>
+                          <ion-select-option value="FEMALE" class="mucustom">FEMALE</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Date Of Birth</ion-label>
+                        <ion-input placeholder="MM/DD/YYYY" type="date" [(ngModel)]="user.dateOfBirth"
+                          name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Language</ion-label>
+                        <ion-input [(ngModel)]="user.language" name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg="0" offsetXl="0">
+                      <ion-item class="textbox read-only item-has-value" fill="outline">
+                        <ion-label position="floating">Role</ion-label>
+                        <ion-input [(ngModel)]="user.role" name="name" readonly="true"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item class="textbox read-only item-has-value" fill="outline">
+                        <ion-label position="floating">Data Source</ion-label>
+                        <ion-input [(ngModel)]="user.data_source" name="name" readonly="true"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item class="textbox read-only item-has-value" fill="outline">
+                        <ion-label position="floating">External Source Id</ion-label>
+                        <ion-input [(ngModel)]="user.external_source_id" name="name" readonly="true"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg="0" offsetXl="0">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Best Time To Contact (Start Time)</ion-label>
+                        <ion-input type="time" placeholder="HH:MM:SS" [(ngModel)]="user.bestTimeContactStartTime"
+                          name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md="0"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Best Time To Contact (End Time)</ion-label>
+                        <ion-input type="time" placeholder="HH:MM:SS" [(ngModel)]="user.bestTimeContactEndTime"
+                          name="date"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="12" size-sm="6" size-md="5.8" size-lg="3.8" size-xl="3.8" offset-md=".2"
+                      offsetLg=".2" offsetXl=".2">
+                      <ion-item fill="outline" class="textbox">
+                        <ion-label position="floating">Best time To Contact (Timezone)</ion-label>
+                        <ion-input [(ngModel)]="user.bestTimeContactTimezone" name="name"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+                  <!-- preferences -->
+                  <ion-row id="preference">
+                    <ion-col size-lg="12" size-md="12" size-sm="12" size-xl="12" size-xs="12">
+                      <h1 class="ion-padding-top">2. Preferences</h1>
+                    </ion-col>
+                    <ion-col size-lg="12" size-md="12" size-sm="12" size-xl="12" size-xs="12">
+                      <ion-row class="icon-wrapper-container">
+                        <ion-col size-xs="2.5" offset-xs=".5" size-md="2" offset-md="0" size-lg="2" size-xl="1.2"
+                          offset-md="0" offset-lg="0" offset-xl="0">
+                          <div (click)="selectedPrefer('EMAIL')" class="cursor-pointer" title="EMAIL"
+                            [ngClass]="{selectpreference: selectedPreference === 'EMAIL'}">
+                            <ion-icon name="mail-outline" class="pointer-none"></ion-icon>
+                          </div>
+                          <ion-badge class="first-badge">{{preferenceDetails.email}}</ion-badge>
+                        </ion-col>
+                        <ion-col style="margin-left: 4px;" size-xs="2.5" offset-xs=".5" size-md="2" size-lg="2"
+                          size-xl="1.2" offset-md="0" offset-lg="0" offset-xl="0">
+                          <div (click)="selectedPrefer('PHONE')" class="cursor-pointer" title="PHONE"
+                            [ngClass]="{selectpreference:  selectedPreference === 'PHONE'}">
+                            <ion-icon name="call-outline" class="pointer-none"></ion-icon>
+                          </div>
+                          <ion-badge class="second-badge">{{preferenceDetails.phone}}</ion-badge>
+                        </ion-col>
+                        <ion-col style="margin-left: 4px;" size-xs="2.5" offset-xs=".5" size-md="2" size-lg="2"
+                          size-xl="1.2" offset-md="0" offset-lg="0" offset-xl="0">
+                          <div (click)="selectedPrefer('PUSH')" class="cursor-pointer" title="WEB_PUSH"
+                            [ngClass]=" {selectpreference:  selectedPreference === 'PUSH' }">
+                            <ion-icon name="desktop-outline" class="pointer-none"></ion-icon>
+                          </div>
+                          <ion-badge class="third-badge">{{preferenceDetails.app}}</ion-badge>
+                        </ion-col>
+                        <ion-col style="margin-left: 4px;" size-xs="2.5" offset-xs=".5" size-md="2" size-lg="2"
+                          size-xl="1.2" offset-md="0" offset-lg="0" offset-xl="0">
+                          <div (click)="selectedPrefer('ADDRESS')" class="cursor-pointer" title="ADDRESS"
+                            [ngClass]=" {selectpreference:  selectedPreference === 'ADDRESS' }">
+                            <ion-icon name="location-outline" class="pointer-none"></ion-icon>
+                          </div>
+                          <ion-badge class="fourth-badge">{{preferenceDetails.address}}</ion-badge>
+                        </ion-col>
+                      </ion-row>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col size="12">
+                      <div>
+                        <div class="cursor-pointer backward-icon" *ngIf="sliderIndex != 0 ">
+                          <ion-icon [class.disabled]="isShow" name="chevron-back-outline"
+                            (click)="slidePrevious()"></ion-icon>
+                        </div>
+                        <ion-card>
+                          <ion-col size="12" style="display: flex;justify-content: end;">
+                            <ion-button *ngIf="(user[attrListDetails[selectedPreference]])?.length == 0"
+                              (click)="addSlider((user[attrListDetails[selectedPreference]] || []), true)"
+                              color="primary">
+                              <ion-label>+Add</ion-label>
+                            </ion-button>
+                          </ion-col>
+                          <p class="ion-padding-top" *ngIf="(user[attrListDetails[selectedPreference]])?.length == 0">No
+                            {{ selectedPreference | lowercase }} preference found !!</p>
+                          <swiper #swiper [config]="config">
+                            <ng-template swiperSlide
+                              *ngFor="let data of user[attrListDetails[selectedPreference]] || [];">
+                              <ion-row *ngIf="(user[attrListDetails[selectedPreference]])?.length != 0"
+                                style="margin-top: 10px; display: contents;">
+                                <ion-col class="btn-slider"
+                                  style="display: flex;justify-content: end;;margin-top: 15px;">
+                                  <ion-buttons>
+                                    <ion-row>
+                                      <ion-col
+                                        *ngIf="(!data.isActive && data.id && (user.role != 'ADMIN' || !data.is_primary_email) )"
+                                        size-xs="4" size="4">
+                                        <ion-button color="primary" (click)="confirmStatus(true, data,'active')">
+                                          <ion-label>Active</ion-label>
+                                        </ion-button>
+                                      </ion-col>
+                                      <ion-col
+                                        *ngIf="(data.isActive && data.id && (user.role != 'ADMIN' || !data.is_primary_email))"
+                                        size-xs="4" size="4">
+                                        <ion-button color="primary" (click)="confirmStatus(false, data,'deactive')">
+                                          <ion-label>Deactive</ion-label>
+                                        </ion-button>
+                                      </ion-col>
+                                      <ion-col *ngIf="!data.id || isShow" size-xs="4" size="4"
+                                        style="display: contents;">
+                                        <ion-button color="primary" (click)="cancelSlider()">
+                                          <ion-label>Cancel</ion-label>
+                                        </ion-button>
+                                      </ion-col>
+                                      <ion-col *ngIf="!data.isActive==false || isShow" size-xs="4" size="4"
+                                        style="display: contents;">
+                                        <ion-button color="primary" (click)="savePreference(data, data.id==undefined)">
+                                          <ion-label>Save</ion-label>
+                                        </ion-button>
+                                      </ion-col>
+                                      <ion-col *ngIf="data.id" size-xs="4" size="4">
+                                        <ion-button color="primary" (click)="addSlider(data, true)">
+                                          <ion-label>+Add</ion-label>
+                                        </ion-button>
+                                      </ion-col>
+                                    </ion-row>
+                                  </ion-buttons>
+                                </ion-col>
+                              </ion-row>
+                              <ion-row class="content-wrapper " size="12" class="ion-padding-top">
+                                <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="4" size-xl="4"
+                                  *ngFor="let attrData of fieldDetails[selectedPreference]"
+                                  [ngClass]="{'ext_width' : attrData.isExt == true  , 'number_width' : attrData.isPhone == true }">
+                                  <ion-row>
+                                    <ion-col class="ion-padding-top slider">
+                                      <ion-item style=" padding-bottom: 1px;padding:0px 7px;"
+                                        [ngClass]="{'read-only' : attrData.isReadOnly == true && data.id  , 'dropdown-stacked' : attrData.type === 'boolean' ||attrData.type === 'enum'}"
+                                        fill="outline" class="textbox">
+                                        <ion-label style="opacity: 1;"
+                                          position="floating">{{attrData.name}}{{user[attrListDetails[selectedPreference]]
+                                          .id}}</ion-label>
+                                        <ion-input
+                                          [disabled]="((data.id && data.isActive === false) || (attrData.name === 'Email' && data.id !== undefined && user.role === 'ADMIN' && data.is_primary_email ==true) )"
+                                          *ngIf="attrData.type === 'text'"
+                                          [readonly]="(attrData.isReadOnly  && data.id)"
+                                          [(ngModel)]="data[attrData.attr]" name="name"></ion-input>
+                                        <ion-input [disabled]="data.id && data.isActive==false "
+                                          *ngIf="attrData.type === 'phone'" inputmode="numeric"
+                                          (keypress)="numericOnly($event)" [readonly]="attrData.isReadOnly  && data.id"
+                                          [(ngModel)]="data[attrData.attr]" name="name"></ion-input>
+                                        <ion-select *ngIf="attrData.type === 'boolean'" class="ion-no-padding"
+                                          [interfaceOptions]="notifiService.customPopoverOptions"
+                                          [disabled]="(data.isActive==false || ['isActive', 'is_primary_email'].indexOf(attrData.attr) != -1 || (attrData.isDisable && data.id))"
+                                          [(ngModel)]="data[attrData.attr]" placeholder="-Select-" interface="popover">
+                                          <ion-select-option value="">-Select-</ion-select-option>
+                                          <ion-select-option [value]="true" class="mucustom">YES</ion-select-option>
+                                          <ion-select-option [value]="false" class="mucustom">NO</ion-select-option>
+                                        </ion-select>
+                                        <ion-select *ngIf="attrData.type === 'enum'" class="ion-no-padding"
+                                          [interfaceOptions]="notifiService.customPopoverOptions"
+                                          [(ngModel)]="data[attrData.attr]"
+                                          [disabled]="data.isActive==false || attrData.isDisable && data.id"
+                                          placeholder="-Select-" interface="popover">
+                                          <ion-select-option value="">-Select-</ion-select-option>
+                                          <ion-select-option [value]="option.value"
+                                            *ngFor="let option of attrData.options"
+                                            class="mucustom">{{option.name}}</ion-select-option>
+                                        </ion-select>
+                                        <ion-input type="time" [disabled]="data.isActive==false && data.id"
+                                          *ngIf="attrData.type === 'time'" placeholder="HH:MM:SS"
+                                          [(ngModel)]="data[attrData.attr]"></ion-input>
+                                      </ion-item>
+                                    </ion-col>
+                                  </ion-row>
+                                </ion-col>
+                              </ion-row>
+                            </ng-template>
+                          </swiper>
+                        </ion-card>
+                        <div class="cursor-pointer forward-icon"
+                          *ngIf="((user[attrListDetails[selectedPreference]] || []).length - 1 != sliderIndex) && (user[attrListDetails[selectedPreference]])?.length != 0">
+                          <ion-icon [class.disabled]="isShow" name="chevron-forward-outline"
+                            (click)="slideNext()"></ion-icon>
+                        </div>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                  <!--Tag-->
+                  <ion-row class="ion-margin-top" id="Tag">
+                    <ion-col class="ion-margin-top" size-xs="12" size-sm="12" size-md="12" size-lg="12">
+                      <h1>3. Tags</h1>
+                    </ion-col>
+                    <ion-col class="ion-margin-top" size-md="12" size-lg="12">
+                      <ion-card>
+                        <ion-row>
+                          <ion-col size="12">
+                            <ion-buttons style="margin-top: 10px;
+                            margin-bottom: -12px;display: flex; justify-content: end">
+                              <ion-button color="primary" style="margin-right: 10px;" (click)="saveTags()">
+                                <ion-label>Save</ion-label>
+                              </ion-button>
+                            </ion-buttons>
+                          </ion-col>
+                        </ion-row>
+                        <ion-row class="ion-margin-top">
+                          <ion-col class="ion-padding-top" style="padding:5px 10px" size-xs="12" size-sm="12"
+                            size-md="6" size-lg="4" size-xl="4" *ngFor="let tags of attributes">
+                            <ion-row>
+                              <ion-col class="ion-padding-top">
+                                <ion-item *ngIf="tags.type == 'BOOLEAN' || tags.type == 'TEXT' || tags.type == 'NUMBER'"
+                                  [ngClass]="{ 'dropdown-stacked' : tags.type == 'BOOLEAN'}" fill="outline"
+                                  class="textbox" lines="none">
+                                  <ion-label position="floating">{{tags.name}}</ion-label>
+                                  <ion-input type="text" [(ngModel)]="tags.value"
+                                    *ngIf="tags.type == 'TEXT'"></ion-input>
+                                  <ion-input type="number" [(ngModel)]="tags.value"
+                                    *ngIf="tags.type == 'NUMBER'"></ion-input>
+                                  <ion-select *ngIf="tags.type == 'BOOLEAN'" [(ngModel)]="tags.value"
+                                    class="ion-no-padding" [interfaceOptions]="notifiService.customPopoverOptions"
+                                    placeholder="-Select-" interface="popover">
+                                    <ion-select-option value="">-Select-</ion-select-option>
+                                    <ion-select-option [value]="true">YES</ion-select-option>
+                                    <ion-select-option [value]="false">NO</ion-select-option>
+                                  </ion-select>
+                                </ion-item>
+                                <ion-item *ngIf=" tags.type == 'DATE_TIME'" fill=" outline" class="textbox "
+                                  style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                                  lines="none">
+                                  <ion-label style="position: absolute;top: -10px;">{{tags.name}}</ion-label>
+                                  <mat-form-field fill="outline"
+                                    style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                    <input class="textbox-stacked" [(ngModel)]="tags.value" style="border:none;"
+                                      matInput [ngxMatDatetimePicker]="picker" placeholder="MM/DD/YYYY HH:MM"
+                                      [disabled]="false">
+                                    <mat-datepicker-toggle style="color:var(--ion-color-primary)" matSuffix
+                                      [for]="$any(picker)" (focus)="picker.open()"></mat-datepicker-toggle>
+                                    <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false"
+                                      [controls]="['date']" [stepHour]="1" [stepMinute]="1" [stepSecond]="1"
+                                      [touchUi]="false" size="cover" [enableMeridian]="true" [disableMinute]="false"
+                                      [hideTime]="false">
+                                      <ng-template>
+                                        <span>OK</span>
+                                      </ng-template>
+                                    </ngx-mat-datetime-picker>
+                                  </mat-form-field>
+                                </ion-item>
+                                <ion-item *ngIf="tags.type == 'DATE'" fill=" outline" class="textbox test"
+                                  style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                                  lines="none">
+                                  <ion-label style="position: absolute;top: -10px;">{{tags.name}}</ion-label>
+                                  <!-- <mat-form-field appearance="fill"
+                                    style="height: 90px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                    <input (dateChange)="formatDate(tags.value)" matInput [matDatepicker]="datepicker"
+                                      class="textbox-stacked" [(ngModel)]="tags.value" style="border:none;"
+                                      placeholder="MM/DD/YYYY" [disabled]="false">
+                                    <mat-datepicker-toggle style="color:var(--ion-color-primary); --padding: 11px 0;"
+                                      matIconSuffix [for]="$any(datepicker)"
+                                      (focus)="datepicker.open()"></mat-datepicker-toggle>
+                                    <mat-datepicker style="padding: 11px 0px ;" #datepicker></mat-datepicker>
+                                  </mat-form-field> -->
+                                  <ion-input type="date" [(ngModel)]="tags.value" style="margin-top: 20px;"></ion-input>
+                                </ion-item>
+                              </ion-col>
+                            </ion-row>
+                          </ion-col>
+                        </ion-row>
+                      </ion-card>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,16 @@
+<mat-form-field class="mat-form-container">
+  <mat-select [multiple]="true" [placeholder]="placeholder" #singleSelect [(ngModel)]="selectedValue"
+    (selectionChange)="onSelectionChange()" (opened)="updateSelectAll()">
+    <mat-option>
+      <ngx-mat-select-search placeholderLabel="Search" [(ngModel)]="searchData"
+        noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+    </mat-option>
+    <div *ngIf="showSelectAll" class="options-container highlight-selectall">
+      <mat-checkbox (click)="selectedAllValue()" [indeterminate]="isIntermediate" [checked]="isSelectAll">
+        Select All</mat-checkbox>
+    </div>
+    <mat-option class="options-container" *ngFor="let item of getFilterDropdownList()" [value]="item[optionValue]">
+      {{ item[optionDisplayName] }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

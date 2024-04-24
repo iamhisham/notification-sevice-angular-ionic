@@ -1,0 +1,606 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ng-template #userSegmentSelectCard>
+  <ion-grid class="ion-no-padding-top">
+    <ion-row *ngFor="let data of userSegmentDetails;" style="margin: 5px;" (click)="addAndCondition(data)">
+      <ion-col size-xs="3" size-sm="4" size-md="4" size-lg="3" size-xl="3"
+        class="template-left-container cursor-pointer">
+        <div>
+          <ion-icon name="phone-portrait-outline"></ion-icon>
+          <ion-label class="ion-padding-start ion-hide-md-down">{{data.name}}</ion-label>
+        </div>
+      </ion-col>
+      <ion-col size-xs="6" size-sm="4" size-md="6" size-lg="8" size-xl="8"
+        class="template-right-container cursor-pointer">
+        <div>
+          <ion-label class="ion-padding-start">{{data.description}}</ion-label>
+        </div>
+      </ion-col>
+      <ion-col size-xs="3" size-sm="4" size-md="2" size-lg="1" size-xl="1"
+        class="template-right-container cursor-pointer">
+        <div style="text-align: center">
+          <ion-icon id="add-button" name="add-outline"></ion-icon>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-template>
+
+<ion-content>
+  <ion-header class="ion-no-border" style="border-bottom:1px solid var(--common-text-white);">
+    <ion-toolbar>
+      <ion-grid class="ion-no-padding">
+        <ion-row class="row-wrapper">
+          <ion-col class="title-column">
+            <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+              <ion-icon name="arrow-back" class="back-icon" style="cursor: pointer;"
+                routerLink="/configuration/user-segment"></ion-icon>
+              <h1>Segment Details</h1>
+              <ion-buttons>
+              </ion-buttons>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- top container  -->
+
+  <div>
+    <ion-card class="card-content-wrapper">
+      <!-- top type field -->
+      <div class="text-field">
+        <ion-grid>
+          <ion-row>
+            <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+              <form [formGroup]="myForm" (ngSubmit)="onSave()" autocomplete="on">
+                <ion-item fill="outline" class="textbox">
+                  <ion-label position="floating">Name<span class="mandatory-field">*</span></ion-label>
+                  <ion-input class="name-field" [ngModelOptions]="{standalone:true}" formControlName="name" type="text"
+                    [(ngModel)]="userSegment.name"></ion-input>
+                </ion-item>
+                <div *ngIf="myForm.get('name')?.invalid &&(myForm.get('name')?.dirty || myForm.get('name')?.touched)">
+                  <div *ngIf="myForm.get('name')?.hasError('required') || myForm.get('name')?.errors?.['whitespace']">
+                    <small class=" form-error-message">This is a required field</small>
+                  </div>
+                </div>
+                <!-- <ng-container
+                  *ngIf="myForm.get('name')?.hasError('required') && (myForm.get('name')?.touched || myForm.get('name')?.dirty)">
+                  <small class=" form-error-message">This is a required field</small>
+                </ng-container> -->
+              </form>
+            </ion-col>
+            <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="6">
+              <ion-item fill="outline" class="textbox">
+                <ion-label position="floating">Description</ion-label>
+                <ion-input class="description-field" type="text" [(ngModel)]="userSegment.description"
+                  name="description"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <div class="main-border-container" *ngIf="userSegment.rules.length > 0">
+        <!-- header rules editor -->
+        <div class="rules-editor">
+          <div class="rules-editor-heading">
+            <ion-row>
+              <ion-col style="display: flex; flex-direction: row;">
+                <div class="rule-editor">
+                  <h3 class="ion-no-margin">Rules Editor</h3>
+                </div>
+                <div class="user-count-segment" *ngIf="userCount != -1">
+                  <span *ngIf="userCount != null">{{userCount}}</span>
+                  <ion-label *ngIf="userCount != null"> users for this filter &nbsp;</ion-label>
+                  <ion-label *ngIf="userCount > 0" class="cursor-pointer left-header-title view-user-btn" style=" font-weight: 400;
+                    text-decoration: underline #1b6dff;
+                    color: #1b6dff;" (click)="openSegmentViewPopup()">View Users</ion-label>
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+        <ion-grid class="main-container customScroller">
+          <ion-row style="margin-top: 18px; margin-left: 1%"
+            *ngFor="let andRuleList of userSegment.rules; let parentIndex = index; let isLastOrRow = last">
+            <ion-col class="ion-no-padding" size="12"
+              *ngFor="let andRule of andRuleList; let currentIndex = index; let isFirstAndRow = first">
+              <!-- small AND box -->
+              <div *ngIf="!isFirstAndRow">
+                <ion-label class="and-btn-box">AND</ion-label>
+                <div style="border-top: 1px solid lightgray"></div>
+              </div>
+
+              <ion-row>
+                <ion-col size-xs="12" size-sm="3" size-md="3" size-lg="3" size-xl="3" class="left-container">
+                  <div>
+                    <ion-icon style="padding-top: 2px;" name="phone-portrait-outline"></ion-icon>
+                    <ion-label class="ion-padding-start">{{andRule.name}}</ion-label>
+                  </div>
+                </ion-col>
+                <ion-col size-xs="11" size-sm="8" size-md="8" size-lg="8" size-xl="8" class="right-container">
+                  <ion-row *ngIf="andRule.type == 'all_users'">
+                    <ion-col size-xs="12" size="4" style="padding: 10px 0px 0px 0px">
+                      <ion-label>All Users</ion-label>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row *ngIf="andRule.type == 'number'">
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                          <ion-select-option value="=">Equal to</ion-select-option>
+                          <ion-select-option value="<>">Not Equal to</ion-select-option>
+                          <ion-select-option value="<">Less than</ion-select-option>
+                          <ion-select-option value="<=">Less than or Equal to</ion-select-option>
+                          <ion-select-option value=">">Greater than</ion-select-option>
+                          <ion-select-option value=">=">Greater than or Equal to</ion-select-option>
+                          <ion-select-option value="BETWEEN">Between</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+
+                    </ion-col>
+                    <ion-col size-xs="6" size="4" *ngIf="andRule.cond != 'BETWEEN'">
+                      <form [formGroup]="myForm" (ngSubmit)="onSave()" autocomplete="on">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" inputmode="numeric" [(ngModel)]="andRule.value"
+                            [ngModelOptions]="{standalone: true}" (ionBlur)="getUserCountByRule()" formControlName="age"
+                            min="0"></ion-input>
+                        </ion-item>
+                        <ng-container *ngIf="myForm.get('age')?.touched && myForm.get('age')?.invalid">
+                          <small class="form-error-message">This value must be positive</small>
+                        </ng-container>
+                      </form>
+                    </ion-col>
+                    <!-- start value -->
+                    <ion-col size-xs="6" size="4" *ngIf="andRule.cond == 'BETWEEN'">
+                      <form [formGroup]="myForm" (ngSubmit)="onSave()" autocomplete="on">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" inputmode="numeric" placeholder="Start value"
+                            [(ngModel)]="andRule.start_value" (ionBlur)="getUserCountByRule()"
+                            formControlName="ageStart" min="0"></ion-input>
+                        </ion-item>
+                        <ng-container *ngIf="myForm.get('ageStart')?.touched && myForm.get('ageStart')?.invalid">
+                          <small class="form-error-message">This value must be positive</small>
+                        </ng-container>
+                      </form>
+                    </ion-col>
+                    <!-- end value -->
+                    <ion-col size-xs="6" size="4" *ngIf="andRule.cond == 'BETWEEN'">
+                      <form [formGroup]="myForm" (ngSubmit)="onSave()" autocomplete="on">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" inputmode="numeric" placeholder="End value"
+                            [(ngModel)]="andRule.end_value" (ionBlur)="getUserCountByRule()" formControlName="ageEnd"
+                            min="0"></ion-input>
+                        </ion-item>
+                        <ng-container *ngIf="myForm.get('ageEnd')?.touched && myForm.get('ageEnd')?.invalid">
+                          <small class="form-error-message">This value must be positive</small>
+                        </ng-container>
+                      </form>
+                    </ion-col>
+                    <!--  -->
+                  </ion-row>
+
+                  <ion-row *ngIf="andRule.type == 'enum'">
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                          <ion-select-option value="=">is</ion-select-option>
+                          <ion-select-option value="<>">is not</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.value" (ionChange)="getUserCountByRule()">
+                          <ion-select-option *ngFor="let data of possibleEnumValue[andRule.attr]"
+                            value="{{data.value}}">{{data.name}}</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+
+                  <ion-row *ngIf="andRule.type == 'text' && andRule.name != 'Language'">
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                          <ion-select-option value="=">is</ion-select-option>
+                          <ion-select-option value="<>">is not</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="textbox-stacked item-height">
+                        <ion-input class="ion-no-padding" (ionBlur)="getUserCountByRule()" type="text"
+                          [(ngModel)]="andRule.value"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+
+                  <!-- only for language  -->
+                  <ion-row *ngIf="andRule.type == 'text' && andRule.name == 'Language' ">
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                          <ion-select-option value="=">is</ion-select-option>
+                          <ion-select-option value="<>">is not</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-input type="text" class="ion-no-padding" placeholder="--Language--"
+                          [(ngModel)]="andRule.value" (ionChange)="getUserCountByRule()"></ion-input>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
+
+                  <!--  -->
+                  <ion-row *ngIf="andRule.type == 'tag'">
+                    <ion-col size-xs="6" size="4">
+                      <ion-item class="dropdown-stacked item-height">
+                        <!-- <ion-input class="ion-no-padding" type="text" [(ngModel)]="andRule.field" -->
+                        <!-- (ionBlur)="getUserCountByRule()"></ion-input> -->
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                          [(ngModel)]="andRule.field" (ionBlur)="getUserCountByRule()"
+                          (ionChange)="updateFieldType(andRule)">
+                          <ion-select-option *ngFor="let tag of listOfTags">{{tag.name}}</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="6" size="4">
+                      <div *ngIf="andRule.field_type == 'TEXT' || andRule.field_type == 'BOOLEAN'">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                            [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                            <ion-select-option value="=">is</ion-select-option>
+                            <ion-select-option value="<>">is not</ion-select-option>
+                            <ion-select-option value="EXISTS">Exists</ion-select-option>
+                          </ion-select>
+                        </ion-item>
+                      </div>
+                      <div
+                        *ngIf="andRule.field_type == 'NUMBER' || andRule.field_type =='DATE' || andRule.field_type == 'DATE_TIME' ">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                            [(ngModel)]="andRule.cond" (ionChange)="getUserCountByRule()">
+                            <ion-select-option value="=">Equal to</ion-select-option>
+                            <ion-select-option value="<>">Not Equal to</ion-select-option>
+                            <ion-select-option value="<">Less than</ion-select-option>
+                            <ion-select-option value="<=">Less than or Equal to</ion-select-option>
+                            <ion-select-option value=">">Greater than</ion-select-option>
+                            <ion-select-option value=">=">Greater than or Equal to</ion-select-option>
+                            <ion-select-option value="BETWEEN">Between</ion-select-option>
+                            <ion-select-option value="EXISTS">Exists</ion-select-option>
+                          </ion-select>
+                        </ion-item>
+                      </div>
+                    </ion-col>
+
+                    <ion-col size-xs="6" size="4" *ngIf="andRule.cond != 'EXISTS'">
+                      <ion-item *ngIf="andRule.field_type == 'TEXT'" class="dropdown-stacked item-height">
+                        <ion-input class="ion-no-padding" type="text" [(ngModel)]="andRule.value"
+                          (ionBlur)="getUserCountByRule()"></ion-input>
+                      </ion-item>
+
+                      <div *ngIf="andRule.field_type == 'BOOLEAN'">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-select class="ion-no-padding" interface="popover" placeholder="--Select--"
+                            [(ngModel)]="andRule.value" (ionChange)="getUserCountByRule()">
+                            <ion-select-option [value]="true">True</ion-select-option>
+                            <ion-select-option [value]="false">False</ion-select-option>
+                          </ion-select>
+                        </ion-item>
+                      </div>
+                      <!--Start number-->
+                      <div *ngIf="andRule.field_type == 'NUMBER' && andRule.cond != 'BETWEEN'">
+                        <ion-item class="dropdown-stacked item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" [(ngModel)]="andRule.value"
+                            (ionBlur)="getUserCountByRule()"></ion-input>
+                        </ion-item>
+                      </div>
+
+                      <div *ngIf="andRule.field_type == 'NUMBER'">
+                        <ion-row>
+                          <!-- start value -->
+                          <ion-col size-xs="6" size="6" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item class="dropdown-stacked item-height ion-no-padding start-val">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-input class="tag-between" type="number" placeholder="Start value"
+                                [(ngModel)]="andRule.start_value"></ion-input>
+                            </ion-item>
+                          </ion-col>
+                          <!-- end value -->
+                          <ion-col size-xs="6" size="6" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item class="dropdown-stacked item-height ion-no-padding end-val">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-input class="tag-between" type="number" placeholder="End value"
+                                [(ngModel)]="andRule.end_value" (ionBlur)="getUserCountByRule()"></ion-input>
+                            </ion-item>
+                          </ion-col>
+                          <!--  -->
+                        </ion-row>
+                      </div>
+                      <!--end number-->
+
+                      <!--Start Date-->
+                      <div *ngIf="andRule.field_type == 'DATE' && andRule.cond != 'BETWEEN'">
+                        <ion-item fill=" outline" class="textbox test"
+                          style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                          lines="none">
+                          <mat-form-field appearance="fill"
+                            style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                            <input matInput [matDatepicker]="datepicker" class="textbox-stacked"
+                              [(ngModel)]="andRule.value" style="border:none;" placeholder="MM/DD/YYYY"
+                              [disabled]="false" (dateInput)="formatDate(andRule.value)"
+                              (dateChange)="getUserCountByRule()"> <mat-datepicker-toggle
+                              style="color:var(--ion-color-primary); padding: 11px 0;" matIconSuffix
+                              [for]="$any(datepicker)" (focus)="datepicker.open()"></mat-datepicker-toggle>
+                            <mat-datepicker style="padding: 11px 0px ;" #datepicker></mat-datepicker>
+                          </mat-form-field>
+                        </ion-item>
+                      </div>
+
+                      <div *ngIf="andRule.field_type == 'DATE'">
+                        <ion-row>
+                          <!-- start value -->
+                          <ion-col size="12" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item fill=" outline" class="textbox test ion-no-padding tag-between-start-val"
+                              style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                              lines="none">
+                              <mat-form-field appearance="fill"
+                                style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                <input matInput [matDatepicker]="datepicker" class="textbox-stacked tag-between"
+                                  [(ngModel)]="andRule.start_value" style="border:none; padding-left: 20px;"
+                                  placeholder="MM/DD/YYYY" [disabled]="false"
+                                  (dateInput)="formatDate(andRule.start_value)">
+                                <mat-datepicker-toggle style="color:var(--ion-color-primary); padding: 11px 0;"
+                                  matIconSuffix [for]="$any(datepicker)"
+                                  (focus)="datepicker.open()"></mat-datepicker-toggle>
+                                <mat-datepicker style="padding: 11px 0px ;" #datepicker></mat-datepicker>
+                              </mat-form-field>
+                            </ion-item>
+                          </ion-col>
+                          <!-- end value -->
+                          <ion-col size="12" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item fill=" outline" class="textbox test ion-no-padding tag-between-end-val"
+                              style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                              lines="none">
+                              <mat-form-field appearance="fill"
+                                style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                <input matInput [matDatepicker]="datepicker" class="textbox-stacked tag-between"
+                                  [(ngModel)]="andRule.end_value" style="border:none; padding-left: 20px;"
+                                  placeholder="MM/DD/YYYY" [disabled]="false"
+                                  (dateInput)="formatDate(andRule.end_value)" (dateChange)="getUserCountByRule()">
+                                <mat-datepicker-toggle style="color:var(--ion-color-primary); padding: 11px 0;"
+                                  matIconSuffix [for]="$any(datepicker)"
+                                  (focus)="datepicker.open()"></mat-datepicker-toggle>
+                                <mat-datepicker style="padding: 11px 0px ;" #datepicker></mat-datepicker>
+                              </mat-form-field>
+                            </ion-item>
+                          </ion-col>
+                          <!--  -->
+                        </ion-row>
+                      </div>
+                      <!--end Date-->
+
+                      <!--Start Date Time-->
+                      <div *ngIf="andRule.field_type == 'DATE_TIME' && andRule.cond != 'BETWEEN'">
+                        <ion-item fill=" outline" class="textbox "
+                          style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px; "
+                          lines="none">
+                          <mat-form-field fill="outline"
+                            style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                            <input class="textbox-stacked" [(ngModel)]="andRule.value" style="border:none;" matInput
+                              [ngxMatDatetimePicker]="picker" placeholder="MM/DD/YYYY HH:MM" [disabled]="false"
+                              (dateChange)="getUserCountByRule()">
+                            <mat-datepicker-toggle style="color:var(--ion-color-primary)" matSuffix [for]="$any(picker)"
+                              (focus)="picker.open()"></mat-datepicker-toggle> <ngx-mat-datetime-picker #picker
+                              [showSpinners]="true" [showSeconds]="false" [controls]="['date']" [stepHour]="1"
+                              [stepMinute]="1" [stepSecond]="1" [touchUi]="false" size="cover" [enableMeridian]="true"
+                              [disableMinute]="false" [hideTime]="false">
+                              <ng-template> <span>OK</span> </ng-template>
+                            </ngx-mat-datetime-picker>
+                          </mat-form-field>
+                        </ion-item>
+                      </div>
+
+                      <div *ngIf="andRule.field_type == 'DATE_TIME'">
+                        <ion-row>
+                          <!-- start value -->
+                          <ion-col size="12" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item fill=" outline" class="textbox tag-between-start-val "
+                              style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px;"
+                              lines="none">
+                              <mat-form-field fill="outline"
+                                style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                <input class="textbox-stacked" [(ngModel)]="andRule.start_value" style="border:none;"
+                                  matInput [ngxMatDatetimePicker]="picker" placeholder="MM/DD/YYYY HH:MM"
+                                  (dateInput)="formatDate(andRule.start_value)" [disabled]="false">
+                                <mat-datepicker-toggle style="color:var(--ion-color-primary)" matSuffix
+                                  [for]="$any(picker)" (focus)="picker.open()"></mat-datepicker-toggle>
+                                <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false"
+                                  [controls]="['date']" [stepHour]="1" [stepMinute]="1" [stepSecond]="1"
+                                  [touchUi]="false" size="cover" [enableMeridian]="true" [disableMinute]="false"
+                                  [hideTime]="false">
+                                  <ng-template> <span>OK</span> </ng-template>
+                                </ngx-mat-datetime-picker>
+                              </mat-form-field>
+                            </ion-item>
+                          </ion-col>
+                          <!-- end value -->
+                          <ion-col size="12" *ngIf="andRule.cond == 'BETWEEN'" class="ion-no-padding">
+                            <ion-item fill=" outline" class="textbox tag-between-end-val"
+                              style="border: 1px solid var(--ion-color-border); border-radius: 5px; overflow: initial; --border-radius: 5px;"
+                              lines="none">
+                              <mat-form-field fill="outline"
+                                style="height: 70px; width: -webkit-fill-available;position: absolute;top: -5px;">
+                                <input class="textbox-stacked" [(ngModel)]="andRule.end_value" style="border:none;"
+                                  matInput [ngxMatDatetimePicker]="picker" placeholder="MM/DD/YYYY HH:MM"
+                                  [disabled]="false" (dateInput)="formatDate(andRule.end_value)"
+                                  (dateChange)="getUserCountByRule()">
+                                <mat-datepicker-toggle style="color:var(--ion-color-primary)" matSuffix
+                                  [for]="$any(picker)" (focus)="picker.open()"></mat-datepicker-toggle>
+                                <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false"
+                                  [controls]="['date']" [stepHour]="1" [stepMinute]="1" [stepSecond]="1"
+                                  [touchUi]="false" size="cover" [enableMeridian]="true" [disableMinute]="false"
+                                  [hideTime]="false">
+                                  <ng-template> <span>OK</span> </ng-template>
+                                </ngx-mat-datetime-picker>
+                              </mat-form-field>
+                            </ion-item>
+                          </ion-col>
+                          <!--  -->
+                        </ion-row>
+                      </div>
+                      <!--end Date Time-->
+                      <!-- <ion-label position="stacked"></ion-label>
+                          <ion-select class="ion-no-padding" interface="popover" placeholder="--select--" [(ngModel)]="andRule.value"
+                          (ionBlur)="getUserCountByRule()">
+                          <ion-select-option *ngFor="let tag of listOfTags"> {{tag.description}} </ion-select-option>
+                        </ion-select> -->
+
+                    </ion-col>
+                  </ion-row>
+
+                  <!-- location (** not for now **) -->
+                  <!-- <ion-row *ngIf="andRule.type == 'location'">
+                    <ion-row>
+                      <ion-col size="4.7" class="content-title">
+                        <ion-label>is within</ion-label>
+                      </ion-col>
+                      <ion-col size="4">
+                        <ion-item class="item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" placeholder="radius" [(ngModel)]="andRule.range"></ion-input>
+                        </ion-item>
+                      </ion-col>
+                      <ion-col size="" class="content-title">
+                        <ion-label>meters of</ion-label>
+                      </ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                      <ion-col size="3" class="content-title">
+                        <ion-label>latitude</ion-label>
+                      </ion-col>
+                      <ion-col size="2.4">
+                        <ion-item class="item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" placeholder="latitude" [(ngModel)]="andRule.latitude"></ion-input>
+                        </ion-item>
+                      </ion-col>
+                      <ion-col size="2.4" style="text-align:left" class="content-title">
+                        <ion-label style="margin-left: 14px;">longitude</ion-label>
+                      </ion-col>
+                      <ion-col size="2.6">
+                        <ion-item class="item-height">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-input type="number" placeholder="longtitude" [(ngModel)]="andRule.longitude"></ion-input>
+                        </ion-item>
+                      </ion-col>
+                    </ion-row>
+
+                  </ion-row> -->
+
+                </ion-col>
+                <ion-col size-xs="1" size-sm="1" size-md="1" size-lg="1" size-xl="1" class="right-container close-mark">
+                  <ion-icon class="close-btn cursor-pointer" name="close-outline"
+                    (click)="removeAndCondition(parentIndex, currentIndex)"></ion-icon>
+                </ion-col>
+              </ion-row>
+
+            </ion-col>
+            <!-- add fltr btn -->
+            <ion-col size="12" class="ion-no-padding" *ngIf="showAddFilterIndex != parentIndex">
+              <ion-grid style="line-height: 35px;">
+                <!-- add filter btn -->
+                <ion-row style="padding-top: 10px">
+                  <ion-col size-xs="5" size-sm="5" size-md="4" size-lg="3" size-xl="3" class="ion-no-padding">
+                    <div (click)="addFilter(parentIndex)" class="cursor-pointer" style="padding-left:26px">
+                      <ion-icon name="add-circle"
+                        class="addFiltr-addOr-btns ion-padding-end ion-hide-md-down"></ion-icon>
+                      <ion-label class="addFiltr-addOr-btns">Add Filter</ion-label>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-col>
+
+            <!-- card container = after add filer / add OR button click -->
+            <ion-card class="card-container ion-no-margin" *ngIf="showAddFilterIndex == parentIndex">
+              <ion-row>
+                <ion-col size="11" class="ion-no-padding">
+                  <ion-item lines="none">
+                    <ion-label *ngIf="addFltr">And Filter</ion-label>
+                    <ion-label *ngIf="orFltr">Or Filter</ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="1" class="ion-no-padding">
+                  <ion-item lines="none" (click)="removeCardContainer(parentIndex)">
+                    <ion-icon name="close-outline" class="close-btn cursor-pointer"></ion-icon>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ng-container *ngTemplateOutlet="userSegmentSelectCard"></ng-container>
+            </ion-card>
+
+            <!-- OR middle line -->
+            <ion-col size="12" class="Or-Btn" *ngIf="!isLastOrRow">
+              <ion-label>OR</ion-label>
+              <div class="line"></div>
+            </ion-col>
+
+          </ion-row>
+          <!-- add or btn -->
+          <ion-row *ngIf="userSegment.rules.length > 0 && showAddFilterIndex == -1"
+            style="margin-left: 1%; line-height: 25px;">
+            <ion-col size-xs="5" size-sm="5" size-md="4" size-lg="3" size-xl="3">
+              <div (click)="addOrCond()" class="cursor-pointer" style="padding-left:26px">
+                <ion-icon name="add-circle" class="addFiltr-addOr-btns ion-padding-end ion-hide-md-down"></ion-icon>
+                <ion-label class="addFiltr-addOr-btns">Add Or</ion-label>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- inital view list and add filer / add or button -->
+      <div class="initial-view-container">
+        <div class="card-container" *ngIf="userSegment.rules.length == 0 && showInitialView">
+          <ng-container *ngTemplateOutlet="userSegmentSelectCard"></ng-container>
+        </div>
+      </div>
+    </ion-card>
+  </div>
+
+  <!-- save and cancel button -->
+  <ion-buttons class="ion-margin-start ion-margin-vertical">
+    <ion-button color="primary m-r-10" (click)="onSave()">
+      <ion-label>Save</ion-label>
+    </ion-button>
+    <ion-button color="secondary m-l-10" (click)="onCancel()">
+      <ion-label>Cancel</ion-label>
+    </ion-button>
+  </ion-buttons>
+
+</ion-content>

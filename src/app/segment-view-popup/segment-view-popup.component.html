@@ -1,0 +1,17 @@
+<div class="modal-popup">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <h3 style="margin-top: 0; font-size: 18px;">Users : {{ userName }}</h3>
+      </ion-col>
+      <ion-col size="6">
+        <ion-icon name="close-outline" title="Close" class="closeicon test " (click)="cancel()"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <app-data-table #user_profile_grid [tableDetails]="userProfileTableDetails"></app-data-table>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

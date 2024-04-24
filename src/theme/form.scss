@@ -1,0 +1,386 @@
+/* Text area Css Start */
+.textarea {
+  font-size: 14px;
+  color: var(--grid-content-txt);
+  --border-color: var(--ion-color-border);
+  font-family: "roboto" !important;
+  font-style: normal;
+
+  .label-floating {
+    -webkit-transform: translateY(12%) !important;
+    transform: translateY(12px) !important;
+  }
+
+  &.item-has-focus {
+    --show-full-highlight: 0.65;
+    --highlight-background: var(--ion-color-border);
+    --highlight-color-valid: var(--grid-content-txt);
+
+    ion-label {
+      font-size: 14px;
+      color: var(--grid-content-txt);
+      transform: translateY(-10px) !important;
+      font-family: "inter";
+      font-style: normal;
+    }
+  }
+
+  &.item-has-value {
+    ion-label {
+      font-size: 14px;
+      color: var(--grid-content-txt);
+      transform: translateY(-10px) !important;
+      font-family: "inter";
+      font-style: normal;
+    }
+  }
+
+  &.item-interactive-disabled {
+    --background: var(--ion-color-border);
+  }
+}
+
+ion-textarea {
+  --padding-top: 3px;
+  --padding-bottom: 3px;
+  font-family: "Roboto";
+  font-style: normal;
+}
+
+/* Text area Css End */
+
+/* Textbox Css Start */
+.textbox {
+  --border-color: var(--ion-color-border);
+  --height: 42px;
+  --min-height: 42px;
+  font-family: "Inter" !important;
+  font-style: normal;
+  color: var(--grid-content-txt); //before label font style
+  font-size: 14px;
+
+  &.item-has-focus {
+    --highlight-color-valid: var(--grid-content-txt);
+    --show-full-highlight: 0.65;
+    --highlight-background: var(--ion-color-border);
+
+    ion-label {
+      font-size: 14px;
+      color: var(--grid-content-txt);
+      transform: translateY(-10px) !important;
+      font-family: "inter";
+      font-style: normal;
+    }
+  }
+
+  &.item-has-value {
+    ion-label {
+      font-size: 14px;
+      color: var(--grid-content-txt);
+      transform: translateY(-10px) !important;
+      font-family: "inter";
+      font-style: normal;
+    }
+
+    .textbox.item-interactive-disabled {
+      --background: var(--ion-color-border);
+    }
+  }
+
+  &.read-only {
+    --background: #f9f9f9;
+
+    &::part(native) {
+      --border-color: var(--ion-color-border);
+    }
+  }
+
+  ion-input {
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    transform: translateY(-10px);
+    font-family: "inter";
+    font-style: normal;
+  }
+
+  ion-label {
+    transform: translateY(12px);
+    font-family: "inter";
+    font-style: normal;
+  }
+}
+
+/* Textbox Css End */
+
+/* Dropdown Css Start */
+.dropdown {
+  --border-color: var(--ion-color-border);
+  --height: 42px;
+  --min-height: 42px;
+  font-family: "Inter" !important;
+  font-style: normal;
+  color: var(--grid-content-txt); //before label font style
+  font-size: 14px;
+
+  &.multiselect {
+    overflow: hidden;
+  }
+
+  ion-select {
+    transform: translateY(-16px);
+
+    &::part(text) {
+      width: 0px;
+    }
+  }
+
+  ion-label {
+    transform: translateY(12px);
+  }
+
+  &::part(native) {
+    border-color: var(--ion-color-border);
+  }
+
+  ion-select::part(icon) {
+    content: url("../assets/icon/Union.png");
+    width: 10px;
+    height: 8px;
+    opacity: 1;
+  }
+}
+
+.dropdown.item-has-focus,
+.dropdown.ion-focused {
+  --highlight-color-valid: var(--grid-content-txt);
+  --show-full-highlight: 0.65;
+  color: var(--grid-content-txt);
+}
+
+.dropdown.item-has-value {
+  ion-label {
+    font-size: 14px;
+    color: var(--grid-content-txt);
+    transform: translateY(-10px) !important;
+  }
+
+  ion-select {
+    transform: translateY(-10px);
+  }
+}
+
+.dropdown.item-interactive-disabled {
+  --background: var(--ion-color-border);
+}
+
+/* Dropdown Css End */
+
+/* DYNAMIC TAG*/
+
+.icon-wrapper {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  z-index: 3;
+
+  ion-img {
+    height: 17px;
+    width: 19px;
+    float: right;
+    margin: 0px 3px 3px 8px;
+    cursor: pointer;
+    padding: 0px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  }
+}
+
+.popover-content {
+  background-color: #f6f6f6;
+  padding: 8px 14px 10px 14px;
+
+  .popover-content:last-child {
+    border-top: 1px solid gray;
+    padding: 0px 0px 0px 0px;
+    margin-top: 15px;
+  }
+
+  ion-list-header {
+    font-weight: 600;
+    color: #808080;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  a {
+    color: #344563;
+    font-size: 16px;
+    padding: 5px 0px;
+    cursor: pointer !important;
+  }
+
+  a:hover {
+    background-color: #e8e8e8;
+    text-decoration: none;
+    padding-left: 1px;
+    transition: 0.2s;
+    margin: 0px;
+    width: 110%;
+    margin-bottom: 0px;
+  }
+}
+
+ion-popover {
+  --backdrop-opacity: 0.32;
+}
+
+/*Form label start*/
+.form-label {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  color: var(--grid-content-txt);
+  font-family: inter;
+  font-style: normal;
+}
+
+.form-label-info {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.52px;
+  padding: 3px 0;
+}
+
+/*Form label end*/
+
+/*error message start*/
+
+.form-error-message {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 17px;
+  color: #c7152a;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+/*error message end*/
+
+/*form element start*/
+
+.form-element {
+  padding: 7.5px;
+}
+
+/*form element end*/
+
+/*Stacked dropdown start*/
+.dropdown-stacked {
+  --border-color: var(--ion-color-border);
+  --height: 42px;
+  --min-height: 42px;
+  font-family: "Inter" !important;
+  font-style: normal;
+  color: var(--grid-content-txt); //before label font style
+  font-size: 16px;
+
+  &.multiselect {
+    overflow: hidden;
+  }
+
+  ion-select {
+    transform: translateY(-10px);
+
+    &::part(text) {
+      width: 16px;
+    }
+  }
+
+  ion-select::part(icon) {
+    content: url("../assets/icon/Union.png");
+    width: 10px;
+    height: 8px;
+    transform: translate3d(0px, 0px, 0px);
+    opacity: 1;
+  }
+}
+
+.dropdown-stacked.item-has-focus {
+  --highlight-color-valid: var(--grid-content-txt);
+  --show-full-highlight: 0.65;
+
+  &::part(native) {
+    border-color: var(--ion-color-border);
+  }
+
+  ion-select::part(icon) {
+    transform: translate3d(0px, 0px, 0px) rotate(180deg);
+  }
+
+  ion-label {
+    color: var(--grid-content-txt);
+  }
+}
+
+.dropdown-stacked.item-interactive-disabled {
+  --background: var(--ion-color-border);
+}
+
+.dropdown-stacked.ion-focused {
+  --highlight-color-valid: var(--grid-content-txt);
+  --show-full-highlight: 0.65;
+
+  select-text::part(text) {
+    width: 16px;
+  }
+
+  &::part(text) {
+    width: 10px;
+  }
+}
+
+/*form dropdown stacked end*/
+
+/* textbox-stacked Css Start */
+.textbox-stacked {
+  --border-color: var(--ion-color-border);
+  --height: 42px;
+  --min-height: 42px;
+  color: var(--grid-content-txt); //before label font style
+  font-size: 14px;
+
+  // &.read-only {
+  //   --background: #f9f9f9;
+
+  //   &::part(native) {
+  //     --border-color: #a22121 !important;
+  //   }
+  // }
+}
+
+.textbox-stacked.item-has-focus {
+  --highlight-color-valid: var(--grid-content-txt);
+  --show-full-highlight: 0.65;
+}
+
+.textbox-stacked.item-interactive-disabled {
+  --background: var(--ion-color-border);
+}
+
+/* textbox-stacked Css End */
+
+//* form mandatory- field start*//
+.mandatory-field {
+  color: #c7152a;
+  padding-left: 2px;
+  font-size: 14px;
+  font-family: "Inter" !important;
+}
+
+//* form mandatory- field end*//
+
+// wordbreak
+.word-break {
+  word-break: break-all;
+}

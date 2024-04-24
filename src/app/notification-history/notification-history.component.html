@@ -1,0 +1,393 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="ion-no-border">
+  <ion-toolbar class="ion-no-margin">
+    <ion-item slot="start" lines="none" class="notification-history-title-container ion-no-padding">
+      <ion-icon name="arrow-back" class="ion-padding-start cursor-pointer"
+        [routerLink]="isAbTesting ? '/ab-testing/result/' + notification_id : '/notification'"
+        [routerLink]=""></ion-icon>
+      <ion-title class="ion-padding-horizontal"> Notification Summary </ion-title>
+      <ion-img src="../../../assets/icon/split line.png"></ion-img>
+    </ion-item>
+    <div>
+      <ion-button color="secondary" title="refresh grid" *ngIf="isNotificationSupported"
+        class="create-view-btn ion-no-margin create-ion-button ion-float-right"
+        style="min-width: 20px; margin-right: 24px;" (click)="reloadAll()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="main-content-grid ion-no-padding">
+    <ion-row>
+      <!-- main left container -->
+      <ion-col size-lg="2.5" size-xl="2.5" *ngIf="isNotificationSupported"
+        class="left-col-container customScroller left-scroll-container ion-hide-lg-down">
+        <div>
+          <ion-list>
+            <ion-list-header class="ion-padding-top">
+              <ion-label>Audience</ion-label>
+            </ion-list-header>
+            <ion-item fill="outline" class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Users Type</ion-label>
+              <ion-input type="text" [value]="notification.is_bulk_notification ? 'Multiple Users' : 'Single User'"
+                readonly=" true" class="font-size"></ion-input>
+            </ion-item>
+            <ion-item fill="outline" *ngIf="!notification.is_bulk_notification"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">User ID</ion-label>
+              <ion-input type="number" [(ngModel)]="notification.customerId" [ngModelOptions]="{standalone: true}"
+                readonly="true" class="font-size"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="notification.includedSegment != '' " fill="outline"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Included User Segments</ion-label>
+              <ion-input type="text" [ngModelOptions]="{standalone: true}" readonly="true"
+                class="font-size">{{notification.includedSegment_str}}</ion-input>
+            </ion-item>
+            <ion-item *ngIf="notification.excludedSegment != '' " fill="outline"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Excluded User Segments</ion-label>
+              <ion-input type="text" [ngModelOptions]="{standalone: true}" readonly="true"
+                class="font-size">{{notification.excludedSegment_str}}</ion-input>
+            </ion-item>
+          </ion-list>
+          <!--  -->
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Message</ion-label>
+            </ion-list-header>
+            <ion-item fill="outline" class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Message Type</ion-label>
+              <ion-input type="text" class="font-size" readonly="true"
+                [value]="isDirectContentMessage===false?'Template':'Custom'" name="categoryName"></ion-input>
+            </ion-item>
+            <ion-item fill="outline" class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Category</ion-label>
+              <ion-input type="text" class="font-size" [value]="(notification?.category || {}).name" readonly="true"
+                name="categoryName"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="!isDirectContentMessage" fill="outline"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Template</ion-label>
+              <ion-input type="text" class="font-size" readonly="true" [value]="(notification?.template || {}).name"
+                name="templateName"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="!isDirectContentMessage" fill="outline"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Priority</ion-label>
+              <ion-input type="text" class="font-size" readonly="true" [value]="(notification.configData
+                || {}).priority" name="priority"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="!isDirectContentMessage" fill="outline"
+              class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Rate limit</ion-label>
+              <ion-input type="text" class="font-size" readonly="true" [value]="(notification?.configData
+              || {}).rate_limit
+                " name="rate_limit"></ion-input>
+            </ion-item>
+          </ion-list>
+          <!-- Channel  -->
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Channel</ion-label>
+            </ion-list-header>
+            <div>
+              <ion-row class=" icon-wrapper-container" style="zoom: 0.85">
+                <div title="Email" class="seletedChannels cursor-pointer" (click)="openPreview('EMAIL')"
+                  *ngIf="(notification.channels || []).indexOf('EMAIL') !== -1">
+                  <ion-icon name="mail-outline" class="pointer-none"></ion-icon>
+                </div>
+                <div title="Web Push" class="seletedChannels cursor-pointer" (click)="openPreview('WEB_PUSH')"
+                  *ngIf="(notification.channels || []).indexOf('WEB_PUSH') !== -1">
+                  <ion-icon name="desktop-outline" class="pointer-none"></ion-icon>
+                </div>
+                <div title="Mobile Push" class="seletedChannels cursor-pointer" (click)="openPreview('MOBILE_PUSH')"
+                  *ngIf="(notification.channels || []).indexOf('MOBILE_PUSH') !== -1">
+                  <ion-icon name="phone-portrait-outline" class="pointer-none"></ion-icon>
+                </div>
+                <div title="SMS" class="seletedChannels cursor-pointer" (click)="openPreview('SMS')"
+                  *ngIf="(notification.channels || []).indexOf('SMS') !== -1">
+                  <ion-icon name="chatbox-ellipses-outline" class="pointer-none"></ion-icon>
+                </div>
+                <div title="In App Message" class="seletedChannels cursor-pointer"
+                  (click)="openPreview('IN_APP_MESSAGE')"
+                  *ngIf="(notification.channels || []).indexOf('IN_APP_MESSAGE') !== -1">
+                  <ion-icon name="apps-outline" class="pointer-none"></ion-icon>
+                </div>
+              </ion-row>
+            </div>
+          </ion-list>
+          <!-- Schedule -->
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Schedule</ion-label>
+            </ion-list-header>
+            <ion-item fill="outline" class="textbox read-only item-has-value ion-margin-bottom">
+              <ion-label position="floating">Sent At</ion-label>
+              <ion-input type="text"
+                [value]="datePipe.transform(this.notification.processedAt, this.notifiService.date_time_format)"
+                readonly="true" class="font-size"></ion-input>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-col>
+
+      <!-- main right container -->
+      <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="9.5" size-xl="9.5"
+        class="right-scroll-container right-container"
+        *ngIf="notification.status != 'FAILED' &&  isNotificationSupported">
+        <ion-grid class="whole-container ion-padding-bottom  ion-no-padding">
+          <!-- summary section -->
+          <ion-row class="ion-margin-top">
+            <ion-col class="summary-container ion-no-padding">
+              <div style="margin-left: 10px;">
+                <ion-label>
+                  <h1 class="all-heading">Customer Statistics</h1>
+                </ion-label>
+              </div>
+              <ion-row style="text-align:center;" class="top-twocard-row ion-margin-bottom ion-padding-bottom">
+                <ion-col size="6">
+                  <ion-card style="height: 142px;">
+                    <ion-row>
+                      <ion-col style="padding: 16px 0px 0px 0px">
+                        <ion-label class="card-count" id="card-count-left"
+                          *ngIf="summary.isLoaded">{{summary.delivered?.userCount}}</ion-label>
+                        <ion-spinner name="circular" style="height: 85px;" *ngIf="!summary.isLoaded"></ion-spinner>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="card-tit-cont ion-no-padding">
+                        <ion-label class="card-name" *ngIf="summary">Delivered</ion-label>
+                        <ion-spinner name="circular" style="height: 85px;" *ngIf="!summary"></ion-spinner>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-card style="height: 142px;">
+                    <ion-row>
+                      <ion-col style="padding: 16px 0px 0px 0px">
+                        <ion-label class="card-count" id="card-count-right"
+                          *ngIf="summary.isLoaded">{{summary.submitted?.userCount}}</ion-label>
+                        <ion-spinner name="circular" style="height: 85px;" *ngIf="!summary.isLoaded"></ion-spinner>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col class="card-tit-cont ion-no-padding">
+                        <ion-label class="card-name" *ngIf="summary">Submitted</ion-label>
+                        <ion-spinner name="circular" style="height: 85px;" *ngIf="!summary"></ion-spinner>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card>
+                </ion-col>
+
+              </ion-row>
+
+              <!-- chart container -->
+              <ion-row class="chartcontainer-row ion-padding-bottom">
+                <ion-col size-xs="12" size-sm="12" size-md="4" size-lg="2.4" size-xl="2.4" class="ion-no-padding"
+                  *ngFor="let chart of chartList">
+                  <ion-row>
+                    <ion-col class="ion-no-padding">
+                      <ion-card>
+                        <div class="chart-container">
+                          <p id="padding-top" class="ion-no-margin" *ngIf="chart.isNotApplicable"> {{chart.title}} </p>
+                          <p class="ion-no-margin" *ngIf="chart.isNotApplicable">N/A</p>
+                          <apx-chart *ngIf="!chart.isNotApplicable" [series]="chart.series" [chart]="chart.chart"
+                            [dataLabels]="chart.dataLabels" [plotOptions]="chart.plotOptions" [labels]="chart.labels"
+                            [colors]="chart.colors" [legend]="chart.legend"></apx-chart>
+                        </div>
+                      </ion-card>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+
+              </ion-row>
+            </ion-col>
+          </ion-row>
+
+          <!-- GRID -->
+          <ion-row>
+            <ion-col size="12" class="ion-no-padding" style="padding:0px 10px">
+              <!-- DELIVERED GRID -->
+              <ion-row id="deliveredView" style="border-bottom: 1px solid rgb(213, 213, 213);">
+                <ion-col size="12" class="ion-no-padding ion-margin-bottom" style="margin-top: 14px;    justify-content: space-between;
+                display: flex;">
+                  <div style="margin-top: 12px;">
+                    <h2 style="margin: 0px;" class="all-heading">Delivered Notification</h2>
+                  </div>
+                </ion-col>
+                <!-- Angular Material DATATABLE -->
+                <ion-col size="12" class="ion-no-padding">
+                  <app-data-table #delivered_grid [tableDetails]="deliveredNotificationList"></app-data-table>
+                </ion-col>
+              </ion-row>
+              <ion-row style="margin-top: 14px;">
+                <ion-col>
+                  <h2 style="margin: 0px 0px 10px 0px;" class="all-heading">Submitted Notification</h2>
+                </ion-col>
+              </ion-row>
+              <ion-row class="flex-container">
+                <ion-col size-lg="6" size-xs="12" size-sm=" 12" size-xs="12" id="submittedErrorView">
+                  <ion-segment value="QUEUE" class="ion-segment" swipe-gesture="false">
+                    <ion-segment-button style="border-right: 1px solid var(--ion-color-border);" value="QUEUE"
+                      (click)="switchView('QUEUE')">
+                      <ion-label>Queued <span>{{'('+ submittedQueuedNotificationList.totalCount
+                          +')'}}</span></ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button style="border-right: 1px solid var(--ion-color-border);" value="DEFERRED"
+                      (click)="switchView('DEFERRED')">
+                      <ion-label> Deferred <span>{{'('+ submittedDeferredNotificationList.totalCount
+                          +')'}}</span></ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="ERROR" (click)="switchView('ERROR')">
+
+                      <ion-label>Error <span>{{'(' + submittedErrorNotificationList.totalCount +
+                          ')'}}
+                        </span></ion-label>
+                    </ion-segment-button>
+                  </ion-segment>
+                </ion-col>
+                <ion-col size-lg="6">
+                  <ion-button
+                    *ngIf="view === 'ERROR' && (submittedErrorNotificationList.selectedIdList || []).length == 0 && (submittedErrorNotificationList.totalCount != 0)"
+                    expand="block" style="min-width: 50px; width: 130px; margin-left: 10px;"
+                    (click)="confirmationRetry(null, true)"
+                    class="create-view-btn ion-no-margin create-ion-button ion-float-right" color="tertiary">
+                    <ion-label style="min-width: 80px;">Retry All</ion-label>
+                  </ion-button>
+                  <ion-button style="min-width: 100px; margin-left: 10px;"
+                    *ngIf="view === 'ERROR' && (submittedErrorNotificationList.selectedIdList || []).length > 0 &&  (submittedErrorNotificationList.totalCount != 0)"
+                    class="create-view-btn ion-no-margin create-ion-button ion-float-right" color="tertiary"
+                    (click)="confirmationRetry()">
+                    <ion-label style="padding: 20px 0px 20px 5px;">Retry Selected
+                      ({{submittedErrorNotificationList.selectedIdList.length}})</ion-label>
+                  </ion-button>
+                  <ion-button style="min-width: 50px; margin-left: 10px;"
+                    *ngIf=" view==='ERROR' && (submittedErrorNotificationList.selectedIdList || []).length> 0 && (submittedErrorNotificationList.totalCount != 0)"
+                    class="create-view-btn ion-no-margin create-ion-button ion-float-right" color="secondary"
+                    (click)="submittedErrorNotificationList.unSelectAll()">
+                    <ion-label>Unselect All </ion-label>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+              <!-- SUBMITTED DEFERRED\ GRID -->
+              <ion-row id="queuedNotificationGrid" [ngClass]="view == 'QUEUE'? '':'ion-hide'">
+                <ion-col size=" 12" class="ion-no-padding">
+                  <app-data-table #queuedNotificationGrid
+                    [tableDetails]="submittedQueuedNotificationList"></app-data-table>
+                </ion-col>
+              </ion-row>
+              <ion-row id="submittedDeferred_grid" [ngClass]="view == 'DEFERRED'? '':'ion-hide'">
+                <ion-col size="12" class="ion-no-padding">
+                  <app-data-table #submittedDeferred_grid
+                    [tableDetails]="submittedDeferredNotificationList"></app-data-table>
+                </ion-col>
+              </ion-row>
+              <!-- SUBMITTED ERROR GRID -->
+              <ion-row id="submittedErrorView" [ngClass]="view == 'ERROR'?'':'ion-hide'" *ngIf="this.refreshingGrid">
+                <ion-col size="12" class="ion-no-padding">
+                  <app-data-table #submittedError_grid [tableDetails]="submittedErrorNotificationList"></app-data-table>
+                  <!--showErrorReason start-->
+                  <ion-modal [isOpen]="errorReason.isModelOpen" class="isViewReason" [backdropDismiss]="false">
+                    <ng-template #showErrorReason class="error-wrapper">
+                      <div class="error-container">
+                        <div class="header-container">
+                          <ion-grid>
+                            <ion-row>
+                              <ion-col size="6" offset="3" class="ion-text-center">
+                                <h2 class="err-title">Error Message Details</h2>
+                              </ion-col>
+                              <ion-col size="3">
+                                <div lines="none">
+                                  <ion-icon name="close-outline" title="Close" class="closeicon test" (click)="cancel()"
+                                    style="float:right"></ion-icon>
+                                </div>
+                              </ion-col>
+                            </ion-row>
+                          </ion-grid>
+                        </div>
+                        <div class="err-content" style="margin: 0px 35px; ">
+                          <div style="display: flex;justify-content: start; width: 100%; margin: 8px 0px;">
+                            <div>
+                              <p style="margin: 0px;width: 100px;"><b>Error Code </b></p>
+                            </div>
+                            <div><b>:&nbsp;&nbsp;</b></div>
+                            <div>
+                              <p style="margin: 0px;"> {{ errorReason.error_code || "No error code found" }}</p>
+                            </div>
+                          </div>
+                          <div style="display: flex;justify-content: start; width: 100%; margin: 8px 0px;">
+                            <div>
+
+                              <p style=" margin: 0px;width: 100px;"><b>Error Message </b></p>
+                            </div>
+                            <div><b>:&nbsp;&nbsp;</b></div>
+                            <div>
+                              <p style="margin: 0px;"> {{errorReason.error_message===null? "No error occured"
+                                :errorReason.error_message }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-modal>
+                  <!--showErrorReason end-->
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+      <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="9.5" size-xl="9.5"
+        class=" right-scroll-container ion-no-padding"
+        *ngIf="notification.status=='FAILED' &&  isNotificationSupported">
+        <ion-row class="ion-padding">
+          <ion-col size-lg="10" size-md="10" size-sm="12" size-sm="12">
+            <ion-card class="ion-padding">
+              <div>
+                <ion-row class="ion-no-padding">
+                  <ion-col size="12" class="ion-no-padding"
+                    style="display: flex; margin-bottom: 18px; margin-top: 5px;">
+                    <div>
+                      <p style="margin: 0px;"><b>Error Code</b> :&nbsp; </p>
+                    </div>
+                    <div>
+                      <p style="margin: 0px;">{{notification.error_code}} </p>
+                    </div>
+                  </ion-col>
+                  <ion-col size="12" class="ion-no-padding" style="display: flex; margin-bottom: 0px;">
+                    <div>
+                      <p style="margin: 0px; width: 110px;"><b>Error Message</b> :&nbsp; </p>
+                    </div>
+                    <div>
+                      <p style="margin: 0px;"> {{notification.error_message}} </p>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </div>
+              <div *ngIf="['ERR-3001','ERR-3002','ERR-4001'].indexOf(notification.error_code) == -1">
+                <ion-button color="primary" style="margin: 18px 0px 0px 0px">
+                  <ion-label (click)="retryAll()">Retry</ion-label>
+                </ion-button>
+              </div>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="12" size-xl="12" class="ion-no-padding"
+        style="display: flex; justify-content: start; align-items: center;"
+        [ngClass]="isNotificationSupported ?'right-scroll-container':'' " *ngIf="!isNotificationSupported">
+        <div class="ion-margin">
+          <ion-card class="ion-padding" style="display: flex; justify-content: center; align-items: center;">
+            <h4 class="no_notification_label"> Invalid Notification ID : <span
+                style="color: var(--ion-color-primary)">{{notification_id}}</span> </h4>
+          </ion-card>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- </ion-card> -->
+</ion-content>

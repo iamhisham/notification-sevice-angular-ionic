@@ -1,0 +1,153 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <ion-icon name="arrow-back" class="back-icon" style="cursor: pointer;" (click)="onCancel()"></ion-icon>
+            <h1>Category Details</h1>
+            <ion-buttons>
+              <ion-button *ngIf="isEditView" routerLink="/configuration/template"
+                [queryParams]="{category_id: category.id}" class="template-btn font-size" slot="end"
+                routerDirection="root">
+                <ion-label class="header-labels" style="font-family:'roboto';font-weight: 400;">View
+                  Template</ion-label>
+              </ion-button>
+            </ion-buttons>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="form" (ngSubmit)="save()" autocomplete="on">
+    <ion-grid class="create-container padding-hide-md-down">
+      <ion-row>
+        <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="10" class="ion-no-padding">
+          <ion-card class="ion-no-padding ion-no-margin">
+            <ion-grid>
+              <ion-row>
+                <ion-col size-xs="12" size-sm="12" size-md="8" size-lg="5" class="form-element">
+                  <ion-item fill="outline" class="textbox">
+                    <ion-label position="floating">Name
+                      <span class="mandatory-field">*</span>
+                    </ion-label>
+                    <ion-input formControlName="name" [(ngModel)]="category.name" name="name"
+                      [disabled]="true"></ion-input>
+                  </ion-item>
+                  <div *ngIf="form.get('name')?.invalid &&(form.get('name')?.dirty || form.get('name')?.touched)">
+                    <div *ngIf="form.get('name')?.hasError('required') || form.get('name')?.errors?.['whitespace']">
+                      <small class=" form-error-message">This is a required field</small>
+                    </div>
+                  </div>
+                  <!-- <ng-container
+                    *ngIf="form.get('name')?.hasError('required') && (form.get('name')?.touched || form.get('name')?.dirty)">
+                    <small class=" form-error-message">This is a required field</small>
+                  </ng-container> -->
+                </ion-col>
+                <ion-col size-xs="12" size-sm="12" size-md="4" size-lg="4" class="form-element">
+                  <ion-item fill="outline" class="dropdown">
+                    <ion-label position="floating">Priority
+                      <span class="mandatory-field">*</span>
+                    </ion-label>
+                    <ion-select class="ion-no-padding" [interfaceOptions]="notifiService.customPopoverOptions"
+                      placeholder="-Select-" [(ngModel)]='category.priority' (ngModelChange)=" onCategoryChange()"
+                      formControlName="priority" interface="popover">
+                      <ion-select-option value="MANDATORY" class="mucustom">Mandatory</ion-select-option>
+                      <ion-select-option value="MEDIUM" class="mucustom">Medium</ion-select-option>
+                      <ion-select-option value="LOW" class="mucustom">Low</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                  <ng-container
+                    *ngIf="form.get('priority')?.hasError('required') && (form.get('priority')?.touched || form.get('priority')?.dirty)">
+
+                    <small class="form-error-message">This is a required field</small>
+                  </ng-container>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="9" class="form-element"
+                  style="padding-bottom: 5px;">
+                  <ion-item fill="outline" class="textarea">
+                    <ion-label position="floating">Description</ion-label>
+                    <ion-textarea [(ngModel)]="category.description" [ngModelOptions]="{standalone: true}">
+                    </ion-textarea>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="9" class="form-element">
+                  <div class="ip-view">
+                    <h4 class="form-label" slot="start">Rate Limit</h4>
+                    <ion-note class="form-label-info" slot="start">Number of message Per Day/Week/Month</ion-note>
+                  </div>
+                  <ion-row>
+                    <ion-col size-xs="6" size-sm="6" size-md="4" size-lg="4" class="ion-no-padding-start">
+                      <ion-item fill="outline" class="dropdown-stacked">
+                        <ion-label position="stacked"></ion-label>
+                        <ion-select class="ion-no-padding" [interfaceOptions]="notifiService.customPopoverOptions"
+                          [(ngModel)]="rateLimit_type" [disabled]="category.priority === 'MANDATORY'"
+                          [ngModelOptions]="{standalone: true}" interface="popover">
+                          <ion-select-option value="">-Select-</ion-select-option>
+                          <ion-select-option value="DAY">Per Day</ion-select-option>
+                          <ion-select-option value="WEEK">Per Week</ion-select-option>
+                          <ion-select-option value="MONTH">Per Month</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size-xs="6" size-sm="6" size-md="3" size-lg="3" class="ion-no-padding-end">
+                      <ion-item [disabled]="category.priority === 'MANDATORY' || rateLimit_type === ''" fill="outline"
+                        class="textbox-stacked">
+                        <ion-input type="number" inputmode="numeric" (keypress)="numericOnly($event)" min="1" step="1"
+                          [(ngModel)]="rateLimit_value" formControlName="rateLimit"
+                          [ngModelOptions]="{standalone: true}" onkeypress="return event.charCode >= 48">
+                        </ion-input>
+                      </ion-item>
+                      <ng-container
+                        *ngIf="form.get('priority')?.hasError('required') && (form.get('priority')?.touched || form.get('priority')?.dirty)">
+
+                        <small class="form-error-message">This is a required field</small>
+                      </ng-container>
+
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="9" class="form-element" style="padding-top:0;">
+                  <div class="ip-view">
+                    <h4 class="form-label" slot="start">Time to live (Days)</h4>
+                    <ion-note class="form-label-info" slot="start">This field is applicable only for push
+                      notification</ion-note>
+                  </div>
+                  <ion-row>
+                    <ion-col size-xs="6" size-sm="6" size-md="4" size-lg="4" class="ion-no-padding-start">
+                      <ion-item fill="outline" class="textbox-stacked">
+                        <ion-input type="number" inputmode="numeric" (keypress)="numericOnly($event)"
+                          formControlName="timetoliveLimit" [(ngModel)]="category.ttl"
+                          [ngModelOptions]="{standalone: true}" min="1" max="28">
+                        </ion-input>
+                      </ion-item>
+                      <ng-container *ngIf="form.get('timetoliveLimit')?.invalid">
+                        <small class="form-error-message">Value must be 1 to 28</small>
+                      </ng-container>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-buttons class="ion-margin-bottom">
+        <ion-button (click)="save()" [disabled]="!form.valid" color="primary" class="m-r-10">
+          <ion-label>Save</ion-label>
+        </ion-button>
+        <ion-button (click)="onCancel()" color="secondary" class="m-l-10">
+          <ion-label>Cancel</ion-label>
+        </ion-button>
+      </ion-buttons>
+    </ion-grid>
+  </form>
+</ion-content>

@@ -1,0 +1,167 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="ion-no-border">
+  <ion-toolbar class="ion-no-padding">
+    <ion-item lines="none" class="ion-no-padding">
+      <ion-icon color="dark cursor-pointer" slot="end" name="close-outline" (click)="closeModal()"></ion-icon>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-element">
+  <!-- 1st modal -->
+  <ion-grid class="ion-no-padding ion-no-margin" *ngIf="viewName == 'ACTION_DENIED' && !showCategoryDropdown">
+    <ion-row>
+      <ion-col class="modal-header ion-no-padding ion-no-margin">
+        <h1>Action Denied</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding-horizontal">
+      <ion-col class="modal-subheading ion-no-padding">
+        <ion-note>This category holds template.</ion-note>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-description ion-no-padding">
+        <ion-label class="ion-no-margin">Move templates to other category or disabled the templates.</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 2st modal -->
+  <ion-grid class="ion-no-padding ion-no-margin" *ngIf="viewName == 'ACTION_DENIED' && showCategoryDropdown">
+    <ion-row>
+      <ion-col class="modal-header ion-no-padding ion-no-margin">
+        <h1>Move templates</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="">
+      <ion-col class="modal-subheading-2 ion-no-padding">
+        <ion-note>Select category to move the templates</ion-note>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-description-2 ion-no-padding">
+        <ion-label class="ion-no-margin ion-margin-bottom">Move templates to:</ion-label>
+        <ion-item fill="outline" class="dropdown-stacked">
+          <ion-label position="stacked"></ion-label>
+          <ion-select interface="popover" [(ngModel)]="newCategory_id" placeholder="-Select Category-"
+            class="ion-no-padding">
+            <ion-select-option *ngIf="categoryList.length==0" disabled="true">No category found</ion-select-option>
+            <ion-select-option *ngFor="let category of categoryList"
+              [value]="category.id">{{category.name}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 3st modal image loading -->
+  <ion-grid class="loading-spinner ion-no-padding ion-no-margin" *ngIf="viewName == 'MOVING_TEMPLATE'">
+    <ion-row>
+      <ion-col class="ion-no-margin">
+        <ion-img src="../../../../assets/templateIcons/movingTemplate.png"></ion-img>
+        <div class="spin-container">
+          <ion-spinner class="ion-no-margin" name="lines-sharp"></ion-spinner>
+        </div>
+        <ion-label class="ion-no-padding">Moving templates..</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <!-- 4st modal -->
+  <ion-grid class="ion-no-padding ion-no-margin" *ngIf="viewName == 'MOVING_TEMPLATE_SUCCESS'">
+    <ion-row>
+      <ion-col class="modal-header-3 ion-no-padding ion-no-margin">
+        <h1>Success!</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding-horizontal">
+      <ion-col class="modal-subheading-3 ion-no-padding">
+        <ion-note>Templates has been moved.</ion-note>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-description-3 ion-no-padding">
+        <ion-label class="ion-no-margin">You can now disable the category or keep the category.</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-subdescription-3 ion-no-padding">
+        <ion-label class="ion-no-margin"><span>Category Name: </span>{{ category.name }}</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 5th modal image loading -->
+  <ion-grid class="loading-spinner ion-no-padding ion-no-margin" *ngIf="viewName == 'DELETING_TEMPLATE'">
+    <ion-row>
+      <ion-col>
+        <ion-img src="../../../../assets/templateIcons/deletingTemplate.png"></ion-img>
+        <ion-item lines="none">
+          <div class="spin-container">
+            <ion-spinner name="lines-sharp"></ion-spinner>
+          </div>
+        </ion-item>
+        <ion-label>Deleting templates..</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 6th modal -->
+  <ion-grid class="ion-no-padding ion-no-margin" *ngIf="viewName == 'DELETE_TEMPLATE_SUCCESS'">
+    <ion-row>
+      <ion-col class="modal-header-4 ion-no-padding ion-no-margin">
+        <h1>Success!</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding-horizontal">
+      <ion-col class="modal-subheading-4 ion-no-padding">
+        <ion-note>Templates has been deleted.</ion-note>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-description-4 ion-no-padding">
+        <ion-label class="ion-no-margin">You can now disable the category or keep the category.</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="modal-subdescription-4 ion-no-padding">
+        <ion-label class="ion-no-margin"><span>Category Name: </span>{{ category.name }}</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+
+<ion-footer class="ion-no-border" *ngIf="['DELETING_TEMPLATE','MOVING_TEMPLATE'].indexOf(viewName) == -1">
+  <ion-toolbar>
+    <ion-button color="primary" class="ion-float-left ion-no-margin lft-btn" fill="clear" (click)="moveTemplate()"
+      *ngIf="viewName == 'ACTION_DENIED' && !showCategoryDropdown">
+      <ion-label>Move templates</ion-label>
+    </ion-button>
+    <ion-button color="secondary" class="ion-float-right ion-no-margin rgt-btn" (click)="deleteTemplate()"
+      *ngIf="viewName == 'ACTION_DENIED' && !showCategoryDropdown">
+      <ion-label>Disable templates</ion-label>
+    </ion-button>
+
+    <ion-button color="primary" class="ion-float-left ion-no-margin lft-btn2" fill="clear"
+      [disabled]="newCategory_id == ''" (click)="moveTemplate()"
+      *ngIf="viewName == 'ACTION_DENIED' && showCategoryDropdown">
+      <ion-label>Move templates</ion-label>
+    </ion-button>
+    <ion-button color="secondary" class="ion-float-right ion-no-margin rgt-btn2" (click)="closeModal()"
+      *ngIf="viewName == 'ACTION_DENIED' && showCategoryDropdown">
+      <ion-label>Cancel</ion-label>
+    </ion-button>
+
+    <ion-button color="secondary" class="ion-float-left ion-no-margin lft-btn3" fill="clear" (click)="deleteCategory()"
+      *ngIf="viewName == 'MOVING_TEMPLATE_SUCCESS' || viewName == 'DELETE_TEMPLATE_SUCCESS'">
+      <ion-label>Disable</ion-label>
+    </ion-button>
+    <ion-button color="primary" class="ion-float-right ion-no-margin rgt-btn3" (click)="closeModal()"
+      *ngIf="viewName == 'MOVING_TEMPLATE_SUCCESS' || viewName == 'DELETE_TEMPLATE_SUCCESS'">
+      <ion-label>Keep</ion-label>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

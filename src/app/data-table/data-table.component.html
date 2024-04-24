@@ -1,0 +1,95 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ng-template #action_item let-element="element" let-action="action">
+  <ion-item class="btn-text" *ngIf="!action.clickFunction ? (action.isValid ? action.isValid(element) : true) :  false"
+    [button]="true" [routerLink]="element.action[action.attr]"
+    [queryParams]="element.action[action.attr + '_queryParam'] || {}">{{action.name}}
+  </ion-item>
+  <ion-item class="btn-text" *ngIf="action.clickFunction && (!action.isValid || action.isValid(element))"
+    [button]="true" (click)="action.clickFunction(element)">{{action.name}}
+  </ion-item>
+</ng-template>
+<ion-row class="table-outer-container">
+  <ion-col size-md="12" size-sm="12" size-xs="12" class="ion-no-padding">
+    <section class=" mat-elevation-z8 table-outer-layout" #mytable>
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="checkbox" *ngIf="tableDetails.isSelectableGrid">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions" class="right-arrow">
+            <mat-checkbox #selectAllCheckbox (change)="selectAllRowInCurrentView($event);" [disabled]="totalCount==0"
+              [checked]="currentView_isAllSelected" [indeterminate]="currentView_isInterminateSelected">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-checkbox (change)="selectRow($event, element);"
+              [disabled]="tableDetails.isCheckboxVisible ? !tableDetails.isCheckboxVisible(element) : false"
+              [checked]="tableDetails.selectedIdList.indexOf(element[tableDetails.pk]) != -1">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="{{field.attr}}" *ngFor="let field of tableDetails.fields">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="w-{{field.width}} {{field.className}}">
+            <span class="{{field.className}}">{{field.name}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" class="w-{{field.width}} {{field.className}}">
+            {{(field.type || 'TEXT') == 'TEXT'? element[field.attr] || '-' : ''}}
+            <a *ngIf="field.type == 'LINK'" [routerLink]="element.link[field.attr]">{{element[field.attr]}}</a>
+            <a *ngIf="field.type == 'CLICK'" class="cursor-pointer"
+              (click)="field.clickFunction(element)">{{element[field.attr]}}</a>
+            <!-- template image icons -->
+
+            <div class="channals_logo" *ngIf="field.type === 'IMAGE_LIST'">
+              <span *ngFor="let img of element[field.attr]" [title]="img.title">
+                <ion-icon class="pointer-none" [name]="img.name"></ion-icon></span>
+            </div>
+
+            <!-- notification single or bulk icons -->
+            <ion-img class="user-icon" *ngIf="field.type === 'IMAGE'" [src]="element[field.attr].src"
+              [title]="element[field.attr].title"></ion-img>
+          </td>
+        </ng-container>
+
+        <!-- Star Column -->
+        <ng-container matColumnDef="final" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions" class="right-arrow">
+            <ion-icon name="chevron-forward-outline" class="ion-hide-md-up" style="font-size: 23px;"
+              (click)="scrollRight()">
+            </ion-icon>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon [id]="tableDetails.name + '_' + element[tableDetails.pk]"
+              class="cursor-pointer">more_vert</mat-icon>
+            <ion-popover [trigger]="tableDetails.name + '_' + element[tableDetails.pk]" [dismissOnSelect]="true"
+              class="grid-action-popover">
+              <ng-template>
+                <ion-content>
+                  <ion-list>
+                    <ng-template [ngTemplateOutlet]="action_item" [ngTemplateOutletContext]="{element, action}"
+                      *ngFor="let action of tableDetails.actions"></ng-template>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+        <tr
+          style="text-align: center; height: 240px; width: 99%; position: absolute;display: flex; justify-content: center;align-items: center;"
+          class="mat-row data-info" *matNoDataRow>
+          <td style="width: 100%; overflow: hidden;" class="mat-cell" colspan="8">
+            {{isLoading?
+            'Loading ...'
+            :'No data found'}} <span *ngIf="tableDetails.search">&nbsp;as&nbsp;</span>
+            <span style="color: #f06464;">{{tableDetails.search}}</span>
+          </td>
+        </tr>
+      </table>
+    </section>
+  </ion-col>
+  <ion-col size-md="12" size-sm="12" size-xs="12" class="ion-no-padding">
+    <div class="paginator-footer">
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" [pageSize]="pageSize" class="mat-paginator-sticky"
+        (page)="pageChanged($event)" aria-label="Select page">
+      </mat-paginator>
+    </div>
+  </ion-col>
+</ion-row>

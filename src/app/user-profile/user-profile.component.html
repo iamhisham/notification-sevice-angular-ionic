@@ -1,0 +1,131 @@
+<ion-header class="header-container ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <h1>Users</h1>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<!--end-->
+<ion-content>
+  <!--left container-->
+  <div class="wrapper">
+    <ion-grid class="ion-no-padding category-grid-container">
+      <ion-row class="h-100-per">
+        <ion-col class="user-side-container ion-no-padding ">
+          <!-- div for column separation -->
+          <div class="customScroller ion-hide-lg-down">
+            <!-- heading search category -->
+            <app-data-table-search-criteria #userprofile_search [defaultFilterCriteria]="defaultFilterCriteria"
+              [filterFieldList]="filterFieldList" (applySearch)="applyFilter($event)"></app-data-table-search-criteria>
+          </div>
+          <!-- angular material for table -->
+          <!-- Angular material -->
+          <div class="table-media-query" style="background-color:var(--ion-color-background)">
+            <ion-grid class=" padding-hide-md-down right-contant">
+              <ion-row>
+                <ion-col size-md="12" class="ion-no-padding">
+                  <ion-row>
+                    <!-- table-top-layer-btns -->
+                    <ion-col size-md="3.7" offset-md="0" class="ion-hide-lg-up ion-hide-sm-down ion-no-padding"
+                      style="display: flex;align-items: flex-end;">
+                      <div class=" filterSmLabel">
+                        <div class="staticLabel">
+                          <ion-chip [outline]="true" id="open-filter-model-userProfile-tab-view">
+                            <ion-icon name="funnel-outline"></ion-icon>
+                            <ion-label class="filter_label">Search Criteria</ion-label>
+                          </ion-chip>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col size-lg="8" offset-lg="4" size-md="8" offset-md="0" size-sm="12" offset-sm="0" size-xs="12"
+                      offset-xs="0" class=" ion-no-padding ion-margin">
+                      <div class="table-top-layer-btns">
+                        <ion-button routerLink="/user-profile/view_attribute" expand="block"
+                          routerLinkActive="active-link"
+                          class="create-view-btn ion-no-margin  ion-text-capitalize create-ion-button" color="tertiary">
+                          <ion-img slot="start"
+                            src="../../../assets/icons/{{notifiService.themeName}}/create-category.svg"></ion-img>
+                          <!-- <ion-icon name="create-outline"></ion-icon> -->
+                          <ion-label>View Attribute</ion-label>
+                        </ion-button>
+                      </div>
+                    </ion-col>
+                    <ion-col size-lg="8" offset-lg="4" size-md="12" offset-md="0" size-sm="12" offset-sm="0"
+                      size-xs="12" offset-xs="0" class="ion-hide-sm-up ion-no-padding">
+                      <div class=" filterSmLabel">
+                        <div class="staticLabel">
+                          <ion-chip [outline]="true" id="open-filter-model-userProfile">
+                            <ion-icon name="funnel-outline"></ion-icon>
+                            <ion-label class="filter_label">Search Criteria</ion-label>
+                          </ion-chip>
+                        </div>
+                      </div>
+                      <!--sm device filter model -->
+                      <ion-modal [backdropDismiss]="false" #modal trigger="open-filter-model-userProfile"
+                        class="template-filter" animated={true}>
+                        <ng-template>
+                          <ion-header class="ion-no-border config-header">
+                            <ion-toolbar>
+                              <ion-title style="font-size: 16px;">Search Criteria</ion-title>
+                              <ion-buttons slot="end">
+                                <ion-icon class="close_icon" (click)="onClose()" name="close-outline"></ion-icon>
+                              </ion-buttons>
+                            </ion-toolbar>
+                          </ion-header>
+                          <ion-content>
+                            <ion-row>
+                              <ion-col style="background-color: white;">
+                                <!-- <ng-container [ngTemplateOutlet]="userpageleft"></ng-container> -->
+                              </ion-col>
+                            </ion-row>
+                          </ion-content>
+                          <ion-footer class="footer-view">
+                            <!-- <ng-container [ngTemplateOutlet]="userpageleftfooter"></ng-container> -->
+                          </ion-footer>
+                        </ng-template>
+                      </ion-modal>
+                      <ion-modal [backdropDismiss]="false" #modal trigger="open-filter-model-userProfile-tab-view"
+                        class="template-filter" animated={true}>
+                        <ng-template>
+                          <ion-header class="ion-no-border config-header">
+                            <ion-toolbar>
+                              <ion-title style="font-size: 16px;">Search Criteria</ion-title>
+                              <ion-buttons slot="end">
+                                <ion-icon class="close_icon" (click)="onClose()" name="close-outline"></ion-icon>
+                              </ion-buttons>
+                            </ion-toolbar>
+                          </ion-header>
+                          <ion-content>
+                            <ion-row>
+                              <ion-col class="aside-filter">
+                                <!-- <ng-container [ngTemplateOutlet]="userpageleft"></ng-container> -->
+                              </ion-col>
+                            </ion-row>
+                          </ion-content>
+                          <ion-footer class="footer-view">
+                            <!-- <ng-container [ngTemplateOutlet]="userpageleftfooter"></ng-container> -->
+                          </ion-footer>
+                        </ng-template>
+                      </ion-modal>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <!-- Angular Material DATATABLE -->
+                <ion-col size="12" class="ion-no-padding">
+                  <app-data-table *ngIf="isInitTriggered" #user_profile_grid
+                    [tableDetails]="userProfileTableDetails"></app-data-table>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

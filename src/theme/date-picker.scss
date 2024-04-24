@@ -1,0 +1,58 @@
+::ng-deep.mat-datepicker-content {
+  .mat-calendar-body-cell-content.mat-focus-indicator.mat-calendar-body-selected {
+    color: var(--ion-color-secondary);
+    background: var(--ion-color-primary);
+  }
+
+  .mat-stroked-button {
+    color: var(--ion-color-secondary);
+    background: var(--ion-color-primary);
+    ;
+  }
+
+  .mat-datepicker-content {
+    .mat-calendar-previous-button {
+      color: black;
+      margin: 0px 12px;
+    }
+
+    .mat-calendar-next-button {
+      color: black;
+    }
+  }
+
+  .ngx-mat-timepicker .ngx-mat-timepicker-table .mat-icon-button {
+    color: black;
+    // background: var(--ion-color-primary);
+    border-radius: 14px;
+  }
+
+  .mat-calendar-body-label {
+    color: black;
+  }
+
+  .mat-calendar-table-header,
+  .mat-calendar-body-label {
+    color: black;
+  }
+
+  td.ngx-mat-timepicker-spacer {
+    padding: 2px 5px;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background: #fafafa !important;
+  }
+
+  .ngx-mat-calendar-body {
+    .mat-calendar-body-cell {
+      position: relative !important;
+    }
+  }
+
+  .mat-calendar-body {
+    .mat-calendar-body-cell {
+      position: static !important;
+    }
+  }
+}

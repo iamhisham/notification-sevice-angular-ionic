@@ -1,0 +1,124 @@
+@import "../../../theme/form.scss";
+@import "../../../theme/variables.scss";
+
+.category-grid-container {
+  background-color: var(--ion-color-background);
+  height: 100%;
+}
+
+.inner-container {
+
+  ion-header {
+    ion-toolbar {
+      padding-left: 40px;
+      padding-top: 19px;
+
+
+      ion-title {
+        font-family: "Inter";
+        font-weight: 600;
+        font-size: 16px;
+        color: #16392f;
+      }
+    }
+  }
+
+  .body-container {
+    margin: 0px 35px 25px 35px;
+    min-height: 100px;
+
+    .category-title {
+      padding-left: 8px;
+      font-family: "Inter";
+      font-weight: 500;
+      font-size: 14px;
+      color: #656d80;
+    }
+
+    // ion-select {
+    //   width: 100%;
+    // }
+  }
+
+  ion-footer {
+    padding-bottom: 22px;
+
+    .cancel-button {
+      // margin-left: 12px;
+    }
+
+    .proceed-button {
+      // margin-right: 42px;
+    }
+  }
+
+}
+
+.attribute-container {
+  --height: 430px;
+  --width: 417px;
+  --border-radius: 15px;
+  padding: 0px 12px;
+}
+
+.dropdown ion-select {
+  transform: translateY(-12px);
+}
+
+.dropdown ion-label {
+  transform: translateY(-9px) scale(0.75) !important;
+  font-size: 18px !important;
+}
+
+// transform: translateY(-6px) scale(0.9);
+
+@media screen and (max-device-width: 350px) {
+  .body-container {
+    margin: 0px 8px 25px 8px !important;
+    min-height: 100px !important;
+  }
+
+  .btn-wrappers {
+    margin: 0px 0px !important;
+  }
+
+
+}
+
+.btn-wrappers {
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 38px;
+}
+
+
+@media (max-width: 480px) {
+
+  .create-ion-button {
+    min-width: 150px;
+    height: 41px;
+  }
+
+  .create-icon {
+    margin-left: 0px !important;
+    margin-right: 6px !important;
+    margin-top: 0px !important;
+    height: 22px !important;
+  }
+
+  .ion-color-tertiary ion-label {
+    min-width: 75px;
+    font-size: 11px;
+    padding: 15px 10px 15px 0px;
+    color: var(--ion-color-secondary);
+  }
+
+  .row-wrapper .title-column .title-content {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 35px;
+    margin: 12.5px 0px 12.5px 0px;
+    padding: 0px 17px 0px 10px;
+  }
+}

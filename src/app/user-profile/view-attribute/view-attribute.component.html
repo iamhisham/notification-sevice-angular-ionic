@@ -1,0 +1,123 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="row-wrapper">
+        <ion-col class="title-column">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <ion-icon name="arrow-back" style="cursor: pointer;" class="back-icon"
+              routerLink="/user-profile"></ion-icon>
+            <h1>User Attribute</h1>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="padding-hide-md-down category-grid-container">
+    <ion-row>
+      <ion-col size="12" class="ion-no-padding ">
+        <ion-row>
+          <ion-col size-lg="6" offset-lg="6" size-md="12" offset-md="0" size-sm="12" offset-sm="0" size-xs="12"
+            offset-xs="0" class=" ion-no-padding ion-margin">
+            <div class="table-top-layer-btns">
+              <ion-searchbar placeholder="Search" show-clear-button="focus" [(ngModel)]="attributeTableDetails.search"
+                matInput (ionChange)="attributeGrid?.search()" #input class="ion-custom-search ion-no-padding ">
+              </ion-searchbar>
+              <ion-button expand="block" (click)="setOpen(null)"
+                class="ion-no-margin  ion-text-capitalize create-ion-button" color="tertiary">
+                <ion-img slot="start" class="create-icon"
+                  src="../../../assets/icons/{{notifiService.themeName}}/create-category.svg"></ion-img>
+                <ion-label> Create attribute</ion-label>
+              </ion-button>
+              <!--atribute  model  -->
+              <ion-modal [isOpen]="isModalOpen" (willDismiss)="onWillDismiss($event)"
+                class="attribute-container inner-container" [backdropDismiss]="false">
+                <ng-template>
+                  <ion-header class="ion-no-border">
+                    <ion-toolbar>
+                      <ion-title class="ion-no-padding">User Attribute</ion-title>
+                    </ion-toolbar>
+                  </ion-header>
+
+                  <ion-content class="form-element">
+                    <form [formGroup]="myForm" (ngSubmit)="save()">
+                      <ion-grid class="body-container ion-no-padding">
+                        <ion-row>
+                          <ion-col size="12" class="ion-no-padding form-element">
+                            <ion-item fill="outline" class="textbox">
+                              <ion-label position="floating">Attribute Name <span class="mandatory-field">*</span>
+                              </ion-label>
+                              <ion-input formControlName="name" name="name" [(ngModel)]="attribute.name"></ion-input>
+                            </ion-item>
+                            <div
+                              *ngIf="myForm.get('name')?.invalid &&(myForm.get('name')?.dirty || myForm.get('name')?.touched)">
+                              <div
+                                *ngIf="myForm.get('name')?.hasError('required') || myForm.get('name')?.errors?.['whitespace']">
+                                <small class=" form-error-message">This is a required field</small>
+                              </div>
+                            </div>
+                            <!-- <ng-container
+                              *ngIf="form.get('name')?.hasError('required') && (form.get('name')?.touched || form.get('name')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container> -->
+                          </ion-col>
+                          <ion-col size="12" class="ion-no-padding form-element">
+                            <ion-item fill="outline" class="dropdown">
+                              <ion-label position="floating">Type<span class="mandatory-field">*</span></ion-label>
+                              <ion-select [ngModelOptions]="{standalone:true}" formControlName="type"
+                                class="ion-no-padding" [(ngModel)]="attribute.type" placeholder="-Select-"
+                                [interfaceOptions]="notifiService.customPopoverOptions"
+                                [ngModelOptions]="{standalone: true}" interface="popover">
+                                <ion-select-option value="TEXT">Text</ion-select-option>
+                                <ion-select-option value="BOOLEAN">Boolean</ion-select-option>
+                                <ion-select-option value="NUMBER">Number</ion-select-option>
+                                <ion-select-option value="DATE">Date</ion-select-option>
+                                <ion-select-option value="DATE_TIME">Date Time</ion-select-option>
+                              </ion-select>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="myForm.get('type')?.hasError('required') && (myForm.get('type')?.touched || myForm.get('type')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </ion-col>
+                          <ion-col size="12" class="ion-no-padding form-element">
+                            <ion-item fill="outline" class="textbox">
+                              <ion-label position="floating">Description</ion-label>
+                              <ion-textarea class="description-textarea" name="description"
+                                [(ngModel)]="attribute.description"></ion-textarea>
+                            </ion-item>
+                          </ion-col>
+                        </ion-row>
+                      </ion-grid>
+                    </form>
+                  </ion-content>
+
+                  <ion-footer class="ion-no-border">
+                    <ion-toolbar>
+                      <!-- <ion-buttons lines="none" class="btns ion-no-padding"> -->
+                      <div class="btn-wrappers">
+                        <ion-button color="secondary" class="ion-float-left cancel-button" (click)="isModalOpen=false"
+                          fill="clear">
+                          <ion-label>Cancel</ion-label>
+                        </ion-button>
+                        <ion-button color="primary" class="ion-float-right proceed-button" (click)="save()">
+                          <ion-label>Proceed</ion-label>
+                        </ion-button>
+                      </div>
+                      <!-- </ion-buttons> -->
+                    </ion-toolbar>
+                  </ion-footer>
+                </ng-template>
+              </ion-modal>
+            </div>
+          </ion-col>
+          <ion-col size="12" class="ion-no-padding">
+            <app-data-table #attribute_grid [tableDetails]="attributeTableDetails"></app-data-table>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

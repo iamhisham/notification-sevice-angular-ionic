@@ -1,0 +1,87 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div *ngIf="urlList.indexOf(route.url.split('?')[0]) == -1">
+  <ion-app>
+    <!-- HEADER LEFT CONTENT -->
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-menu-button style="color: var(--ion-color-secondary); margin-top: 8px; margin-left: 3px ;font-size: 25px;"
+          slot="start"></ion-menu-button>
+        <div slot="start" class="header-logo">
+          <ion-item lines="none" class="ion-no-padding" style="--background: var(--ion-color-header-bg);">
+            <ion-img *ngIf="this.notifiService.themeName == 'dot-mobile'" src="../../assets/icons/dot-mobile/logo.svg"
+              class="mainLogo"></ion-img>
+            <ion-img *ngIf="this.notifiService.themeName == 'mobilex'" src="../../assets/icons/mobilex/logo.png"
+              class="mainLogo"></ion-img>
+          </ion-item>
+        </div>
+        <!-- HEADER RIGHT CONTENT -->
+        <div slot="end" class="header-right-content">
+          <ion-item lines="none" class="ion-no-padding">
+            <ion-item lines="none" class="ion-no-padding userNamePic">
+              <ion-icon name="person-outline" id="profile-trigger" title="User" class="ion-margin-end"></ion-icon>
+              <ion-label class="header-username ion-hide-md-down font-size">
+                {{notifiService.userDetails.name || ''}}
+              </ion-label>
+            </ion-item>
+            <ion-icon (click)="logOutConformation()" name="log-out-outline" title="Logout"
+              class="cursor-pointer user-profile-picture"></ion-icon>
+          </ion-item>
+        </div>
+        <ion-popover mode="ios" class="profile-popover" trigger="profile-trigger" triggerAction="hover">
+          <ng-template>
+            <ion-content>
+              <ion-card>
+                <ion-card-subtitle>Profile</ion-card-subtitle>
+                <ion-card-content>
+                  <ion-list>
+                    <ion-item lines="none">
+                      <ion-avatar>
+                        <div
+                          style="background-color: #6495ed;border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                          <h1>{{notifiService.userDetails.name.charAt(0)}}</h1>
+                        </div>
+                      </ion-avatar>
+                      <div>
+                        <ion-label>{{notifiService.userDetails.name || ''}}</ion-label>
+                        <ion-label style="font-size: 12px;">{{notifiService.userDetails.primary_email
+                          || ''}}</ion-label>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-card-content>
+              </ion-card>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-toolbar>
+    </ion-header>
+    <!-- Sidebar/Navbar -->
+    <ion-content>
+      <ion-split-pane when="md" contentId="menu-content">
+        <ion-menu class="ion-side-menu" contentId="menu-content" [ngClass]="{ collapse: isMenuCollapse }">
+          <ion-content class="sidebar-container">
+            <ion-menu-toggle autoHide="false">
+              <ion-item class="ion-hide-md-down" lines="none">
+                <ion-icon class="cursor-pointer" name="menu" slot="{{ isMenuCollapse ? '' : 'end' }}"
+                  (click)="isMenuCollapse = !isMenuCollapse"></ion-icon>
+              </ion-item>
+              <ion-item lines="none" [routerLink]="item.link" [title]="item.title" *ngFor="let item of menuList"
+                routerDirection="root" routerLinkActive="active-link">
+                <ion-icon [name]="item.image" class="pointer-none"></ion-icon>
+                <ion-label [title]="item.title" class="ion-padding">
+                  {{item.title}}
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-content>
+        </ion-menu>
+        <ion-router-outlet id="menu-content"></ion-router-outlet>
+      </ion-split-pane>
+    </ion-content>
+  </ion-app>
+</div>
+<div *ngIf="urlList.indexOf(route.url.split('?')[0]) != -1">
+  <ion-app>
+    <ion-router-outlet id="menu-content"></ion-router-outlet>
+  </ion-app>
+</div>

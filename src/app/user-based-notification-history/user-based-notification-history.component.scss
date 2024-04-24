@@ -1,0 +1,278 @@
+@import "../../theme/form.scss";
+@import '../../theme/variables.scss';
+
+* {
+  font-family: Roboto;
+  font-style: normal;
+}
+
+.header-container {
+  // border-bottom: 0.5px solid var(--common-text-white) !important;
+  border-bottom: 1px solid var(--ion-color-border);
+}
+
+
+
+
+
+.errMsg-header-container {
+  height: 59px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1.4px solid var(--ion-color-primary) !important;
+}
+
+// .top-three-card-container {
+//   ion-spinner {
+//     height: 14px;
+//     margin: 2px 0px 0px 2px;
+//   }
+// }
+
+@media(max-width: 440px) {
+  .row-wrapper {
+    h1 {
+      font-size: 16px;
+    }
+
+    h2 {
+      font-size: 14px;
+    }
+  }
+}
+
+.left-col-container {
+  // border-right: 0.5px solid var(--common-text-white);
+  border-right: 1px solid var(--ion-color-border);
+  background-color: var(--ion-color-secondary);
+
+  ion-list {
+    padding: 0px 20px;
+
+    ion-list-header {
+      padding: 0px;
+
+      ion-label {
+        font-family: 'inter';
+        font-size: 16px;
+        font-weight: 600;
+        color: #344562;
+      }
+    }
+
+    h5 {
+      font-family: "inter";
+      font-size: 16px;
+      font-weight: 600;
+      color: black;
+      margin-top: 10px;
+    }
+  }
+
+}
+
+.textbox ion-label {
+  transform: translateY(-10px) !important;
+  background: white;
+  width: max-content;
+}
+
+.right-container {
+  background-color: var(--ion-color-background);
+}
+
+.all-heading {
+  font-size: 20px;
+  color: black;
+  font-family: 'Inter';
+  font-weight: bold;
+}
+
+// commanded - feature needed may be in future
+
+// .form-buttons-container {
+//   .form-button-success {
+//     border: 0.5px solid var(--ion-color-primary);
+//     color: var(--ion-color-secondary);
+//     height: 36px;
+//     border-radius: 3px;
+//     text-transform: none;
+//     font-family: "roboto";
+//     font-style: normal;
+//     float: left;
+//     cursor: pointer;
+//     background-color: var(--ion-color-primary);
+//     width: 90px;
+//     margin-left: 10px;
+//   }
+// }
+
+#submittedErrorView,
+#submittedDeferred_grid {
+  border-bottom: 1px solid rgb(214, 214, 214);
+}
+
+// }
+ion-segment {
+  margin-top: 2%;
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+  border: 1px solid var(--ion-color-border);
+  --margin-start: 0 !important;
+
+  ion-segment-button {
+    --background-checked: var(--default-channel-bg);
+    --color-checked: none;
+
+  }
+}
+
+.top-twocard-row {
+  border-bottom: 1px solid rgb(213, 213, 213);
+}
+
+.chartcontainer-row {
+  border-bottom: 1px solid rgb(213, 213, 213);
+}
+
+ion-spinner {
+  height: 14px;
+}
+
+.card-count {
+  font-family: 'inter';
+  font-weight: 600;
+  color: black;
+  font-size: 75px;
+}
+
+#card-count-left {
+  color: var(--chart-series-1);
+}
+
+#card-count-right {
+  color: var(--chart-series-2);
+}
+
+.card-name {
+  font-family: 'inter';
+  color: black;
+  font-size: 16px;
+}
+
+.chartTitle {
+  padding-left: 10px;
+  font-size: 16px;
+  color: black;
+  font-family: "Inter";
+}
+
+.chart-container {
+  height: 200px;
+  padding-top: 12px;
+  // display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+
+  #padding-top {
+    padding-top: 75px;
+  }
+
+  p {
+    font-family: "Inter";
+    font-size: 20px;
+    color: gray;
+    font-weight: 600;
+    opacity: 0.5;
+    padding-top: 10px;
+  }
+}
+
+.card-tit-cont {
+  padding: 0px 0px 16px 0px;
+}
+
+.header-container-error {
+  height: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1.4px solid var(--ion-color-primary) !important;
+}
+
+.err-title {
+  margin: 19px 0px 18px 0px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.err-content {
+  height: 135px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+
+  div {
+    margin: 0px 0px 10px 0px;
+  }
+
+  p {
+    margin: 0px 10px 0px 10px;
+    font-size: 14px;
+  }
+}
+
+.error-wrapper {
+  align-items: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+
+.closeicon {
+  float: right;
+  font-size: 34px;
+  margin: 15px 0px 0px 0px;
+  padding-left: 31px;
+  color: black;
+  cursor: pointer;
+}
+
+.content-container {
+  height: 61%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+ion-card {
+  overflow: visible;
+}
+
+@media screen and (max-device-width: 430px) {
+
+  ion-segment ion-segment-button {
+    font-size: 12px !important;
+  }
+
+  .apx-card-chart {
+    --margin: 10px 16px !important;
+  }
+}
+
+
+::ng-deep .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control[disabled]:not(:checked):not(:indeterminate):not([data-indeterminate=true])~.mdc-checkbox__background {
+  background-color: #d4d4d4 !important;
+  border-color: transparent;
+  border: none;
+}
+
+.title-content {
+  display: flex;
+  justify-content: space-between !important;
+}

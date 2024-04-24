@@ -1,0 +1,126 @@
+@import "../../../../theme/form.scss";
+@import "../../../../theme/variables.scss";
+@import "../../../../theme/searchable-dropdown.scss";
+
+ion-header {
+  ion-toolbar {
+    padding-left: 40px;
+    padding-top: 30px;
+    border-radius: 18px 18px 0px 0px;
+
+    ion-title {
+      font-family: "Inter";
+      font-weight: 600;
+      font-size: 16px;
+      color: #16392f;
+    }
+  }
+}
+
+.body-container {
+  margin: 0px 35px 25px 35px;
+  min-height: 100px;
+
+  .category-title {
+    padding-left: 8px;
+    font-family: "Inter";
+    font-weight: 500;
+    font-size: 14px;
+    color: #656d80;
+  }
+
+  ion-select {
+    width: 100%;
+  }
+}
+
+ion-footer {
+  // padding-bottom: 22px;
+
+  .cancel-btn {
+    // margin-left: 40px;
+  }
+
+  .proceed-btn {
+    // margin-right: 40px;
+  }
+}
+
+@media screen and (max-device-width: 350px) {
+  .body-container {
+    margin: 0px 8px 25px 8px !important;
+    min-height: 100px !important;
+  }
+
+  .btn-wrappers {
+    margin: 0px 11px !important;
+  }
+
+  ion-header ion-toolbar {
+    padding-left: 16px;
+  }
+}
+
+.btn-wrappers {
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 38px;
+  margin-top: -20px !important;
+}
+.ios .btn-wrappers {
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 38px;
+  margin-top: 0px !important;
+}
+
+.form-element {
+  padding: 7.5px 5px !important;
+}
+
+//searchable dropdowm changes
+ion-content {
+  height: 280px;
+}
+
+.btns {
+  border-radius: 0px 0px 18px 18px;
+}
+
+::ng-deep .mat-form-container {
+  margin-top: 0px !important;
+}
+
+::ng-deep.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background: #ffffff !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label {
+  background-color: white !important;
+}
+
+::ng-deep .mat-select-block .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  border: none !important;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+//left right and bottom bottom work for various classes in mat-select
+::ng-deep.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading {
+  border-color: var(--ion-color-border) !important;
+}
+
+::ng-deep.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch {
+  border-color: var(--ion-color-border) !important;
+}
+
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+  border-color: var(--ion-color-border) !important;
+}
+
+//label color
+::ng-deep .mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above {
+  color: #1d1a1a !important;
+}

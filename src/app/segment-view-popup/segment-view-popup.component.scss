@@ -1,0 +1,42 @@
+@import '../../theme/variables.scss';
+
+.model-footer-button {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  display: flex;
+  border-radius: 5px;
+  height: 40px;
+  justify-content: end;
+  margin: 6px 10px;
+}
+
+.close-btn-label {
+  background-color: #6495ED;
+  color: var(--ion-color-secondary);
+  border-radius: 5px;
+  height: 44px;
+}
+
+.menu-btn-text {
+  padding: 12px 40px !important
+}
+
+.modal-popup {
+  padding: 23px 16px;
+  // padding-bottom: 0;
+  // padding-top: 10px;
+  background-color: var(--ion-color-background);
+}
+
+.closeicon {
+
+  float: right;
+  font-size: 23px;
+  margin: 0px 0px;
+  padding-left: 31px;
+  color: black;
+  cursor: pointer;
+}

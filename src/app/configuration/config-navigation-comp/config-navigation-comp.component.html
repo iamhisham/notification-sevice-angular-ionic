@@ -1,0 +1,71 @@
+<ion-header class="ion-hide-md-down  ion-no-border header-container-lg">
+  <ion-toolbar class=" ">
+    <ion-grid class="ion-no-padding">
+
+      <ion-row class="row-wrapper">
+        <ion-col size-lg="12" size-md="4" size-sm="6" size-xs="6" class="title-column ion-no-padding">
+          <div lines="none" class="title-content  ion-no-margin ion-no-padding">
+            <h1>Configuration</h1>
+            <ion-buttons>
+              <ion-button routerLink="/configuration/category" [ngClass]="activeMenu === 'CATEGORY' ? 'active' : ''"
+                [routerLinkActive]="'active'" class="category-btn font-size" slot="end" routerDirection="root">
+                <ion-label class="header-labels">Category</ion-label>
+              </ion-button>
+              <ion-button routerLink="/configuration/template" [ngClass]="activeMenu === 'TEMPLATE' ? 'active' : ''"
+                [routerLinkActive]="'active'" class="template-btn font-size" slot="end" routerDirection="root">
+                <ion-label class="header-labels">Template</ion-label>
+              </ion-button>
+              <ion-button routerLink="/configuration/user-segment"
+                [ngClass]="activeMenu === 'USER_SEGMENT' ? 'active' : ''" [routerLinkActive]="'active'"
+                class="userSegment-btn font-size" slot="end" routerDirection="root">
+                <ion-label class="header-labels">User Segment</ion-label>
+              </ion-button>
+            </ion-buttons>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-header class="ion-hide-md-up ion-no-border">
+  <ion-toolbar>
+    <ion-grid class="ion-no-padding padding-hide-md-down navGrid-container">
+      <ion-row class="navbar ion-no-padding">
+
+        <ion-col size=" 12" class="ion-float-left ion-no-padding" class=" config-mob-title">
+          <div class="ion-text-start ion-no-margin">
+            <h1>Configuration</h1>
+          </div>
+        </ion-col>
+        <!-- 4/12 -->
+        <ion-col size="4" class="nav-container ion-no-padding">
+          <ion-card routerLink="/configuration/category" [ngClass]="activeMenu === 'CATEGORY' ? 'active' : ''"
+            [routerLinkActive]="'active'" routerDirection="root">
+            <ion-card-header>
+              <ion-img src="../../../assets/icons/{{notifiService.themeName}}/category-mobview.svg"></ion-img>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">Category</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4" class="nav-container ion-no-padding">
+          <ion-card routerLink="/configuration/template" [ngClass]="activeMenu === 'TEMPLATE' ? 'active' : ''"
+            [routerLinkActive]="'active'" routerDirection="root">
+            <ion-card-header>
+              <ion-img src="../../../assets/icons/{{notifiService.themeName}}/template-mobview.svg"></ion-img>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">Template</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4" class="nav-container ion-no-padding">
+          <ion-card routerLink="/configuration/user-segment" [ngClass]="activeMenu === 'USER_SEGMENT' ? 'active' : ''"
+            [routerLinkActive]="'active'" routerDirection="root">
+            <ion-card-header>
+              <ion-img src="../../../assets/icons/{{notifiService.themeName}}/usersegment-mobview.svg"></ion-img>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">User Segment</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>

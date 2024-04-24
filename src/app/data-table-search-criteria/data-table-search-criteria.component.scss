@@ -1,0 +1,28 @@
+@import "../../theme/form.scss";
+@import"../../theme/variables.scss";
+@import "../../theme/searchable-dropdown.scss";
+@import "../../theme/date-picker.scss";
+
+.search-outer-container {
+  // border-right: 0.5px solid var(--common-text-white);
+  border-right: 1px solid var(--ion-color-border);
+
+  .search-container {
+    padding: 0px 12px;
+  }
+}
+
+.close-icon {
+  font-size: 22px;
+  position: absolute;
+  top: 4px;
+  right: -4px;
+  color: gray;
+}
+
+.owlInput {
+  width: -webkit-fill-available;
+  height: 42px;
+  border-radius: 3px;
+  border: none;
+}

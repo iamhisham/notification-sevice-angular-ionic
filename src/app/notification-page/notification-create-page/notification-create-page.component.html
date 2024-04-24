@@ -1,0 +1,1058 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ng-template #dynamic_tag_popover>
+  <ion-content>
+    <!-- System -->
+    <div class="popover-content custom-display-flex">
+      <ion-list-header class="ion-no-margin ion-no-padding">
+        System
+      </ion-list-header>
+      <a *ngFor="let tag of systemTagList" class="system-text" (click)="addSelectedTag('system.' + tag)">{{tag}}</a>
+      <!-- Application -->
+      <div class="popover-content custom-display-flex" *ngIf="dynamic_tags.length>0">
+        <ion-list-header class="ion-no-margin  ion-no-padding">
+          Application
+        </ion-list-header>
+        <a *ngFor="let tag of dynamic_tags" (click)="addSelectedTag(tag.name)">{{tag.name}}</a>
+      </div>
+    </div>
+  </ion-content>
+</ng-template>
+
+<ng-template #preview_container let-content="content">
+  <ion-row *ngIf="preview_type === 'PARSE_USER_TEMPLATE'">
+    <ion-col size="4">
+      <p class="preview-label">Preview as:</p>
+    </ion-col>
+
+    <ion-col size-lg="6" size-xs="7" class="form-element">
+      <ion-item fill="outline" class="textbox-stacked">
+        <ion-label position="stacked">
+        </ion-label>
+        <ion-input [disabled]="!notification.isBulkNotification" type="number" placeholder="User ID."
+          [(ngModel)]="preview_customerId" (ionBlur)="getUserData()"></ion-input>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <div class="preview-container" @fadeIn>
+    <span class="cursor-pointer full-screen" *ngIf="preview_channel.length > 0 ? true : false"
+      (click)="modalPresent(content)" title="Full screen">
+      <ion-icon class="pointer-none" name="scan-outline"></ion-icon>
+    </span>
+    <div class="slide-navigate slide-navigate-left" *ngIf="preview_channel"
+      [ngClass]="{ pointer_event: preview_type === 'TEMPLATE' }" (click)="slidePreview()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </div>
+    <div class="slide-content" *ngIf="preview_channel">
+      <swiper #swiper [config]="config">
+        <ng-template swiperSlide>
+          <div>
+            <app-template-page [attachment_preview]="'NOTIFICATION'"
+              [attachment_details]="!isAbTesting ? this.previewTemplateMap[this.notification.templateId] : this.previewTemplateMap[templateId]"
+              [attachment_list]="this.notification?.attachments" [preview_channel]="preview_channel" [content]="content"
+              [isEmailReadOnly]="!isDirectContentMessage"></app-template-page>
+          </div>
+          <!--  -->
+        </ng-template>
+        <ng-template swiperSlide>
+          <div>
+            <app-template-page [attachment_preview]="'NOTIFICATION'"
+              [attachment_details]="!isAbTesting ? this.previewTemplateMap[this.notification.templateId] : this.previewTemplateMap[templateId]"
+              [attachment_list]="this.notification?.attachments" [preview_channel]="preview_channel" [content]="content"
+              [dynamicTagDetails]="getDynamicTagDetails()" [needTemplateParser]="true"
+              [isEmailReadOnly]="true"></app-template-page>
+          </div>
+        </ng-template>
+        <ng-template swiperSlide>
+          <div>
+            <app-template-page [attachment_preview]="'NOTIFICATION'"
+              [attachment_details]="!isAbTesting ? this.previewTemplateMap[this.notification.templateId] : this.previewTemplateMap[templateId]"
+              [attachment_list]="this.notification?.attachments" [preview_channel]="preview_channel" [content]="content"
+              [dynamicTagDetails]="getDynamicTagDetails()" [needTemplateParser]="true"
+              [systemTagDetails]="this.previewUserDetails" [isEmailReadOnly]="true"></app-template-page>
+          </div>
+        </ng-template>
+      </swiper>
+    </div>
+    <div class="slide-navigate slide-navigate-right" *ngIf="preview_channel"
+      [ngClass]="{ pointer_event: preview_type === 'PARSE_USER_TEMPLATE' }" (click)="slideNext()">
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #override_dynamic_tags let-templateId="templateId" let-override="override">
+  <div class="main-wrapper">
+    <div class="content-wrapper textarea" *ngFor="let tag of override; let i=index">
+      <ion-item fill="outline" class="textbox">
+        <ion-label class="override-dyn" position="floating">Name</ion-label>
+        <ion-select interface="popover" [interfaceOptions]="notifiService.customPopoverOptions"
+          *ngIf="(previewTemplateMap[templateId].dynamic_tags || []).length > 0" placeholder="--Select Tag--"
+          [(ngModel)]="tag.name" class="ion-no-padding">
+          <ion-select-option value="">--Select Tag--</ion-select-option>
+          <ion-select-option *ngFor="let dynamicTag of previewTemplateMap[templateId].dynamic_tags"
+            [value]="dynamicTag.name">{{dynamicTag.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p>=</p>
+      <ion-item fill="outline" class="textbox">
+        <ion-label position="floating">Override Value</ion-label>
+        <ion-input name="value" type="text" [(ngModel)]="tag.value"></ion-input>
+      </ion-item>
+      <ion-icon name="close-outline" class="cursor-pointer" (click)="removeOverrideDynamicTag(override, i)"></ion-icon>
+    </div>
+  </div>
+  <div class="sub-footer">
+    <ion-button (click)="addOverrideDynamicTag(override)"
+      [disabled]="previewTemplateMap[templateId]?.dynamic_tags.length == override.length">
+      + Add
+    </ion-button>
+  </div>
+</ng-template>
+
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<ion-header class="ion-no-border" style="border-bottom:1px solid var(--common-text-white) ;">
+  <ion-toolbar class="ion-no-margin">
+    <ion-item slot="start" lines="none" class="notification-title-container
+     ion-no-padding">
+      <ion-icon name="arrow-back" class="back-icon" [routerLink]="landingPageURL"></ion-icon>
+      <ion-title class="ion-padding-horizontal"> {{landingPageName}} Details</ion-title>
+      <ion-img src="../../../assets/icon/split line.png"></ion-img>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="ion-no-padding container-background">
+    <ion-row>
+      <ion-col size="12" style="display: flex; flex-direction: row;" class="ion-no-padding">
+        <div style=" width: 275px; min-width: 275px; border-right: 1px solid var(--common-text-white);padding-top: 8px;"
+          class="ion-hide-lg-down">
+          <div style="position: fixed;width: 274px;">
+            <ion-list class="ion-no-margin ion-no-padding notification-side-title">
+              <ion-list-header class="ion-no-padding"> Create Notification </ion-list-header>
+              <ion-note>You can create and schedule notifications to send now or later.</ion-note>
+            </ion-list>
+            <div class="notification-button-container">
+              <ion-item button lines="none"
+                *ngFor="let name of isAbTesting ? ['Audience', 'Message', 'A/B Test Settings', 'Schedule'] : ['Audience', 'Message', 'Schedule']; let i=index">
+                <ion-label (click)="scrollContent(name.split(' ').join(''))"
+                  class="ion-no-padding ion-no-margin ion-padding-start" fill="clear">
+                  {{i+1}}. {{name}}
+                </ion-label>
+              </ion-item>
+            </div>
+          </div>
+        </div>
+
+
+        <div style="width: 100%;" class="table-media-query">
+          <div style="width: 100%;" class="ion-hide-md-up">
+            <ion-buttons style="justify-content:center; margin: 0px 10px;">
+              <ion-button (click)="scrollContent(name)" class="sm-show-button"
+                *ngFor="let name of ['Audience', 'Message', 'Schedule']; let i=index">
+                {{i+1}}. {{name}}
+              </ion-button>
+            </ion-buttons>
+          </div>
+          <div>
+            <ion-card>
+              <ion-grid class="ion-padding">
+                <!-- Audience -->
+                <ion-row class="row-bottom-border ion-padding-bottom" id="Audience">
+                  <ion-col size-md="12" size-lg="12">
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col size-lg="6">
+                          <p class="notification-sub-title">1. Audience</p>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row class="form-element" *ngIf="!isAbTesting">
+                        <ion-col class="notification-card-container">
+                          <div class="notification-card ion-no-margin"
+                            [ngClass]="{'selected': !notification.isBulkNotification}"
+                            (click)="onAudienceChange(false)">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/singleuser.png">
+                            </ion-img>
+                            <ion-label class="channel-title">Single User</ion-label>
+                          </div>
+                          <div class="notification-card ion-no-margin"
+                            [ngClass]="{'selected': notification.isBulkNotification}" (click)="onAudienceChange(true)">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/multiuser.png">
+                            </ion-img>
+                            <ion-label class="channel-title">Multiple User</ion-label>
+                          </div>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row *ngIf="isAbTesting || notification.isBulkNotification">
+                        <ion-col size-xm="12" size-md="12" size-lg="12" class="form-element">
+                          <ion-row>
+                            <ion-col size-xs="12" size-lg="6">
+                              <ion-label class="notification-label-title">Who should receive this notification?
+                              </ion-label>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-lg="6" style="padding-bottom: 12.5px; padding-top: 0px;">
+                              <!-- <ion-item fill="outline" class="dropdown-stacked multiselect">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-select interface="popover" [multiple]="userSegmentList.length !== 0"
+                                [interfaceOptions]="notifiService.segementioncutsomPopover"
+                                [(ngModel)]="includedSegments" placeholder="-Select user segment-"
+                                class="ion-no-padding"
+                                (ionBlur)="getNotificationUserCount(includedSegments, 'INCLUDED')">
+                                <ion-select-option *ngIf="userSegmentList.length === 0" [disabled]="true">No user
+                                  segment found</ion-select-option>
+                                <ion-select-option *ngFor="let userSegment of userSegmentList"
+                                  [value]="userSegment.id">{{userSegment.name}}</ion-select-option>
+                              </ion-select>
+                            </ion-item> -->
+                              <div style="margin-top: 14px" class="mat-select-block">
+                                <mat-form-field class="mat-form-container">
+                                  <mat-select [multiple]="true" [(ngModel)]="includedSegments"
+                                    placeholder="-Select user segment-" (click)="this.matSelect.type = 'INCLUDED';"
+                                    class="ion-no-padding"
+                                    (closed)="getNotificationUserCount(includedSegments, 'INCLUDED')">
+                                    <mat-option>
+                                      <ngx-mat-select-search placeholderLabel="Search"
+                                        [(ngModel)]="matSelect.dropdownFilterSearch"
+                                        [ngModelOptions]="{standalone: true}"
+                                        noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                                    </mat-option>
+                                    <mat-option *ngIf="userSegmentList.length === 0" [disabled]="true">No user
+                                      segment found</mat-option>
+                                    <mat-option class="options-container"
+                                      *ngFor="let userSegment of userSegmentList
+                                    | filter: { name:'INCLUDED'=== matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                      [value]="userSegment.id">{{userSegment.name}}</mat-option>
+                                  </mat-select>
+                                </mat-form-field>
+                              </div>
+                            </ion-col>
+                            <ion-col size-md="12" size-lg="5" offset-lg="0.5" class="multi-user-limit"
+                              *ngIf="((notification.includedSegments || []).length > 0) && includedSegments.length">
+                              <ion-label>Total users (Estimate):
+                                <ion-spinner *ngIf="totalUserCount == null" name="circular"
+                                  style="height: 14px"></ion-spinner>
+                                <span *ngIf="totalUserCount != null" name="circular"
+                                  style="height: 14px">{{totalUserCount}}</span>
+                              </ion-label>
+                              <ion-label class="user-view" *ngIf="totalUserCount != null && totalUserCount !== 0"
+                                (click)="openSegmentViewPopup()">View User</ion-label>
+                            </ion-col>
+                          </ion-row>
+                        </ion-col>
+                        <ion-col size-xs="12" offset-xs="5.5" size-md="12" offset-md="6" size-lg="6" offset-lg="2.7"
+                          style="padding-bottom: 12.5px;">
+                          <ion-label class=" or-label">(Or)</ion-label>
+                        </ion-col>
+                        <ion-col size-md="12" size-lg="12" class="form-element">
+                          <ion-row>
+                            <ion-col size-xs="12" size-lg="6">
+                              <ion-label class="notification-label-title">
+                                Who should
+                                <span class="span-text">not</span> receive this notification?
+                              </ion-label>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col size-xs="12" size-lg="6">
+                              <!-- <ion-item fill="outline" class="dropdown-stacked multiselect p-10">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-select interface="popover" [multiple]="userSegmentList.length !== 0"
+                                [(ngModel)]="excludedSegments" placeholder="-Select user segment-"
+                                class="ion-no-padding" [interfaceOptions]="notifiService.segementioncutsomPopover"
+                                (ionBlur)="getNotificationUserCount(excludedSegments, 'EXCLUDED')">
+                                <ion-select-option *ngIf="userSegmentList.length === 0" [disabled]="true">No user
+                                  segment found</ion-select-option>
+                                <ion-select-option *ngFor="let userSegment of userSegmentList"
+                                  [value]="userSegment.id">{{userSegment.name}}</ion-select-option>
+                              </ion-select>
+                            </ion-item> -->
+                              <div style="margin-top: 14px" class="mat-select-block">
+                                <mat-form-field class="mat-form-container">
+                                  <mat-select [multiple]="true" [(ngModel)]="excludedSegments"
+                                    placeholder="-Select user segment-" (click)="this.matSelect.type = 'EXCLUDED';"
+                                    class="ion-no-padding"
+                                    (closed)="getNotificationUserCount(excludedSegments, 'EXCLUDED')">
+                                    <mat-option *ngIf="userSegmentList.length !== 0">
+                                      <ngx-mat-select-search placeholderLabel="Search"
+                                        [(ngModel)]="matSelect.dropdownFilterSearch"
+                                        [ngModelOptions]="{standalone: true}"
+                                        noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                                    </mat-option>
+                                    <mat-option *ngIf="userSegmentList.length === 0" [disabled]="true">No user
+                                      segment found</mat-option>
+                                    <mat-option class="options-container"
+                                      *ngFor="let userSegment of userSegmentList
+                                    | filter: { name:'EXCLUDED'=== matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                      [value]=" userSegment.id">{{userSegment.name}}</mat-option>
+                                  </mat-select>
+                                </mat-form-field>
+                              </div>
+                            </ion-col>
+                            <ion-col size-md="12" size-lg="5" offset-lg="0.5" class="multi-user-limit"
+                              *ngIf="((notification.excludedSegments || []).length > 0) && excludedSegments.length">
+                              <ion-label>Total users (Estimate):
+                                <ion-spinner *ngIf="totalUserCount == null" name="circular"
+                                  style="height: 14px"></ion-spinner>
+                                <span *ngIf="totalUserCount != null" name="circular"
+                                  style="height: 14px">{{totalUserCount}}</span>
+                              </ion-label>
+                              <ion-label *ngIf="totalUserCount != null && totalUserCount !== 0" class="user-view"
+                                (click)="openSegmentViewPopup()">View
+                                User</ion-label>
+                            </ion-col>
+                          </ion-row>
+                        </ion-col>
+                      </ion-row>
+                      <form [formGroup]="form">
+                        <ion-row *ngIf="!isAbTesting && !notification.isBulkNotification">
+                          <ion-col size-md="12" size-lg="6" class="form-element">
+                            <ion-item fill="outline" class="textbox">
+                              <ion-label position="floating">Customer ID
+                                <span class="mandatory-field">*</span>
+                              </ion-label>
+                              <ion-input formControlName="Id" type="number" class="font-size"
+                                [(ngModel)]="notification.customerId"
+                                (ionBlur)="getActivateChannelOfSingleUser(notification.customerId, true)">
+                              </ion-input>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="form.get('Id')?.hasError('required') && (form.get('Id')?.touched || form.get('Id')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </ion-col>
+                        </ion-row>
+                      </form>
+                    </ion-grid>
+                  </ion-col>
+                </ion-row>
+                <!-- Message -->
+                <ion-row class="row-bottom-border ion-padding-top" id="Message">
+                  <ion-col size-md="12" size-lg="6">
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col size-sm="8">
+                          <p class="notification-sub-title">2. Message</p>
+                        </ion-col>
+                        <ion-col size-sm="4" class="ion-hide-sm-up">
+                          <ion-buttons style="justify-content:end;" *ngIf="preview_channel">
+                            <ion-button class="preview-btn" (click)="setOpen(true)">
+                              <ion-icon name="search-outline"></ion-icon>Preview</ion-button>
+                          </ion-buttons>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row class="form-element" *ngIf="!isAbTesting">
+                        <ion-col class="notification-card-container">
+                          <div class="notification-card ion-no-margin" [ngClass]="{'selected': !isDirectContentMessage}"
+                            (click)="onMessageTypeChange(false);">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/notification_temp.svg">
+                            </ion-img>
+                            <ion-label class="channel-title">Template</ion-label>
+                          </div>
+                          <div class="notification-card ion-no-margin" [ngClass]="{'selected': isDirectContentMessage}"
+                            (click)="onMessageTypeChange(true);">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/notification_custom.svg">
+                            </ion-img>
+                            <ion-label class="channel-title">Custom</ion-label>
+                          </div>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row *ngIf="!isAbTesting">
+                        <ion-col size-md="12" size-xs="12" class="form-element">
+                          <ion-label class="notification-label-title">Select Category
+                            <span class="mandatory-field">*</span>
+                          </ion-label>
+                          <form [formGroup]="form">
+                            <!-- <ion-item fill="outline" class="dropdown-stacked p-10">
+                            <ion-label position="stacked"></ion-label>
+                            <ion-select interface="popover" [interfaceOptions]="notifiService.customPopoverOptions"
+                              [(ngModel)]="notification.categoryId"
+                              (ionChange)="onCategorySelect();isDropdownOpen=false" (click)="isDropdownOpen = true;"
+                              placeholder="-Select Category-" class="ion-no-padding" formControlName="category">
+                              <ion-select-option *ngIf="categoryList.length === 0" [disabled]="true">No category
+                                found</ion-select-option>
+                              <ion-select-option *ngFor="let category of categoryList"
+                                [value]="category.id">{{category.name}}</ion-select-option>
+                            </ion-select>
+                          </ion-item> -->
+                            <div style="margin-top: 14px" class="mat-select-block">
+                              <mat-form-field class="mat-form-container">
+                                <mat-select placeholder="-Select Category-"
+                                  (ngModelChange)="onCategorySelect();isDropdownOpen=false"
+                                  (click)="isDropdownOpen = true; this.matSelect.type = 'category'; "
+                                  [(value)]="notification.categoryId" formControlName="category">
+                                  <mat-option>
+                                    <ngx-mat-select-search placeholderLabel="Search"
+                                      [(ngModel)]="matSelect.dropdownFilterSearch" [ngModelOptions]="{standalone: true}"
+                                      noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                                  </mat-option>
+                                  <mat-option class="options-container"
+                                    *ngFor="let category of categoryList | filter: { name:'category'=== matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                    [value]="category.id">{{category.name}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                            </div>
+                            <ng-container
+                              *ngIf="form.get('category')?.hasError('required') && (form.get('category')?.touched || form.get('category')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element"
+                          *ngIf="!isDirectContentMessage">
+                          <ion-label class="notification-label-title">Select Template
+                            <span class="mandatory-field">*</span>
+                          </ion-label>
+                          <form [formGroup]="form">
+                            <!-- <ion-item fill="outline" class="dropdown-stacked p-10">
+                            <ion-label position="stacked"></ion-label>
+                            <ion-select interface="popover" [(ngModel)]="notification.templateId"
+                              [interfaceOptions]="notifiService.customPopoverOptions"
+                              (ionChange)="onTemplateSelect();isDropdownOpen=false" (click)="isDropdownOpen = true;"
+                              placeholder="-Select Template-" class="ion-no-padding" formControlName="template">
+                              <ion-select-option *ngIf="templateList.length===0" [disabled]="true">No template
+                                found</ion-select-option>
+                              <ion-select-option *ngFor="let template of templateList"
+                                [value]="template.id">{{template.name}}</ion-select-option>
+                            </ion-select>
+                          </ion-item> -->
+                            <div style="margin-top: 14px" class="mat-select-block">
+                              <mat-form-field class="mat-form-container">
+                                <mat-select [(ngModel)]="notification.templateId"
+                                  (ngModelChange)="onTemplateSelect();isDropdownOpen=false"
+                                  (click)="isDropdownOpen = true; this.matSelect.type = 'template';"
+                                  placeholder="-Select Template-" class="ion-no-padding" formControlName="template">
+                                  <mat-option *ngIf="templateList.length>0">
+                                    <ngx-mat-select-search placeholderLabel="Search"
+                                      [(ngModel)]="matSelect.dropdownFilterSearch" [ngModelOptions]="{standalone: true}"
+                                      noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                                  </mat-option>
+                                  <mat-option class="notFound" *ngIf="templateList.length===0" disabled="true">No
+                                    template
+                                    found</mat-option>
+                                  <mat-option class="options-container"
+                                    *ngFor="let template of templateList | filter: { name:'template'=== matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                    [value]="template.id">{{template.name}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                            </div>
+                            <ng-container
+                              *ngIf="form.get('template')?.hasError('required') && (form.get('template')?.touched || form.get('template')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element">
+                          <form [formGroup]="form">
+                            <ion-label class="notification-label-title">Select
+                              Channel
+                              <span class="mandatory-field">*</span>
+                            </ion-label>
+                            <ion-item fill="outline" class="dropdown-stacked multiselect p-10">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-select interface="popover" [(ngModel)]="notification.channels"
+                                [multiple]="((isDirectContentMessage ? directContentChannelList : templateMap[notification.templateId]?.channels) || []).length != 0"
+                                [interfaceOptions]="notifiService.customPopoverOptions" (ionChange)="onChannelSelect();"
+                                placeholder="-Select Channels-" class="ion-no-padding" formControlName="channel">
+                                <ion-select-option
+                                  *ngIf="((isDirectContentMessage ? directContentChannelList : templateMap[notification.templateId]?.channels) || []).length == 0"
+                                  [disabled]="true">No channel found</ion-select-option>
+                                <ion-select-option
+                                  [disabled]="(!notification.isBulkNotification && !singleUserCount[channel]) || (notification.isBulkNotification && !userCountDetails[channel])"
+                                  *ngFor="let channel of (isDirectContentMessage ? directContentChannelList : templateMap[notification.templateId]?.channels || [])"
+                                  [value]="channel">{{channelMap[channel]}}
+                                  <span *ngIf="notification.isBulkNotification"> (User Count -
+                                    {{userCountDetails[channel]|| 0}})</span>
+                                  <span *ngIf="!notification.isBulkNotification"> (Active Channel -
+                                    {{singleUserCount[channel] || 0}})</span>
+                                </ion-select-option>
+                              </ion-select>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="form.get('channel')?.hasError('required') && (form.get('channel')?.touched || form.get('channel')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col class="form-element" size-md="12"
+                          *ngIf="!isDirectContentMessage && (previewTemplateMap[notification.templateId]?.dynamic_tags || []).length > 0">
+                          <ion-item class="override-checkbox">
+                            <ion-checkbox [(ngModel)]="isOverrideTagValue" slot="start"></ion-checkbox>
+                            <ion-label>Override Dynamic Tags</ion-label>
+                          </ion-item>
+                        </ion-col>
+                        <ion-col class="form-element" size-md="12"
+                          *ngIf="!isDirectContentMessage && isOverrideTagValue && (previewTemplateMap[notification.templateId]?.dynamic_tags || []).length > 0">
+                          <ng-template [ngTemplateOutlet]="override_dynamic_tags"
+                            [ngTemplateOutletContext]="{templateId: notification.templateId, override: dynamic_tags_override}"></ng-template>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row *ngIf="!isAbTesting && isDirectContentMessage">
+                        <ion-col size-xs="12" size-md="12" class="form-element" *ngIf="isValidFieldToShow('title')">
+                          <form [formGroup]="form">
+                            <ion-item fill="outline" class="textbox">
+                              <ion-label position="floating">Title
+                                <span class="mandatory-field">*</span>
+                              </ion-label>
+                              <span class="icon-wrapper">
+                                <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                                  (click)="dynamicTagModel()"></ion-img>
+                                <ion-img id="title_dynamic_tag" (click)="showDynamicContentPopup('TITLE')"
+                                  src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                                  class="cursor-pointer">
+                                </ion-img>
+                              </span>
+                              <!-- system & application popover -->
+                              <ion-popover side="bottom" trigger="title_dynamic_tag" [dismissOnSelect]="true">
+                                <ng-template>
+                                  <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                                </ng-template>
+                              </ion-popover>
+                              <ion-input type="text" class="font-size" formControlName="title"
+                                (click)="cursorIndexIdentifier($event,'TITLE')"
+                                (select)="cursorIndexIdentifier($event,'TITLE')"
+                                (keyup)="cursorIndexIdentifier($event,'TITLE')"
+                                [(ngModel)]="notification.content.title"></ion-input>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="form.get('title')?.hasError('required') && (form.get('title')?.touched || form.get('title')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col size-xs="12" size-md="12" class="form-element" *ngIf="isValidFieldToShow('message')">
+                          <form [formGroup]="form">
+                            <ion-item fill="outline" class="textarea">
+                              <ion-label position="floating">Body(Html)
+                                <span class="mandatory-field">*</span>
+                              </ion-label>
+                              <span class="icon-wrapper">
+                                <ion-img src="../../../assets/icons/{{notifiService.themeName}}/edit_insert_tag.svg"
+                                  (click)="dynamicTagModel()"></ion-img>
+                                <ion-img id="message_dynamic_tag" (click)="showDynamicContentPopup('MESSAGE')"
+                                  src="../../../assets/icons/{{notifiService.themeName}}/showtexttempalte.svg"
+                                  class="cursor-pointer">
+                                </ion-img>
+                              </span>
+                              <!-- system & application popover -->
+                              <ion-popover side="bottom" trigger="message_dynamic_tag" [dismissOnSelect]="true">
+                                <ng-template>
+                                  <ng-template [ngTemplateOutlet]="dynamic_tag_popover"></ng-template>
+                                </ng-template>
+                              </ion-popover>
+                              <ion-textarea rows="4" type="text" (click)="cursorIndexIdentifier($event,'MESSAGE')"
+                                (select)="cursorIndexIdentifier($event,'MESSAGE')"
+                                (keyup)="cursorIndexIdentifier($event,'MESSAGE')"
+                                [(ngModel)]="notification.content.message" class="font-size"
+                                formControlName="body"></ion-textarea>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="form.get('body')?.hasError('required') && (form.get('body')?.touched || form.get('body')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+
+                        <ion-col size-xs="12" size-md="12" class="form-element"
+                          *ngIf="isValidFieldToShow('click_action')">
+                          <ion-item fill="outline" class="textbox">
+                            <ion-label position="floating">Click Action</ion-label>
+                            <ion-input type="text" class="font-size"
+                              [(ngModel)]="notification.content.click_action"></ion-input>
+                          </ion-item>
+                        </ion-col>
+                        <ion-col class="form-element" size-xs="12" size-sm="12" size-md="12"
+                          *ngIf="isValidFieldToShow('image')">
+                          <app-image-upload [details]="notification.content.image" [title]="'Image'"></app-image-upload>
+                        </ion-col>
+                        <ion-col class="form-element" size-xs="12" size-sm="12" size-md="12"
+                          *ngIf="isValidFieldToShow('icon')">
+                          <app-image-upload [details]="notification.content.icon" [title]="'Icon'"></app-image-upload>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row *ngIf="isAbTesting">
+                        <ion-col size-md="12" size-xs="12" class="form-element">
+                          <ion-label class="notification-label-title">Select Category
+                            <span class="mandatory-field">*</span>
+                          </ion-label>
+                          <form [formGroup]="form">
+                            <!-- <ion-item fill="outline" class="dropdown-stacked p-10">
+                            <ion-label position="stacked"></ion-label>
+                            <ion-select interface="popover" [interfaceOptions]="notifiService.customPopoverOptions"
+                              [(ngModel)]="notification.categoryId"
+                              (ionChange)="onCategorySelect();isDropdownOpen=false" (click)="isDropdownOpen = true;"
+                              placeholder="-Select Category-" class="ion-no-padding" formControlName="category">
+                              <ion-select-option *ngFor="let category of categoryList"
+                                [value]="category.id">{{category.name}}</ion-select-option>
+                            </ion-select>
+                          </ion-item> -->
+                            <div style="margin-top: 14px" class="mat-select-block">
+                              <mat-form-field class="mat-form-container">
+                                <mat-select placeholder="-Select Category-"
+                                  (selectionChange)="onCategorySelect();isDropdownOpen=false"
+                                  (click)="isDropdownOpen = true; matSelect.type='ab_category'"
+                                  [(ngModel)]="notification.categoryId" formControlName="category">
+                                  <mat-option>
+                                    <ngx-mat-select-search placeholderLabel="Search"
+                                      [(ngModel)]="matSelect.dropdownFilterSearch" [ngModelOptions]="{standalone: true}"
+                                      noEntriesFoundLabel="No matches found"></ngx-mat-select-search>
+                                  </mat-option>
+                                  <mat-option class="options-container"
+                                    *ngFor="let category of categoryList | filter: { name:'ab_category'==matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                    [value]="category.id">{{category.name}}</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                            </div>
+                            <ng-container
+                              *ngIf="form.get('category')?.hasError('required') && (form.get('category')?.touched || form.get('category')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element">
+                          <form [formGroup]="form">
+                            <ion-label class="notification-label-title">Select Channel
+                              <span class="mandatory-field">*</span>
+                            </ion-label>
+                            <ion-item fill="outline" class="dropdown-stacked multiselect p-10">
+                              <ion-label position="stacked"></ion-label>
+                              <ion-select interface="popover" [(ngModel)]="notification.channel"
+                                [interfaceOptions]="notifiService.customPopoverOptions" (ionChange)="onChannelSelect();"
+                                placeholder=" -Select Channels-" class="ion-no-padding" formControlName="channel">
+                                <ion-select-option *ngFor="let channel of channelList"
+                                  [disabled]="userCountDetails[channel] == 0" [value]="channel">{{channelMap[channel]}}
+                                  <span
+                                    *ngIf="(notification.includedSegments || []).length > 0 || (notification.excludedSegments || []).length > 0 && userCountDetails[channel]!= undefined  ">&nbsp;(User
+                                    Count - {{userCountDetails[channel] || 0}})</span></ion-select-option>
+                              </ion-select>
+                            </ion-item>
+                            <ng-container
+                              *ngIf="form.get('channel')?.hasError('required') && (form.get('channel')?.touched || form.get('channel')?.dirty)">
+                              <small class="form-error-message">This is a required field</small>
+                            </ng-container>
+                          </form>
+                        </ion-col>
+                        <ion-col size-md="12" size-xs="12" class="form-element"
+                          *ngIf="notification.categoryId && notification.channel">
+                          <ion-segment [value]="notification.variants[selectedVariantIndex].name">
+                            <ion-segment-button [value]="variant.name" (click)="onVariantSelect(i);"
+                              *ngFor="let variant of notification.variants; let i = index;">
+                              <ion-label class="textCapitalize">{{variant.name}}</ion-label>
+                            </ion-segment-button>
+                          </ion-segment>
+                        </ion-col>
+                        <ion-col size-md="12" size-xs="12" class="varaint-input-container"
+                          *ngIf="notification.categoryId && notification.channel">
+                          <ion-row>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element">
+                              <ion-item fill="outline" class="textbox">
+                                <ion-label position="floating">Name
+                                  <span class="mandatory-field">*</span>
+                                </ion-label>
+                                <ion-input type="text" class="font-size"
+                                  [(ngModel)]="notification.variants[selectedVariantIndex].name">
+                                </ion-input>
+                              </ion-item>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element">
+                              <ion-label class="notification-label-title">Select
+                                Template
+                                <span class="mandatory-field">*</span>
+                              </ion-label>
+                              <form [formGroup]="form">
+                                <!-- <ion-item fill="outline" class="dropdown-stacked p-10">
+                                <ion-label position="stacked"></ion-label>
+                                <ion-select interface="popover"
+                                  [(ngModel)]="notification.variants[selectedVariantIndex].templateId"
+                                  (ionChange)="onTemplateSelect();isDropdownOpen=false" (click)="isDropdownOpen = true;"
+                                  [interfaceOptions]="notifiService.customPopoverOptions"
+                                  placeholder="-Select Template-" class="ion-no-padding" formControlName="template">
+                                  <ion-select-option
+                                    *ngIf="(templateList | filter: {channels: notification.channel}).length==0"
+                                    [disabled]="(templateList | filter: {channels: notification.channel}).length==0">No
+                                    template found</ion-select-option>
+                                  <ion-select-option
+                                    *ngFor="let template of templateList | filter: {channels: notification.channel}"
+                                    [value]="template.id">{{template.name}}</ion-select-option>
+                                </ion-select>
+                              </ion-item> -->
+                                <div style="margin-top: 14px" class="mat-select-block">
+                                  <mat-form-field class="mat-form-container">
+                                    <mat-select [multiple]="false"
+                                      [(ngModel)]="notification.variants[selectedVariantIndex].templateId"
+                                      (ngModelChange)="onTemplateSelect();isDropdownOpen=false"
+                                      (click)="isDropdownOpen = true; this.matSelect.type = notification.variants[selectedVariantIndex].name;"
+                                      placeholder="-Select Template-" formControlName="template">
+                                      <mat-option *ngIf="userSegmentList.length !== 0">
+                                        <ngx-mat-select-search placeholderLabel="Search"
+                                          [(ngModel)]="matSelect.dropdownFilterSearch"
+                                          [ngModelOptions]="{standalone: true}" noEntriesFoundLabel="No matches found">
+                                        </ngx-mat-select-search>
+                                      </mat-option>
+                                      <mat-option class="options-container"
+                                        *ngFor="let template of templateList
+                                      | filter: { name: notification.variants[selectedVariantIndex].name  === matSelect.type ? matSelect.dropdownFilterSearch:'' }"
+                                        [value]=" template.id"
+                                        [disabled]="template.channels.indexOf(notification.channel)== -1">
+                                        {{template.name}}
+                                      </mat-option>
+                                      <mat-option
+                                        *ngIf="(templateList | filter: { name: notification.variants[selectedVariantIndex].name  === matSelect.type ? matSelect.dropdownFilterSearch:'' }).length==0"
+                                        [disabled]="true">No template found
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                                </div>
+                              </form>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element"
+                              *ngIf="(previewTemplateMap[notification.variants[selectedVariantIndex].templateId]?.dynamic_tags || []).length > 0">
+                              <ion-item class="override-checkbox">
+                                <ion-checkbox
+                                  [(ngModel)]="notification.variants[selectedVariantIndex].isOverrideTagValue"
+                                  slot="start"></ion-checkbox>
+                                <ion-label>Override Dynamic Tags</ion-label>
+                              </ion-item>
+                            </ion-col>
+                            <ion-col size-xs="12" size-sm="12" size-md="12" class="form-element"
+                              *ngIf="notification.variants[selectedVariantIndex].isOverrideTagValue">
+                              <ng-template [ngTemplateOutlet]="override_dynamic_tags"
+                                [ngTemplateOutletContext]="{templateId: notification.variants[selectedVariantIndex].templateId, override: notification.variants[selectedVariantIndex].dynamic_tags_override}"></ng-template>
+                            </ion-col>
+                          </ion-row>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row *ngIf="!isAbTesting">
+                        <!--email attachment start-->
+                        <ion-col class="form-element" *ngIf="isValidFieldToShow('attachment_upload')">
+                          <ion-label>Email Attachment<ion-icon name="information-circle"
+                              class="tooltip-icon"></ion-icon><ion-tooltip class="tooltip">
+                              1. Should not exceed more than 3 files<br>
+                              2. Supported file types pdf, xls, xlsx, csv, jpg, jpeg, png, gif, bmp, ppt, pptx, doc,
+                              docx<br>
+                              3. Each file size should not exceed more than 2 MB<br>
+                            </ion-tooltip></ion-label>
+                          <div class="upload-text" style="margin-top: 6px;">
+                            <input type="file" style="display: none;" #attachmentInput
+                              (change)="getEmailBase64URL($event)">
+                            <ion-item class="textbox-stacked" lines="none"
+                              style="--padding-start: 6px; --inner-padding-end: 10px; ">
+                              <ion-label
+                                *ngIf="this.notification.attachments.length == 0 && this.previewTemplateMap[this.notification.templateId]?.attachments?.length == 0"
+                                style="margin-left: 5px;">Attachment</ion-label>
+                              <div
+                                *ngIf="this.notification.attachments.length > 0 || this.previewTemplateMap[this.notification.templateId]?.attachments?.length > 0 "
+                                style="padding-bottom: 5px; padding-top: 5px;display: contents;">
+                                <div *ngIf="!this.isDirectContentMessage">
+                                  <ion-chip
+                                    *ngFor="let list of this.previewTemplateMap[this.notification.templateId]?.attachments; index as i"
+                                    class="attachment-chip">
+                                    <ion-label [title]="list.name"
+                                      style="max-width: 70px; overflow: hidden; text-overflow: ellipsis;cursor:pointer;">{{list.name}}{{list.id}}</ion-label>
+                                    <ion-icon name="download-outline" title="downlaod"
+                                      (click)="notifiService.downlaodEmailAttachment(list);" *ngIf="list.id"
+                                      style="margin-left: 10px; cursor: pointer;"></ion-icon>
+                                  </ion-chip>
+                                </div>
+                                <ion-chip *ngFor="let list of notification.attachments; index as i"
+                                  class="attachment-chip">
+                                  <ion-label [title]="list.name"
+                                    style="max-width: 70px; overflow: hidden; text-overflow: ellipsis;cursor:pointer;">{{list.name}}{{list.id}}</ion-label>
+                                  <ion-icon name="download-outline" title="downlaod"
+                                    (click)="notifiService.downlaodEmailAttachment(list);" *ngIf="list.id"
+                                    style="margin-left: 10px; cursor: pointer;"></ion-icon>
+                                  <ion-icon name="close" (click)="confirmationDeleteAttachment(i)"></ion-icon>
+                                </ion-chip>
+                              </div>
+                              <ion-button
+                                [disabled]=" !isDirectContentMessage ? (this.notification.attachments.length + this.previewTemplateMap[this.notification.templateId]?.attachments?.length)  > 2 : this.notification.attachments.length > 2"
+                                slot="end" fill="clear" (click)="attachmentInput.click()" style="margin-left: 0px;">
+                                <ion-icon style="margin-right: 4px; color: var(--add-channel);"
+                                  name="cloud-upload-outline"></ion-icon>
+                                <ion-label>Upload</ion-label>
+                              </ion-button>
+                            </ion-item>
+                          </div>
+                        </ion-col>
+                        <!--email attachment end-->
+                      </ion-row>
+                    </ion-grid>
+                  </ion-col>
+                  <!---->
+                  <ion-col size-md="12" size-lg="6" class="right-contant ion-hide-sm-down">
+                    <ion-row>
+                      <ion-col>
+
+                        <ng-template *ngIf="isAbTesting" [ngTemplateOutlet]="preview_container"
+                          [ngTemplateOutletContext]="{content: (previewTemplateMap[notification.variants[selectedVariantIndex].templateId] || {})[preview_channel_attr_map[preview_channel]] || {}}"></ng-template>
+                        <ng-template *ngIf="!isAbTesting" [ngTemplateOutlet]="preview_container"
+                          [ngTemplateOutletContext]="{content: isDirectContentMessage ? notification.content : (previewTemplateMap[notification.templateId] || {})[preview_channel_attr_map[preview_channel]] || {}}"></ng-template>
+                        <!-- mobile view popup modal -->
+                        <ion-modal [isOpen]="isModalOpen">
+                          <ng-template>
+                            <div>
+                              <ion-item lines="none">
+                                <ion-icon slot="end" color="dark" name="close-outline"
+                                  (click)="setOpen(false)"></ion-icon>
+                              </ion-item>
+                              <ion-row *ngIf="preview_channel">
+                                <ion-col size="3">
+                                  <p class="preview-label" style="margin: 12px 0px 10px 10px">Preview:</p>
+                                </ion-col>
+                                <ion-col size="7" offset="1" class="form-element">
+                                  <ion-item fill="outline" class="dropdown-stacked">
+                                    <ion-label position="stacked"></ion-label>
+                                    <ion-select interface="popover" [(ngModel)]="preview_channel"
+                                      placeholder="-Select Channel-" class="ion-no-padding">
+                                      <ion-select-option *ngFor="let channel of notification.channels"
+                                        [value]="channel">{{channelMap[channel]}} user</ion-select-option>
+                                    </ion-select>
+                                  </ion-item>
+                                </ion-col>
+                              </ion-row>
+                              <ng-template *ngIf="isAbTesting" [ngTemplateOutlet]="preview_container"
+                                [ngTemplateOutletContext]="{content: (previewTemplateMap[notification.variants[selectedVariantIndex].templateId] || {})[preview_channel_attr_map[preview_channel]] || {}}"></ng-template>
+                              <ng-template *ngIf="!isAbTesting" [ngTemplateOutlet]="preview_container"
+                                [ngTemplateOutletContext]="{content: isDirectContentMessage ? notification.content : (previewTemplateMap[notification.templateId] || {})[preview_channel_attr_map[preview_channel]] || {}}"></ng-template>
+                            </div>
+                          </ng-template>
+                        </ion-modal>
+                        <!--  -->
+                      </ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="preview_channel.length > 0 ? true : false">
+                      <ion-col size-sm="4">
+                        <p class="preview-label">Preview:</p>
+                      </ion-col>
+                      <ion-col size-sm="6" class="form-element">
+                        <ion-item fill="outline" class="dropdown-stacked">
+                          <ion-label position="stacked"></ion-label>
+                          <ion-select interface="popover" [(ngModel)]="preview_channel" placeholder="-Select Channel-"
+                            class="ion-no-padding">
+                            <ion-select-option *ngFor="let channel of notification.channels"
+                              [value]="channel">{{channelMap[channel]}}</ion-select-option>
+                          </ion-select>
+                        </ion-item>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                  <!---->
+                </ion-row>
+                <!-- A/B test setting -->
+                <ion-row class="row-bottom-border ion-padding-top" *ngIf="isAbTesting" id="A/BTestSettings">
+                  <ion-col class="ion-padding-bottom" style="padding-bottom:25px; padding-top:5px">
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col size="12">
+                          <p class="notification-sub-title">3. A/B Test Settings</p>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row class="form-element">
+                        <ion-col size-lg="6" size-sm="12" size-xs="12" class="row-right-border">
+                          <div style="display: flex;
+                        flex-direction: row;">
+                            <p>What percentage of your target audience should we send the test to? </p>
+
+                          </div>
+                          <ion-row>
+                            <ion-col size-lg="9.5" size-md="9.5" size-sm="9" size-xs="9">
+                              <ion-range [(ngModel)]="notification.variantSettings.audiencePercentage"
+                                style="margin: 6px 0px; ">
+                                <ion-text slot="start">0%</ion-text>
+                                <ion-text slot="end">100%</ion-text>
+                              </ion-range>
+                            </ion-col>
+                            <ion-col size-lg="2.5" size-md="2.5" size-sm="3" size-xs="3">
+                              <ion-item fill="outline" class="textbox-stacked" class="range-input">
+                                <ion-label position="stacked"></ion-label>
+                                <ion-input [(ngModel)]="notification.variantSettings.audiencePercentage" type="number"
+                                  name="targetedAudience" min="0" max="100"
+                                  (ionChange)="updateTargetedAudience($event)"></ion-input>
+                              </ion-item>
+                            </ion-col>
+                          </ion-row>
+
+                        </ion-col>
+                        <ion-col size-lg="6" size-sm="12" size-xs="12">
+                          <div class="ion-padding-start info-icon-wrapper">
+                            <div>
+                              <span style="margin-top: 13px;"><ion-icon color="dark"
+                                  name="information-circle-outline"></ion-icon></span>
+                              <p style="color: black">
+                                Each variant will be sent to {{notification.variantSettings.audiencePercentage / 2}}%
+                                of
+                                your selected audience.
+                                <br>
+                                (Estimate) {{math.floor((((userCountDetails[notification.channel] || 0) / 100) *
+                                notification.variantSettings.audiencePercentage) / 2) }} users per variant
+                              </p>
+                            </div>
+                            <div *ngIf="notification.variantSettings.audiencePercentage > 50">
+                              <span style="margin-top: 13px;"><ion-icon color="warning"
+                                  name="warning-outline"></ion-icon></span>
+                              <p style="color: #ffc409">
+                                For best results we recommend selecting between 1-50% for your test audience.
+                              </p>
+                            </div>
+                            <div
+                              *ngIf="(((userCountDetails[notification.channel] || 0) / 100) * notification.variantSettings.audiencePercentage) < notification.variants.length">
+                              <span style="margin-top: 13px;"><ion-icon color="danger"
+                                  name="alert-circle-outline"></ion-icon></span>
+                              <p style="color: #eb445a">
+                                The audience and percent you have selected has
+                                {{(((userCountDetails[notification.channel]
+                                || 0) / 100) *
+                                notification.variantSettings.audiencePercentage) | number : '1.0-2'}} recipients.<br>
+                                At least 1 recipient per variant is required.
+                                Try increasing the percentage or selecting a different segment.
+                              </p>
+                            </div>
+                          </div>
+                        </ion-col>
+                      </ion-row>
+
+                    </ion-grid>
+                  </ion-col>
+                </ion-row>
+                <!-- Schedule -->
+                <ion-row class="ion-padding-top" id="Schedule">
+                  <ion-col>
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col>
+                          <p class="notification-sub-title">{{isAbTesting?'4':'3'}}. Schedule</p>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row class="form-element">
+                        <ion-col class="notification-card-container">
+                          <div class="notification-card ion-no-margin"
+                            [ngClass]="{'selected': !notification.isScheduled}"
+                            (click)="notification.isScheduled = false">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/notification_send_now.svg">
+                            </ion-img>
+                            <ion-label class="channel-title">Send Now</ion-label>
+                          </div>
+                          <div class="notification-card ion-no-margin"
+                            [ngClass]="{'selected': notification.isScheduled}"
+                            (click)="notification.isScheduled = true">
+                            <ion-img class="tick-mark"
+                              src="../../../../assets/icons/{{notifiService.themeName}}/tick.svg">
+                            </ion-img>
+                            <ion-img class="user-selected"
+                              src="../../../assets/icons/{{notifiService.themeName}}/notification_send_later.svg"></ion-img>
+                            <ion-label class="channel-title">Send Later</ion-label>
+                          </div>
+                        </ion-col>
+                      </ion-row>
+
+                      <form [formGroup]="form">
+                        <ion-row *ngIf="notification.isScheduled">
+                          <ion-col size-xs="12" size-sm="12" size-md="12" size-lg="7" class=" date form-element">
+                            <ion-label class="notification-label-title">Select Date and Time
+                              <span class="mandatory-field">*</span>
+                            </ion-label>
+                          </ion-col>
+                          <ion-col class="form-element" size-xs="12" size-sm="12" size-md="12" size-lg="6">
+                            <div>
+                              <mat-form-field>
+                                <input formControlName="scheduledStartDateTime" class="textbox-stacked inline-style"
+                                  [(ngModel)]="scheduleTime" style="border:none;" matInput
+                                  [ngxMatDatetimePicker]="picker" (dateChange)="addEvent('change', $event)"
+                                  placeholder="MM/DD/YYYY HH:MM" [disabled]="false">
+                                <mat-datepicker-toggle style="color:var(--ion-color-primary);" matSuffix
+                                  [for]="$any(picker)" (focus)="picker.open()"></mat-datepicker-toggle>
+                                <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false"
+                                  [controls]="['date']" [stepHour]="1" [stepMinute]="1" [stepSecond]="1"
+                                  [touchUi]="false" size="cover" [enableMeridian]="true" [disableMinute]="false"
+                                  [hideTime]="false">
+                                  <ng-template>
+                                    <span>OK</span>
+                                  </ng-template>
+                                </ngx-mat-datetime-picker>
+                              </mat-form-field>
+                            </div>
+                          </ion-col>
+                        </ion-row>
+                      </form>
+                    </ion-grid>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+            <!-- Desktop -->
+            <ion-buttons class="ion-hide-md-down ion-margin-top ion-margin-bottom ion-padding-bottom "
+              style="padding-left: 9px;padding-top:5px">
+              <ion-button color="primary m-r-10"
+                *ngIf="notification.status == 'CREATED' || !notification.is_processed || isCloneView"
+                (click)="saveAsDraft()">
+                <ion-label>Save</ion-label>
+              </ion-button>
+              <ion-button color="primary m-l-10 m-r-10" *ngIf="!notification.is_processed && !notification.isScheduled"
+                (click)="sendNotification()">
+                <ion-label>Send Now</ion-label>
+              </ion-button>
+              <ion-button color="primary m-r-10" *ngIf="!notification.is_processed && notification.isScheduled"
+                (click)="scheduleNotification()">
+                <ion-label>{{(isScheduledNotification && !isCloneView) ? 'Re-Schedule' : 'Schedule'}}</ion-label>
+              </ion-button>
+              <ion-button color="secondary m-l-10" (click)=" onCancel()">
+                <ion-label>Cancel</ion-label>
+              </ion-button>
+            </ion-buttons>
+            <!-- mobile -->
+            <ion-buttons class="ion-hide-md-up" style="padding: 0px 8px 10px 8px;">
+              <ion-grid class="ion-no-padding">
+                <ion-row style="margin:5px 0px 20px 0px">
+                  <ion-col size-xs="4" size-sm="4" class="ion-text-start">
+                    <ion-button *ngIf="notification.status == 'CREATED' || !notification.is_processed || isCloneView"
+                      (click)="saveAsDraft()" class="ion-no-margin" color="primary" style="width: 80%;float:right;">
+                      <ion-label style="font-size: 87.5%;">Save</ion-label>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xs="4" size-sm="4" class="ion-text-center">
+                    <ion-button *ngIf="!notification.is_processed && !notification.isScheduled"
+                      (click)="sendNotification()" class="ion-no-margin" color="primary" style="width: 80%;">
+                      <ion-label style="font-size: 87.5%;">Send Now</ion-label>
+                    </ion-button>
+                    <ion-button color="primary" *ngIf="!notification.is_processed && notification.isScheduled"
+                      (click)="scheduleNotification()" style="width: 80%;">
+                      <ion-label style="font-size: 87.5%;">{{(isScheduledNotification && !isCloneView) ? 'Re-Schedule' :
+                        'Schedule'}}</ion-label>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xs="4" size-sm="4" class="ion-text-end">
+                    <ion-button (click)=" onCancel()" class="ion-no-margin" color="secondary"
+                      style="width: 80%;float:left">
+                      <ion-label style="font-size: 87.5%;">Cancel</ion-label>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-buttons>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
